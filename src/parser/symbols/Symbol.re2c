@@ -1,0 +1,93 @@
+#include <string>
+#include <ostream>
+#include <sstream>
+
+#include <boost/property_tree/ptree.hpp> 
+#include <boost/algorithm/string.hpp>
+
+#include "Referenced.h"
+#include "pointers.h"
+#include "referencedwrappers.h"
+
+#include "parser/symbols/Symbol.h"
+
+namespace bcplus {
+namespace parser {
+namespace symbol {
+
+char const* Symbol::Type::cstr(Value v) {
+	switch (v) {
+		case SORT:      return "sort";
+        case CONSTANT:  return "constant";
+        case VARIABLE:  return "variable";
+        case OBJECT:    return "object";
+        case MACRO:     return "macro";
+	}
+}
+
+Symbol::Type::Value Symbol::Type::val(char const* c) {
+	char const* marker;
+
+	/*!re2c
+		re2c:define:YYCTYPE = "char";
+		re2c:define:YYCURSOR = c;
+		re2c:define:yyfill:enable = 0;
+		re2c:define:YYMARKER = marker;
+		re2c:indent:top = 1;
+
+		'sort'				{ return SORT; }
+		'constant'			{ return CONSTANT; }
+		'variable'			{ return VARIABLE; }
+		'object'			{ return OBJECT; }
+		'macro'				{ return MACRO; }
+	*/
+}
+
+
+Symbol::Symbol(Type::Value type, ReferencedString const* base, size_t arity)
+	: _type(type), _arity(arity), _base(base), _good(true) {
+
+	std::stringstream tmp;
+	tmp << *base << "/" << arity;
+	_name = new ReferencedString(tmp.str()); 
+}
+
+Symbol::Symbol(Type::Value type, boost::property_tree::ptree const& node, std::ostream* err) {
+	bool good = true;
+	std::string base = pt.get("<xmlattr>.base","");
+	int arity = node.get("<xmlattr>.arity",0);
+	Type::Value type_val;
+
+
+	if (base == "") {
+		good = false;
+		if (err) err << "Error: Encountered malformed symbol declaration. Expected a 'base' attribute." << std::endl;
+	}
+
+	if (arity < 0) {
+		good = false;
+		if (err) err << "Error: Encountered malformed symbol declaration. Expected an non-negative integer 'arity' attribute." << std::endl;
+	}
+
+	_type = type;
+	_arity = (size_t)arity;
+	_base = new ReferencedString(base);
+	
+	std::stringstream tmp;
+	tmp << base << "/" << arity;
+	_name = new ReferencedString(tmp.str());	
+
+	_good = good;
+}
+
+Symbol::~Symbol() {
+	/// Intentionally left blank
+}
+
+void Symbol::save(boost::property_tree::ptree& node) const {
+	node.put("<xmlattr>.base", *base());
+	if (arity()) node.put("<xmlattr>.arity", arity());
+}
+
+
+}}}
