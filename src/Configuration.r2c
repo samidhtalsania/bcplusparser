@@ -7,20 +7,22 @@
 #endif
 #include <boost/filesystem.hpp>
 
-
+#include "referencedwrappers.h"
 
 #include "Configuration.h"
 #include "utils.h"
 
-const fs::path Configuration::DEFAULT_STATE_DIR = fs::current_path() / ".states";
-const bool Configuration::DEFAULT_VERIFY_MODULES = true;
-const std::string Configuration::VERSION = "0.1 ALPHA";
+namespace bcplus {
+
 const size_t Configuration::DEFAULT_VERB_LEVEL = Verb::STD;
 
-Configuration::Configuration(std::string const& version)
-	: _version(version), _verify(DEFAULT_VERIFY_MODULES), _state_dir(DEFAULT_STATE_DIR),
-		_verb(DEFAULT_VERB_LEVEL), _nullstream( ios::null_sink() )
-{ /* Intentionally left blank */ }
+Configuration::Configuration(char const* bin, char const* version)
+	: _nullstream( ios::null_sink() )
+{ 
+	_verb = DEFAULT_VERB_LEVEL;
+	_version = new ReferencedString(version);
+	_bin_name = new ReferencedString(fs::path(bin).filename().native());
+}
 
 
 Configuration::~Configuration()
@@ -35,7 +37,7 @@ Option::Status Configuration::load(int argc, char const** argv) {
 
 	// Figure out who we are
 	fs::path bin = argv[0];
-	_bin_name = bin.filename().native();
+	_bin_name = new ReferencedString(bin.filename().native());
 
 	// parse arguments
 
@@ -45,24 +47,21 @@ Option::Status Configuration::load(int argc, char const** argv) {
 		Option::Value opt = parseOption(argv[i], val);
 
 		switch (opt) {
-		case Option::MOD_FILE:
+		case Option::SYMTAB_INPUT:
 			if (fs::native(val)) {
-				_mod_file = val;
+				_symtab_in = new ReferencedPath(val);
+			} else {
+				ret = Option::STAT_BAD_ARG;
+				std::cerr << "ERROR: \"" << val << "\" is not a valid file path." << std::endl;
+			}
+			break;
+		case Option::SYMTAB_OUTPUT:
+			if (fs::native(val)) {
+				_symtab_out = new ReferencedPath(val);
 			} else {
 				ret = Option::STAT_BAD_ARG;
 				std::cerr << "ERROR: \"" << val << "\" is not a valid file path." << std::endl;
 
-			}
-			break;
-
-		case Option::VERIFY:
-			if (!strcmp(val, "true")) {
-				_verify = true;
-			} else if (!strcmp(val, "false")) {
-				_verify = false;
-			} else {
-				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: unknown value provided for command line option. Expected \"true\" or \"false\" \" in \"" << opt << "\"." << std::endl;
 			}
 			break;
 
@@ -73,26 +72,6 @@ Option::Status Configuration::load(int argc, char const** argv) {
 				std::cerr << "ERROR: unknown valud provided for command line option. Expected a non-negative integer in \"" << opt <<"." << std::endl;
 			} else {
 				verbosity(int_v);	
-			}
-			break;
-
-
-		case Option::STATE_DIR:
-			if (fs::native(val)) {
-				_state_dir = val;
-			} else {
-				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: \"" << val << "\" is not a valid file path." << std::endl;
-
-			}
-			break;
-
-		case Option::INPUT_FILE:
-			if (fs::native(val)) {
-				_input = val;
-			} else {
-				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: \"" << val << "\" is not a valid file path." << std::endl;
 			}
 			break;
 
@@ -113,30 +92,9 @@ Option::Status Configuration::load(int argc, char const** argv) {
 	return ret;
 }
 
-bool Configuration::verify() {
+bool Configuration::good() {
 	bool good = true;
-
-	if (_mod_file.empty()) {
-		std::cerr << "ERROR: A module definition file is required." << std::endl;
-		good = false;
-	} else  if (!fs::is_regular_file(_mod_file)) {
-		std::cerr << "ERROR: The provided module definition file does not exist or is not a regular file." << std::endl;
-		good = false;
-	}
-
-	if (_state_dir.empty()) {
-		std::cerr << "ERROR: A state-file directory is required." << std::endl;
-		good = false;
-	} else if (fs::exists(_state_dir) && !fs::is_directory(_state_dir)) {
-		std::cerr << "ERROR: The provided state-file directory does not appear to be a directory." << std::endl;
-		good = false;
-	}
-
-	if (!_input.empty() && !fs::is_regular_file(_input)) {
-		good = false;
-		std::cerr << "ERROR: The provided event input file does not exist or is not a regular file." << std::endl;
-	}
-
+	// TODO
 	return good;
 }
 
@@ -158,12 +116,9 @@ Option::Value Configuration::parseOption(char const* opt, char const*& val) {
     	re2c:define:YYMARKER = marker;
     	re2c:indent:top = 1;
 	
-		"-m="|"--modules="						{ val = opt; return Option::MOD_FILE; }
-		"--verify="								{ val = opt; return Option::VERIFY; }
+		"-s="|"--symtab-in="					{ val = opt; return Option::SYMTAB_INPUT; }
+		"--symtab-out="							{ val = opt; return Option::SYMTAB_OUTPUT; }
 		"--verb="								{ val = opt; return Option::VERBOSITY; }
-		"--no-verify"							{ val = "false"; return Option::VERIFY; }
-		"-s="|"--state-dir="					{ val = opt; return Option::STATE_DIR; }
-		"-i="|"--input="						{ val = opt; return Option::INPUT_FILE; }
 		"-h"|"-?"|"--help"						{ val = NULL; return Option::HELP; }
 		"-v"|"--version"						{ val = NULL; return Option::VERSION; }
 		.										{ val = NULL; return Option::BAD; }
@@ -176,27 +131,27 @@ Option::Value Configuration::parseOption(char const* opt, char const*& val) {
 
 std::ostream& Configuration::output(std::ostream& out) const {
 	out 
-		<< "Executable name: " << _bin_name << std::endl
-		<< "Version: " << _version << std::endl << std::endl
-		<< "Module File: \"" << _mod_file.native() << "\"" << std::endl
-		<< "Verify Modules: \"" << (_verify ? "true" : "false") << "\"" << std::endl
-		<< "State Directory: \"" << _state_dir.native() << "\"" << std::endl
-		<< "Input File: \"" << _input.native() << "\"" << std::endl
+		<< "Executable name: " << *_bin_name << std::endl
+		<< "Version: " << *_version << std::endl << std::endl
+		<< "Symbol Table Input: \"" << (_symtab_in ? _symtab_in->native() : "<NONE>") << "\"" << std::endl
+		<< "Symbol Table Output: \"" << (_symtab_out ? _symtab_out->native() : "<NONE>") << "\"" << std::endl
 		<< "Verbosity: " << "\"" << _verb << "\"" << std::endl;
 
 	return out;
 }
 
 std::ostream& Configuration::outputVersion(std::ostream& out) const {
-	out << binaryName() << " version " << version() << std::endl;
+	out << binaryName() << " version " << *version() << std::endl;
 	return out;
 }
 
 std::ostream& Configuration::outputHelp(std::ostream& out) const {
 	out << "---------------------------------------------------------------------------------------"<< std::endl
-		<< binaryName() << " version " << version() 												<< std::endl
-		<< "---------------------------------------------------------------------------------------"<< std::endl
-		<< "Usage: " << binaryName() << " -m=<MODULE_FILE> -i=<INPUT_FILE> [ADDITIONAL_OPTIONS]" 	<< std::endl
+		<< *binaryName() << " version " << *version() 												<< std::endl
+		<< "---------------------------------------------------------------------------------------"<< std::endl;
+	// TODO
+/*
+		<< "Usage: " << *binaryName() << " -m=<MODULE_FILE> -i=<INPUT_FILE> [ADDITIONAL_OPTIONS]" 	<< std::endl
 		<< "     <MODULE_FILE> - The name of the XML file containing module definitions."			<< std::endl
 		<< "     <INPUT_FILE>  - The name of the file containing input events as ASP facts."		<< std::endl
 		<< "     ADDITIONAL_OPTIONS:"																<< std::endl
@@ -226,6 +181,8 @@ std::ostream& Configuration::outputHelp(std::ostream& out) const {
 		<< "          -h"																			<< std::endl
 		<< "          --help"																		<< std::endl
 		<< "                   - Displays this dialog and exits."									<< std::endl;
-
+*/
 	return out;
 }
+
+};

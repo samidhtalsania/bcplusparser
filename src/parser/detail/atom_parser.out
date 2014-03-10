@@ -1,0 +1,406 @@
+State 0:
+          start ::= * solutionlist epilogue EOF
+          solutionlist ::= * error
+          solutionlist ::= * solutionlist error
+          solutionlist ::= * pa_solution
+          solutionlist ::= * solutionlist pa_solution
+          solutionlist ::= * reg_solution
+          pa_solution ::= * preamble atomlist
+          reg_solution ::= * nonempty_atomlist
+          preamble ::= * ANSWER COLON NUMBER
+          nonempty_atomlist ::= * atom
+          nonempty_atomlist ::= * nonempty_atomlist atom
+          nonempty_atomlist ::= * nonempty_atomlist error
+          atom ::= * ID
+          atom ::= * ID DOT
+          atom ::= * ID L_PAREN arglist R_PAREN
+          atom ::= * ID L_PAREN arglist R_PAREN DOT
+
+                            ID shift  11
+                        ANSWER shift  13
+                         error shift  33
+                         start accept
+                  solutionlist shift  1
+                   pa_solution shift  32
+                  reg_solution shift  31
+                      preamble shift  2
+             nonempty_atomlist shift  5
+                          atom shift  35
+
+State 1:
+          start ::= solutionlist * epilogue EOF
+          solutionlist ::= solutionlist * error
+          solutionlist ::= solutionlist * pa_solution
+          pa_solution ::= * preamble atomlist
+          preamble ::= * ANSWER COLON NUMBER
+     (24) epilogue ::= *
+          epilogue ::= * epilogue UNSATISFIABLE
+          epilogue ::= * epilogue SATISFIABLE
+          epilogue ::= * epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                        ANSWER shift  13
+                         error shift  47
+                      epilogue shift  8
+                   pa_solution shift  46
+                      preamble shift  2
+                     {default} reduce 24
+
+State 2:
+          pa_solution ::= preamble * atomlist
+      (9) atomlist ::= *
+          atomlist ::= * nonempty_atomlist
+          nonempty_atomlist ::= * atom
+          nonempty_atomlist ::= * nonempty_atomlist atom
+          nonempty_atomlist ::= * nonempty_atomlist error
+          atom ::= * ID
+          atom ::= * ID DOT
+          atom ::= * ID L_PAREN arglist R_PAREN
+          atom ::= * ID L_PAREN arglist R_PAREN DOT
+
+                            ID shift  11
+                      atomlist shift  45
+             nonempty_atomlist shift  6
+                          atom shift  35
+                     {default} reduce 9
+
+State 3:
+          arglist ::= * function
+          arglist ::= * arglist COMMA function
+          function ::= * ID
+          function ::= * STRING_LITERAL
+          function ::= * NUMBER
+          function ::= * ID L_PAREN arglist R_PAREN
+          function ::= ID L_PAREN * arglist R_PAREN
+
+                            ID shift  14
+                STRING_LITERAL shift  37
+                        NUMBER shift  36
+                      function shift  39
+                       arglist shift  9
+
+State 4:
+          atom ::= ID L_PAREN * arglist R_PAREN
+          atom ::= ID L_PAREN * arglist R_PAREN DOT
+          arglist ::= * function
+          arglist ::= * arglist COMMA function
+          function ::= * ID
+          function ::= * STRING_LITERAL
+          function ::= * NUMBER
+          function ::= * ID L_PAREN arglist R_PAREN
+
+                            ID shift  14
+                STRING_LITERAL shift  37
+                        NUMBER shift  36
+                      function shift  39
+                       arglist shift  10
+
+State 5:
+      (7) reg_solution ::= nonempty_atomlist *
+          nonempty_atomlist ::= nonempty_atomlist * atom
+          nonempty_atomlist ::= nonempty_atomlist * error
+          atom ::= * ID
+          atom ::= * ID DOT
+          atom ::= * ID L_PAREN arglist R_PAREN
+          atom ::= * ID L_PAREN arglist R_PAREN DOT
+
+                            ID shift  11
+                         error shift  43
+                          atom shift  44
+                     {default} reduce 7
+
+State 6:
+     (10) atomlist ::= nonempty_atomlist *
+          nonempty_atomlist ::= nonempty_atomlist * atom
+          nonempty_atomlist ::= nonempty_atomlist * error
+          atom ::= * ID
+          atom ::= * ID DOT
+          atom ::= * ID L_PAREN arglist R_PAREN
+          atom ::= * ID L_PAREN arglist R_PAREN DOT
+
+                            ID shift  11
+                         error shift  43
+                          atom shift  44
+                     {default} reduce 10
+
+State 7:
+          arglist ::= arglist COMMA * function
+          function ::= * ID
+          function ::= * STRING_LITERAL
+          function ::= * NUMBER
+          function ::= * ID L_PAREN arglist R_PAREN
+
+                            ID shift  14
+                STRING_LITERAL shift  37
+                        NUMBER shift  36
+                      function shift  40
+
+State 8:
+          start ::= solutionlist epilogue * EOF
+          epilogue ::= epilogue * UNSATISFIABLE
+          epilogue ::= epilogue * SATISFIABLE
+          epilogue ::= epilogue * MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                   SATISFIABLE shift  49
+                 UNSATISFIABLE shift  50
+                        MODELS shift  29
+                           EOF shift  30
+
+State 9:
+          arglist ::= arglist * COMMA function
+          function ::= ID L_PAREN arglist * R_PAREN
+
+                       R_PAREN shift  38
+                         COMMA shift  7
+
+State 10:
+          atom ::= ID L_PAREN arglist * R_PAREN
+          atom ::= ID L_PAREN arglist * R_PAREN DOT
+          arglist ::= arglist * COMMA function
+
+                       R_PAREN shift  15
+                         COMMA shift  7
+
+State 11:
+     (14) atom ::= ID *
+          atom ::= ID * DOT
+          atom ::= ID * L_PAREN arglist R_PAREN
+          atom ::= ID * L_PAREN arglist R_PAREN DOT
+
+                       L_PAREN shift  4
+                           DOT shift  42
+                     {default} reduce 14
+
+State 12:
+          preamble ::= ANSWER COLON * NUMBER
+
+                        NUMBER shift  34
+
+State 13:
+          preamble ::= ANSWER * COLON NUMBER
+
+                         COLON shift  12
+
+State 14:
+     (20) function ::= ID *
+          function ::= ID * L_PAREN arglist R_PAREN
+
+                       L_PAREN shift  3
+                     {default} reduce 20
+
+State 15:
+     (16) atom ::= ID L_PAREN arglist R_PAREN *
+          atom ::= ID L_PAREN arglist R_PAREN * DOT
+
+                           DOT shift  41
+                     {default} reduce 16
+
+State 16:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON * FP_NUMBER
+
+                     FP_NUMBER shift  48
+
+State 17:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING * COLON FP_NUMBER
+
+                         COLON shift  16
+
+State 18:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER * SOLVING COLON FP_NUMBER
+
+                       SOLVING shift  17
+
+State 19:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON * FP_NUMBER SOLVING COLON FP_NUMBER
+
+                     FP_NUMBER shift  18
+
+State 20:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT * COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                         COLON shift  19
+
+State 21:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER * PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                    PREPRO_DOT shift  20
+
+State 22:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON * FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                     FP_NUMBER shift  21
+
+State 23:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE * COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                         COLON shift  22
+
+State 24:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER * PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                       PREPARE shift  23
+
+State 25:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME COLON * FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                     FP_NUMBER shift  24
+
+State 26:
+          epilogue ::= epilogue MODELS COLON NUMBER TIME * COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                         COLON shift  25
+
+State 27:
+          epilogue ::= epilogue MODELS COLON NUMBER * TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                          TIME shift  26
+
+State 28:
+          epilogue ::= epilogue MODELS COLON * NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                        NUMBER shift  27
+
+State 29:
+          epilogue ::= epilogue MODELS * COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER
+
+                         COLON shift  28
+
+State 30:
+      (0) start ::= solutionlist epilogue EOF *
+
+                             $ reduce 0
+
+State 31:
+      (5) solutionlist ::= reg_solution *
+
+                     {default} reduce 5
+
+State 32:
+      (3) solutionlist ::= pa_solution *
+
+                     {default} reduce 3
+
+State 33:
+      (1) solutionlist ::= error *
+
+                     {default} reduce 1
+
+State 34:
+      (8) preamble ::= ANSWER COLON NUMBER *
+
+                     {default} reduce 8
+
+State 35:
+     (11) nonempty_atomlist ::= atom *
+
+                     {default} reduce 11
+
+State 36:
+     (22) function ::= NUMBER *
+
+                     {default} reduce 22
+
+State 37:
+     (21) function ::= STRING_LITERAL *
+
+                     {default} reduce 21
+
+State 38:
+     (23) function ::= ID L_PAREN arglist R_PAREN *
+
+                     {default} reduce 23
+
+State 39:
+     (18) arglist ::= function *
+
+                     {default} reduce 18
+
+State 40:
+     (19) arglist ::= arglist COMMA function *
+
+                     {default} reduce 19
+
+State 41:
+     (17) atom ::= ID L_PAREN arglist R_PAREN DOT *
+
+                     {default} reduce 17
+
+State 42:
+     (15) atom ::= ID DOT *
+
+                     {default} reduce 15
+
+State 43:
+     (13) nonempty_atomlist ::= nonempty_atomlist error *
+
+                     {default} reduce 13
+
+State 44:
+     (12) nonempty_atomlist ::= nonempty_atomlist atom *
+
+                     {default} reduce 12
+
+State 45:
+      (6) pa_solution ::= preamble atomlist *
+
+                     {default} reduce 6
+
+State 46:
+      (4) solutionlist ::= solutionlist pa_solution *
+
+                     {default} reduce 4
+
+State 47:
+      (2) solutionlist ::= solutionlist error *
+
+                     {default} reduce 2
+
+State 48:
+     (27) epilogue ::= epilogue MODELS COLON NUMBER TIME COLON FP_NUMBER PREPARE COLON FP_NUMBER PREPRO_DOT COLON FP_NUMBER SOLVING COLON FP_NUMBER *
+
+                     {default} reduce 27
+
+State 49:
+     (26) epilogue ::= epilogue SATISFIABLE *
+
+                     {default} reduce 26
+
+State 50:
+     (25) epilogue ::= epilogue UNSATISFIABLE *
+
+                     {default} reduce 25
+
+----------------------------------------------------
+Symbols:
+    0: $:
+    1: ID
+    2: STRING_LITERAL
+    3: L_PAREN
+    4: R_PAREN
+    5: DOT
+    6: COMMA
+    7: COLON
+    8: NUMBER
+    9: FP_NUMBER
+   10: ANSWER
+   11: SATISFIABLE
+   12: UNSATISFIABLE
+   13: MODELS
+   14: TIME
+   15: PREPARE
+   16: PREPRO_DOT
+   17: SOLVING
+   18: EOF
+   19: ERR_UNTERMINATED_STRING
+   20: ERR_UNKNOWN_SYMBOL
+   21: error:
+   22: start: ID ANSWER
+   23: solutionlist: ID ANSWER
+   24: epilogue: <lambda> SATISFIABLE UNSATISFIABLE MODELS
+   25: pa_solution: ANSWER
+   26: reg_solution: ID
+   27: preamble: ANSWER
+   28: atomlist: <lambda> ID
+   29: nonempty_atomlist: ID
+   30: atom: ID
+   31: function: ID STRING_LITERAL NUMBER
+   32: arglist: ID STRING_LITERAL NUMBER

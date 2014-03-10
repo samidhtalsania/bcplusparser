@@ -7,6 +7,7 @@
 #include "pointers.h"
 #include "referencedwrappers.h"
 
+#include "parser/elements/formulas.h"
 #include "parser/Location.h"
 #include "parser/elements/terms.h"
 
@@ -54,8 +55,8 @@ public:
 	inline Constant const* c() const				{ return _c; }
 
 	/// The value
-	inline Term* v()					{ return _v; }
-	inline Term const* v() const		{ return _v; }
+	inline Term* v()								{ return _v; }
+	inline Term const* v() const					{ return _v; }
 
     virtual Element* copy() const;
     virtual void output(std::ostream& out) const;

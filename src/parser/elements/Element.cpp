@@ -1,6 +1,6 @@
 
 #include "parser/Location.h"
-#include "parser/types/Element.h"
+#include "parser/elements/Element.h"
 
 namespace bcplus {
 namespace parser {

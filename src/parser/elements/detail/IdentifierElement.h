@@ -67,7 +67,7 @@ public:
 /// @param type The type flag to indicate the specialization of the type
 /// @param SymbolType The type that the SymbolTable is of.
 /// @param ArgType The type that the arguments are allowed to take.
-template <typename BaseType, int type, typename SymbolType, typename ArgType = void>
+template <typename BaseType, int type, typename SymbolType, typename ArgType>
 class IdentifierElement : public IdentifierElement_bare<BaseType, type, SymbolType>
 {
 public:

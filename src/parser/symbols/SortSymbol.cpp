@@ -1,6 +1,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/property_tree/exceptions.hpp>
+#include <boost/foreach.hpp>
 
 #include "parser/symbols/Resolver.h"
 #include "parser/symbols/Symbol.h"
@@ -23,13 +24,13 @@ SortSymbol::SortSymbol(ReferencedString const* base, ObjectList* objects, SortLi
 	if (!subsorts) _subsorts = new SortList();
 	else { 
 		_subsorts = subsorts;
-		for (SortSymbol* sort : _subsorts) {
-			sort->addSuperset(this);
+		BOOST_FOREACH(SortSymbol* sort, *_subsorts) {
+			sort->addSupersort(this);
 		}
 	}
 
 	_integral = true;
-	for(ObjectSymbol const* obj : objects) {
+	BOOST_FOREACH(ObjectSymbol const* obj, *_objects) {
 		if (!obj->integral()) {
 			_integral = false;
 			break;
@@ -38,9 +39,11 @@ SortSymbol::SortSymbol(ReferencedString const* base, ObjectList* objects, SortLi
 }
 
 SortSymbol::SortSymbol(boost::property_tree::ptree const& node, std::ostream* err)
-	: Symbol(node, err) {
+	: Symbol(Symbol::Type::SORT, node, err) {
 
-	
+	_objects = new ObjectList();
+	_supersorts = new SortList();
+	_subsorts = new SortList();	
 
 	// Ensure arity = 0 for sorts
 	if (good() && arity()) {
@@ -54,30 +57,30 @@ SortSymbol::~SortSymbol() {
 	// Intentionally left blank
 }
 
-bool SortSymbol::add(ObjectSymbol const* obj) const {
+bool SortSymbol::add(ObjectSymbol const* obj) {
 	if (_objects->insert(obj).second) {
-		// update any supersets
-		for (SortSymbol* sort : _supersets) {
+		// update any supersorts
+		BOOST_FOREACH(SortSymbol* sort, *_supersorts) {
 			sort->add(obj);
 		}
 		return true;
 	} else return false;
 }
 
-bool SortSymbol::addSuperSort(SortSymbol* super) {
+bool SortSymbol::addSupersort(SortSymbol* super) {
 	if (_supersorts->insert(super).second) {
-		super->addSubSort(this);
+		super->addSubsort(this);
 		// update the supersort's objects
-		for (ObjectSymbol* obj : _objects) {
+		BOOST_FOREACH(ObjectSymbol const* obj, *_objects) {
 			super->add(obj);
 		}
 		return true;
 	} else return false;
 }
 
-bool SortSymbol::addSubSort(SortSymbol* sub) {
+bool SortSymbol::addSubsort(SortSymbol* sub) {
 	if (_subsorts->insert(sub).second) {
-		sub->addSuperSort(this);
+		sub->addSupersort(this);
 		return true;
 	} else return false;
 }
@@ -85,19 +88,18 @@ bool SortSymbol::addSubSort(SortSymbol* sub) {
 bool SortSymbol::loadDefinition(boost::property_tree::ptree const& node, Resolver* resolver, std::ostream* err) {
 	// verify symbol name
 	std::string node_name = node.get("<xmlattr>.name", "");
-	int node_arity = node.get("<xmlattr>.arity", 0)'
+	int node_arity = node.get("<xmlattr>.arity", 0);
 
 	if (node_arity || node_name != *base()) {
 		good(false);
 		if (err) *err << "INTERNAL ERROR: Cannot load definition for sort \"" << *base() << "\". Identifier \"" << node_name << "/" << node_arity << "\" does not match this sort." << std::endl;
 	} else {
-
-		for (boost::property_tree::value_type const& n : node) {
-			if (boost::iequals(n.first, "sort")) {
+		BOOST_FOREACH(boost::property_tree::ptree::value_type const& n, node) {
+			if (boost::iequals(n.first, "subsort")) {
 				// subsort
-				ref_ptr<SortSymbol> subsort = new SortSymbol(node, err);
+				ref_ptr<SortSymbol> subsort = new SortSymbol(n.second, err);
 				if (subsort) {
-					ref_ptr<SortSymbol> subsort_resolved = resolver->resolveOrCreate(subsort, err);
+					ref_ptr<SortSymbol> subsort_resolved = (SortSymbol*)resolver->resolveOrCreate(subsort);
 					if (!subsort_resolved) {
 						good(false);
 						if (err) *err << "ERROR: An error occurred while scanning the definition of sort \"" << *base() << "\".  Subsort \"" << *(subsort->base()) << "\" is not a declared sort." << std::endl;
@@ -108,16 +110,16 @@ bool SortSymbol::loadDefinition(boost::property_tree::ptree const& node, Resolve
 				}
 			} else if (boost::iequals(n.first, "object")) {
 				// object
-				ref_ptr<ObjectSymbol> obj = new ObjectSymbol(node, resolver, err);
+				ref_ptr<ObjectSymbol> obj = new ObjectSymbol(n.second, resolver, err);
 				if (!obj || !obj->good()) {
 					good(false);
 					if (err) *err << "ERROR: An error occurred while scanning the definition of sort \"" << *base() << "\". Encountered a malformed object declaration." << std::endl;
 				} else {
 					// resolve it with previous definitions
-					ref_ptr<ObjectSymbol> obj_resolved = resolver->resolveOrCreate(obj, err);
+					ref_ptr<ObjectSymbol> obj_resolved = (ObjectSymbol*)resolver->resolveOrCreate(obj);
 					if (!obj_resolved) {
 						good(false);
-						if (err) *err << "ERROR: An error occurred while scanning the definition of sort \"" << *base() << \". Encountered a conflicting definition of symbol \"" << *(obj->name()) << "\"." << std::endl;
+						if (err) *err << "ERROR: An error occurred while scanning the definition of sort \"" << *base() << "\". Encountered a conflicting definition of symbol \"" << *(obj->name()) << "\"." << std::endl;
 					} else {
 						// Good to go. Add the object
 						add(obj_resolved);
@@ -128,7 +130,7 @@ bool SortSymbol::loadDefinition(boost::property_tree::ptree const& node, Resolve
 			} else {
 				// who knows
 				good(false);
-				if (err) << "ERROR: Encountered an unexpected element \"" << n.first << "\" while scanning the definition of sort \"" << *base() << "\". Expected either \"sort\" or \"object\"." << std::endl;
+				if (err) *err << "ERROR: Encountered an unexpected element \"" << n.first << "\" while scanning the definition of sort \"" << *base() << "\". Expected either \"subsort\" or \"object\"." << std::endl;
 			}
 		}
 	}
@@ -136,24 +138,65 @@ bool SortSymbol::loadDefinition(boost::property_tree::ptree const& node, Resolve
 	return good();
 }
 
+bool SortSymbol::operator==(Symbol const& other) const {
+	// sort symbols are special as they have complex interaction with each other
+	// a sort symbol is only equal to another if it's the same object
+//	return this == &other;
+
+
+	if (!Symbol::operator==(other)) return false;
+/*
+	// check objects
+	{
+		const_iterator oit = o.begin();
+		for (const_iterator it = begin() ; it != end(); it++) {
+			// Everything draws from the same set of symbols, so we can use pointer comparison here
+			if (oit == o.end()) return false;
+			if (*it != *oit) return false;
+			oit++;
+		}
+		if (oit != o.end()) return false;
+	}
+
+	// check superset
+	{
+		SortList::const_iterator oit = o.beginSuperSorts();
+		for (SortList::const_iterator it = beginSuperSorts() ; it != endSuperSorts(); it++) {
+			// Everything draws from the same set of symbols, so we can use pointer comparison here
+			if (oit == o.endSuperSorts()) return false;
+			if (*it != *oit) return false;
+			oit++;
+		}
+		if (oit != o.endSuperSorts()) return false;
+	}
+
+	// check subsets
+	{
+		SortList::const_iterator oit = o.beginSubSorts();
+		for (SortList::const_iterator it = beginSubSorts() ; it != endSubSorts(); it++) {
+			// Everything draws from the same set of symbols, so we can use pointer comparison here
+			if (oit == o.endSubSorts()) return false;
+			if (*it != *oit) return false;
+			oit++;
+		}
+		if (oit != o.endSubSorts()) return false;
+	} */
+	return true;
+
+}
 
 void SortSymbol::save(boost::property_tree::ptree& node) const {
 	Symbol::save(node);
 
-	for (ObjectSymbol const* obj : *this) {
-		boot::property_tree::ptree tmp;
-		tmp.put("<xmlattr>.name",*(obj->base()));
-		tmp.put("<xmlattr>.arity",obj->arity());
-		node.add_child("object", tmp);
+	BOOST_FOREACH(ObjectSymbol const* obj, *_objects) {
+		boost::property_tree::ptree& tmp = node.add("object", "");
+		obj->save(tmp);
 	}
 
-	for (SortSymbol::const_iterator it = beginSubSorts(); it != endSubSorts(); it++) {
-		boost::property_tree::ptree tmp;
+	BOOST_FOREACH(SortSymbol const* sort, *_subsorts) {
+		boost::property_tree::ptree& tmp = node.add("subsort", "");
 		tmp.put("<xmlattr>.name", *(sort->base()));
-		node.add_child("sort", tmp);
 	}
 }
 
-
 }}}
-

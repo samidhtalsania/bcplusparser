@@ -3,7 +3,7 @@
 #include <string>
 #include <ostream>
 
-#include <boost/property_tree/ptree.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include "Referenced.h"
 #include "pointers.h"
@@ -47,9 +47,9 @@ public:
 	/// Get the sort this symbol ranges over
 	SortSymbol const* sort() const						{ return _sort; }
 
-
+	virtual bool operator==(Symbol const& other) const;
 	virtual bool integral() const;
-	virtual bool save(boost::property_tree::ptree& node) const;
+	virtual void save(boost::property_tree::ptree& node) const;
 
 };
 

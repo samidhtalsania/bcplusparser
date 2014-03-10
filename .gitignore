@@ -11,3 +11,22 @@
 *.lai
 *.la
 *.a
+
+# swap files and other temporary files
+*.swp
+.*
+
+# Autoconf stuff
+autom4te.cache
+aclocal.m4
+.deps
+Makefile
+Makefile.in
+/configure
+/config.*
+/libtool
+
+
+#misc
+/tests
+

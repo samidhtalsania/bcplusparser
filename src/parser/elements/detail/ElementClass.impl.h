@@ -7,9 +7,9 @@ namespace parser {
 namespace elements  {
 namespace detail {
 
-template<int type, typename Subtypes>
-ElementClass<type, Subtypes>::ElementClass(Subtype type, Location const& begin, Location const& end, bool parens)
-	: Element(type, begin, end, parens) {
+template<int t, typename Subtypes>
+ElementClass<t, Subtypes>::ElementClass(typename Type::Value subtype, Location const& begin, Location const& end, bool parens)
+	: Element((Element::Type::Value)t, begin, end, parens), _subtype(subtype) {
 	/* Intentionally left blank */
 }
 

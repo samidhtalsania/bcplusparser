@@ -3,7 +3,7 @@
 #include <string>
 #include <ostream>
 
-#include <boost/property_tree/ptree.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include "Referenced.h"
 #include "pointers.h"
@@ -45,8 +45,8 @@ public:
 	/// Get the variable's sort
 	SortSymbol const* sort() const									{ return _sort; }
 
-	/// Outputs the symbol to the provided property_tree node
-	/// @param node The node to write to
+	virtual bool integral() const;
+	virtual bool operator==(Symbol const& other) const;
 	virtual void save(boost::property_tree::ptree& node) const;
 
 

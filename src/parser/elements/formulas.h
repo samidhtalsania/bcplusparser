@@ -110,7 +110,7 @@ struct UnaryFormulaOperator {
  */
 typedef detail::ElementClass<
 	Element::Type::FORMULA, 
-	detail::FormulaType::Value > Formula;
+	detail::FormulaType > Formula;
 
 /** 
  * @brief A binary formula of the form (F @ G) where '@' is some operator.

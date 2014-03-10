@@ -10,7 +10,7 @@ namespace elements {
 namespace detail {
 
 template <typename BaseType, int type, typename SymbolType>
-IdentifierElement_bare<BaseType, type, SymbolType>::IdentifierElement_bare(SymbolType const* symbol, Location const& begin, Location const& end, bool parens) : BaseType(type, begin, end, parens), _sym(symbol) {
+IdentifierElement_bare<BaseType, type, SymbolType>::IdentifierElement_bare(SymbolType const* symbol, Location const& begin, Location const& end, bool parens) : BaseType((typename BaseType::Type::Value)type, begin, end, parens), _sym(symbol) {
 	/* Intentionally left blank */
 }
 
@@ -21,7 +21,7 @@ IdentifierElement_bare<BaseType, type, SymbolType>::~IdentifierElement_bare() {
 
 template <typename BaseType, int type, typename SymbolType>
 Element* IdentifierElement_bare<BaseType, type, SymbolType>::copy() const {
-	return new IdentifierElement_bare<BaseType, type, SymbolType>(symbol(), ((BaseType const*)this)->begin(), ((BaseType const*)this)->end(), ((BaseType const*)this)->parens());
+	return new IdentifierElement_bare<BaseType, type, SymbolType>(symbol(), ((BaseType const*)this)->beginLoc(), ((BaseType const*)this)->endLoc(), ((BaseType const*)this)->parens());
 }
 
 template <typename BaseType, int type, typename SymbolType>
@@ -32,7 +32,7 @@ void IdentifierElement_bare<BaseType, type, SymbolType>::output(std::ostream& ou
 
 template <typename BaseType, int type, typename SymbolType, typename ArgType>
 IdentifierElement<BaseType, type, SymbolType, ArgType>::IdentifierElement(SymbolType const* symbol, ArgumentList* args, Location const& begin, Location const& end, bool parens) 
-	: IdentifierElement_bare<BaseType, type, SymbolType>(symbol, type, begin, end, parens), _args(args) {
+	: IdentifierElement_bare<BaseType, type, SymbolType>(symbol, begin, end, parens), _args(args) {
 	/* Intentionally left blank */
 }
 
@@ -46,11 +46,11 @@ Element* IdentifierElement<BaseType, type, SymbolType, ArgType>::copy() const {
 
 	// Create a new list
 	ref_ptr<ArgumentList> l = new ArgumentList();
-	for (iterator it = begin(); it != end(); it++) {
-		l->push_back((*it)->copy());
+	for (const_iterator it = begin(); it != end(); it++) {
+		l->push_back((ArgType*)(*it)->copy());
 	}
 
-	return new IdentifierElement<BaseType, type, SymbolType, ArgType>(IdentifierElement_bare<BaseType, type, SymbolType>::symbol(), l, ((BaseType const*)this)->begin(), ((BaseType const*)this)->end(), ((BaseType const*)this)->parens());
+	return new IdentifierElement<BaseType, type, SymbolType, ArgType>(IdentifierElement_bare<BaseType, type, SymbolType>::symbol(), l, ((BaseType const*)this)->beginLoc(), ((BaseType const*)this)->endLoc(), ((BaseType const*)this)->parens());
 }
 
 template <typename BaseType, int type, typename SymbolType, typename ArgType>
@@ -58,7 +58,7 @@ void IdentifierElement<BaseType, type, SymbolType, ArgType>::output(std::ostream
 	IdentifierElement_bare<BaseType, type, SymbolType>::output(out);
 	if (arity() > 0) {
 		out << "(";
-		for (iterator it = begin(); it != end(); ) {
+		for (const_iterator it = begin(); it != end(); ) {
 			(*it)->output(out);
 			it++;
 			if (it != end()) {

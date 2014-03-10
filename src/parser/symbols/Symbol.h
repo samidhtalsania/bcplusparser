@@ -27,12 +27,15 @@ public:
 	struct Type {
 		/// Enumeration of possible values
 		enum Value {
-			SORT		= 0x00000001,
-			CONSTANT	= 0x00000010,
-			VARIABLE	= 0x00000100,
-			OBJECT		= 0x00001000,
-			MACRO		= 0x00010000
+			SORT		= 0x0001,
+			CONSTANT	= 0x0002,
+			VARIABLE	= 0x0004,
+			OBJECT		= 0x0008,
+			MACRO		= 0x0010,
+			_LARGEST_	= 0x0010,			///< placeholder for the largest type value	
+			ERR_INVALID_SYMBOL = 0x1000		///< placeholder for invalid value
 		};
+
 
 		/// Interesting masks of multiple symbol types
 		enum Mask {
@@ -53,7 +56,7 @@ public:
 
 private:
 	/************************************************************************/
-	/* Private Types */
+	/* Private Members */
 	/************************************************************************/
 	Type::Value _type;
 	size_t _arity;
@@ -63,6 +66,11 @@ private:
 
 
 public:
+	/************************************************************************/
+	/* Static Functions */
+	/************************************************************************/
+	/// Generate the symbol's name from its base and arity
+	static std::string genName(std::string const& base, size_t arity = 0);
 
 	/************************************************************************/
 	/* Constructor / Destructor */
@@ -74,13 +82,20 @@ public:
 	Symbol(Type::Value type, ReferencedString const* base, size_t arity);
 	
 	/// Attempts to load the symbol from the property tree node.
+	/// @param type The type of symbol being instantiated
 	/// @param node The node to load the symbol from
 	/// @param err An error stream to write to or NULL.
 	/// Sets the symbol's good flag if it was successful.
-	Symbol(boost::property_tree::ptree const& node, std::ostream* err = NULL);
+	Symbol(Type::Value type, boost::property_tree::ptree const& node, std::ostream* err = NULL);
 
 	/// Destructor stub
 	virtual ~Symbol();
+	
+	/************************************************************************/
+	/* Public Functions */
+	/************************************************************************/
+
+
 
 	/// Get the symbol type
 	inline Type::Value type() const					{ return _type; }
@@ -104,10 +119,16 @@ public:
 	/// @param b The base name to match against.
 	/// @param a The arity to match against
 	inline bool match(std::string const& b, size_t a) const
-													{return (a == arity()) && (b == base()); }
+													{return (a == arity()) && (b == *base()); }
 	/// Determine if this symbol matches the provided details
 	/// @param n The full name of the symbol to match against (base/arity)
-	inline bool match(std::string const&n) const	{ return n == name(); }
+	inline bool match(std::string const&n) const	{ return n == *name(); }
+	
+
+	/// Check to see if two symbols are equal
+	/// @param other The other symbol to compare this one to
+	/// @return True if they are equal, false otherwise.
+	virtual bool operator==(Symbol const& other) const;
 
 	/// Outputs the symbol to the provided property tree node
 	/// @param node The node to write to

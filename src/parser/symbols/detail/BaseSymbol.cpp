@@ -1,7 +1,8 @@
 
-#include "boost/lexical_cast.hpp"
-#include "boost/property_tree/ptree.hpp"
-#include "boost/property_tree/exceptions.hpp"
+#include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/exceptions.hpp>
 
 #include "parser/symbols/Resolver.h"
 #include "parser/symbols/Symbol.h"
@@ -29,8 +30,8 @@ BaseSymbol::BaseSymbol(Symbol::Type::Value type, boost::property_tree::ptree con
 	// Get all of the sorts for each of the arguments
 	for (size_t i = 0; i < arity(); i++) {
 		try {
-			std::string sort_name = node.get("<xmlattr>.arg" + boost::lexical_cast(i));
-			SortSymbol const* sort = resolver->resolve(Symbol::Type::SORT, sort_name);
+			std::string sort_name = node.get<std::string>("<xmlattr>.arg" + boost::lexical_cast<std::string>(i));
+			SortSymbol const* sort = (SortSymbol const*)resolver->resolve(Symbol::Type::SORT, sort_name);
 			if (!sort) {
 				good(false);
 				if (err) *err << "ERROR: An error occurred scanning the definition of \"" << *name() << "\". \"" << sort_name << "\" is not a declared sort." << std::endl;
@@ -38,7 +39,7 @@ BaseSymbol::BaseSymbol(Symbol::Type::Value type, boost::property_tree::ptree con
 				l->push_back(sort);
 			}
 			
-		} catch (boost::property_tree::ptree_error& err) {
+		} catch (boost::property_tree::ptree_error& e) {
 			good(false);
 			if (err) *err << "ERROR: An error occurred scanning the definition of \"" << *name() << "\". The sort for argument " << i << " is not properly declared. Please ensure there is an 'arg" << i << "' attribute attached to the declaration." << std::endl;
 		}
@@ -51,12 +52,27 @@ BaseSymbol::~BaseSymbol() {
 	// Intentionally left blank
 }
 
+bool BaseSymbol::operator==(Symbol const& other) const {
+	if (!Symbol::operator==(other)) return false;
+	BaseSymbol const& o = (BaseSymbol const&)other;
+
+	// check argument sorts
+	// we can use pointer comparison as we draw from the same set of symbols
+	const_iterator oit = o.begin();
+	for (const_iterator it = begin(); it != end(); it++) {
+		if (oit == o.end()) return false;
+		if (*it != *oit) return false;
+		oit++;
+	}
+	if (oit != o.end()) return false;
+	return true;
+}
+
 void BaseSymbol::save(boost::property_tree::ptree& node) const {
 	Symbol::save(node);
-	node.put("<xmlattr>.sort", *(sort()->base()));
 	size_t arg = 0;
-	for(SortSymbol const* sort : _args) {
-		node.put("<xmlattr>.arg" + boost::lexical_cast(arg++), *(sort->base()));
+	BOOST_FOREACH(SortSymbol const* sort, *_args) {
+		node.put("<xmlattr>.arg" + boost::lexical_cast<std::string>(arg++), *(sort->base()));
 	}
 }
 

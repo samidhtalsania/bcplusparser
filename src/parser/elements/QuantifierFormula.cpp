@@ -23,33 +23,33 @@ QuantifierFormula::~QuantifierFormula() {
 Element* QuantifierFormula::copy() const {
 
 	// Make a new quantifier list
-	QuantifierList* l = new QuantrifierList();
-	for (iterator it = begin(); it != end(); it++) {
-		l.push_back((*it)->copy());
+	QuantifierList* l = new QuantifierList();
+	for (const_iterator it = begin(); it != end(); it++) {
+		l->push_back(Quantifier(it->first, (Variable*)it->second->copy()));
 	}
 
-	return new QuantifierFormula(l, subformula(), begin(), end(), parens());
+	return new QuantifierFormula(l, (Formula*)subformula()->copy(), beginLoc(), endLoc(), parens());
 }
 
 void QuantifierFormula::output(std::ostream& out) const {
-	if (parens) out << "(";
+	if (parens()) out << "(";
 
 	out << "[";
-	for (iterator it = begin(); it != end(); it++) {
+	for (const_iterator it = begin(); it != end(); it++) {
 		outputQuantifier(*it, out);
 	}
 	out << "| ";
 	subformula()->output(out);
 	out << " ]";
-	if (parens) out << ")";
+	if (parens()) out << ")";
 }
 
-void QuantifierFormula::outputQuantifier(Quantifier const* q, std::ostream& out) const {
-	switch (q->first) {
+void QuantifierFormula::outputQuantifier(Quantifier const& q, std::ostream& out) const {
+	switch (q.first) {
 	case Operator::CONJ:				out << "/\\";	break;
 	case Operator::DISJ:				out << "\\/";	break;
 	}
-	q->second->output(out);
+	q.second->output(out);
 
 }
 }}}

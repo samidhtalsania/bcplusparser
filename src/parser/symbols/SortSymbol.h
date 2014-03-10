@@ -4,7 +4,7 @@
 #include <ostream>
 #include <set>
 
-#include <boost/property_tree/ptree.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include "Referenced.h"
 #include "pointers.h"
@@ -115,8 +115,7 @@ public:
 	/// @return True if successful, false otherwise.
 	bool loadDefinition(boost::property_tree::ptree const& node, Resolver* resolver, std::ostream* err = NULL);
 	
-	/// Outputs the symbol to the provided property_tree node
-	/// @param node The node to write to
+	virtual bool operator==(Symbol const& other) const;
 	virtual void save(boost::property_tree::ptree& node) const;
 
 

@@ -1,4 +1,6 @@
 
+#include <ostream>
+
 #include "utils.h"
 
 #include "parser/symbols/Resolver.h"
@@ -12,7 +14,7 @@ namespace bcplus {
 namespace parser {
 namespace symbols {
 
-ConstantSymbol::ConstantSymbol(ReferencedString const* base, SortSymbol sort, SortList const* args) 
+ConstantSymbol::ConstantSymbol(ReferencedString const* base, SortSymbol const* sort, SortList const* args) 
 	: BaseSymbol(Symbol::Type::CONSTANT, base, args) , _sort(sort){
 	// intentionally left blank
 }
@@ -22,14 +24,14 @@ ConstantSymbol::ConstantSymbol(boost::property_tree::ptree const& node, Resolver
 
 	try {
 		std::string sort_name = node.get<std::string>("<xmlattr>.sort");
-		SortSymbol const* sort = resolver->resolve(Symbol::Type::SORT, sort_name);
+		SortSymbol const* sort = (SortSymbol const*)resolver->resolve(Symbol::Type::SORT, sort_name);
 		if (!sort) {
 			good(false);
 			if (err) *err << "ERROR: An error occurred while scanning the definition of \"" << *name() << "\". \"" << sort_name << "\" is not a valid sort." << std::endl;
 		} else {
 			_sort = sort;
 		}
-	} catch (boost::property_tree::ptree_error& err) {
+	} catch (boost::property_tree::ptree_error& e) {
 		good(false);
 		if (err) *err << "ERROR: An error occurred while scanning the definition of \"" << *name() << "\". Expected a 'sort' attribute declaring the constant's sort." << std::endl;
 	}
@@ -44,7 +46,16 @@ bool ConstantSymbol::integral() const {
 	return _sort->integral();
 }
 
-bool ConstantSymbol::save(boost::property_tree::ptree& node) const {
+bool ConstantSymbol::operator==(Symbol const& other) const {
+	if (!BaseSymbol::operator==(other)) return false;
+	ConstantSymbol const& o = (ConstantSymbol const&)other;
+
+	// ensure the sort is the same
+	if (sort() != o.sort()) return false;
+	return true;
+}
+
+void ConstantSymbol::save(boost::property_tree::ptree& node) const {
 	BaseSymbol::save(node);
 	node.put("<xmlattr>.sort", *_sort->base());
 }

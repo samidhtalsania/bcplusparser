@@ -28,7 +28,7 @@ public:
 	/****************************************************************************/
 
 	/// Alias for the possible subtype
-	typedef Subtypes Subtype;
+	typedef Subtypes Type;
 
 private:
 	/****************************************************************************/
@@ -36,7 +36,7 @@ private:
 	/****************************************************************************/
 
 	/// The subtype we're looking at
-	Subtype _type;
+	typename Type::Value _subtype;
 
 public:
 	/****************************************************************************/
@@ -47,7 +47,7 @@ public:
 	/// @param begin The beginning location of this element
 	/// @param end The ending location of this element
 	/// @param parens Whether the element is surrounded by parentheses
-	ElementClass(Subtype type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+	ElementClass(typename Type::Value type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
 	/// Destructor stub
 	virtual ~ElementClass();
@@ -57,7 +57,7 @@ public:
 	/****************************************************************************/
 
 	/// Get the formula type
-	inline Subtype subType() const				{ return _type; }
+	inline typename Type::Value subType() const				{ return _subtype; }
 	
 	virtual Element* copy() const = 0;
 	virtual void output(std::ostream& out) const = 0;

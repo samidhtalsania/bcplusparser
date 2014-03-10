@@ -2,6 +2,7 @@
 
 #include "parser/symbols/ObjectSymbol.h"
 #include "parser/symbols/VariableSymbol.h"
+#include "parser/symbols/ConstantSymbol.h"
 #include "parser/elements/detail/ElementClass.h"
 #include "parser/elements/detail/BinaryElement.h"
 #include "parser/elements/detail/UnaryElement.h"
@@ -90,7 +91,7 @@ struct UnaryTermOperator {
  */
 typedef detail::ElementClass<
 	Element::Type::TERM, 
-	detail::TermType::Value> Term;
+	detail::TermType> Term;
 
 /**
  * @brief A binary operator term of the form T @ V where T,V are terms and @ is a binary operator.
@@ -122,7 +123,7 @@ typedef detail::IdentifierElement<
 /**
  * @brief A variable 'V'.
  */
-typedef detail::IdentifierElement<
+typedef detail::IdentifierElement_bare<
 	Term, 
 	detail::TermType::VARIABLE, 
 	symbols::VariableSymbol> Variable;

@@ -19,7 +19,7 @@ UnaryElement<BaseType,type,Op,preOpString,postOpString>::~UnaryElement<BaseType,
 
 template <typename BaseType, int type, typename Op, typename preOpString, typename postOpString>
 Element* UnaryElement<BaseType,type,Op,preOpString,postOpString>::copy() const {
-	return new UnaryElement<BaseType,type,Op,preOpString,postOpString>(op(), sub()->copy(), ((BaseType*)this)->begin(), ((BaseType*)this)->end(), ((BaseType*)this)->parens());
+	return new UnaryElement<BaseType,type,Op,preOpString,postOpString>(op(), sub()->copy(), ((BaseType*)this)->beginLoc(), ((BaseType*)this)->endLoc(), ((BaseType*)this)->parens());
 }
 
 template <typename BaseType, int type, typename Op, typename preOpString, typename postOpString>

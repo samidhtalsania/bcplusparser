@@ -4,7 +4,7 @@
 #include <ostream>
 #include <list>
 
-#include <boost/property_tree/ptree.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include "Referenced.h"
 #include "pointers.h"
@@ -68,16 +68,13 @@ public:
 	/*************************************************************************************/
 
 	/// Gets an iterator for the beginning of the parameters
-	inline const_iterator begin() const							{ return _params->begin(); }
+	inline const_iterator begin() const							{ return _args->begin(); }
 
 	/// Gets an iterator for the end of the parameters
-	inline const_iterator end() const							{ return _params->end(); }
+	inline const_iterator end() const							{ return _args->end(); }
 
-	/// Outputs the symbol to the provided property_tree node
-	/// @param node The node to write to
+	virtual bool operator==(Symbol const& other) const;
 	virtual void save(boost::property_tree::ptree& node) const;
-
-
 	virtual bool integral() const = 0;
 
 };

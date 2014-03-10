@@ -3,7 +3,7 @@
 #include <string>
 #include <ostream>
 
-#include <boost/property_tree/ptree.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include "Referenced.h"
 #include "pointers.h"
@@ -19,37 +19,8 @@ namespace symbols {
 class Resolver;
 
 class MacroSymbol : public Symbol {
-
-private:
-	/*************************************************************************************/
-	/* Private Members */
-	/*************************************************************************************/
-	/// The variable's sort
-	ref_ptr<const SortSymbol> _sort;
-
-public:
-	/// Basic constructor
-	/// @param base The name of the variable
-	/// @param sort The sort the variable ranges over
-	MacroSymbol(ReferencedString const* base, SortSymbol const* sort);
-
-	/// Loads the variable from the property tree node
-	/// @param node The node to load the symbol from
-	/// @param err An error strem to write to (or NULL)
-	/// Sets the symbol's good flag if it was successful
-	MacroSymbol(boost::property_tree::ptree const& node, Resolver const* resolver, std::ostream* err = NULL);
-
-	/// Destructor stub
-	virtual ~MacroSymbol();
-
-	/// Get the variable's sort
-	SortSymbol const* sort() const									{ return _sort; }
-
-	/// Outputs the symbol to the provided property_tree node
-	/// @param node The node to write to
-	virtual void save(boost::property_tree::ptree& node) const;
-
-
+	// TODO
+	inline virtual bool integral() const { return false; }
 };
 
 }}}

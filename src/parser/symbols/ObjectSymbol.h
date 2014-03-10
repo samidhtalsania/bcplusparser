@@ -3,7 +3,7 @@
 #include <string>
 #include <ostream>
 
-#include <boost/property_tree/ptree.h>
+#include <boost/property_tree/ptree.hpp>
 
 #include "Referenced.h"
 #include "pointers.h"

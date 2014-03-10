@@ -78,10 +78,10 @@ public:
 	inline Type::Value type() const						{ return _type; }
 
 	/// Get the starting location of this element
-	inline Location const& begin() const				{ return _begin; }
+	inline Location const& beginLoc() const				{ return _begin; }
 	
 	/// Get the ending location of this element
-	inline Location const& end() const					{ return _end; }
+	inline Location const& endLoc() const				{ return _end; }
 
 	/// Helper function to output a string representing this element.
 	inline std::string str() const						{ std::stringstream out; output(out); return out.str(); }

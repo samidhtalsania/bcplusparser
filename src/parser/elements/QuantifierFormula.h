@@ -96,7 +96,7 @@ private:
 	/// Write the provided quantifier to the output stream
 	/// @param q The quantifier to write out
 	/// @param out The output stream to write to.
-	void outputQuantifier(Quantifier const* q, std::ostream& out) const;
+	void outputQuantifier(Quantifier const& q, std::ostream& out) const;
 
 
 

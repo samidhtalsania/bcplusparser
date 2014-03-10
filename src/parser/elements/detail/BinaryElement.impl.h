@@ -19,7 +19,7 @@ BinaryElement<BaseType, type, Op, opString>::~BinaryElement() {
 
 template <typename BaseType, int type, typename Op, typename opString>
 Element* BinaryElement<BaseType, type, Op, opString>::copy() const {
-	return new BinaryElement(op(), left()->copy(), right()->copy(), ((BaseType*)this)->begin(), ((BaseType*)this)->bend(), ((BaseType*)this)->bparens());
+	return new BinaryElement(op(), left()->copy(), right()->copy(), ((BaseType*)this)->beginLoc(), ((BaseType*)this)->bendLoc(), ((BaseType*)this)->bparens());
 }
 
 template <typename BaseType, int type, typename Op, typename opString>

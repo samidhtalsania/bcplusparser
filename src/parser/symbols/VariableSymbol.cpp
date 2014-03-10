@@ -15,7 +15,7 @@ VariableSymbol::VariableSymbol(ReferencedString const* base, SortSymbol const* s
 }
 
 VariableSymbol::VariableSymbol(boost::property_tree::ptree const& node, Resolver const* resolver, std::ostream* err)
-	: Symbol(node, err) {
+	: Symbol(Symbol::Type::VARIABLE, node, err) {
 
 	if (good() && arity()) {
 		good(false);
@@ -28,13 +28,13 @@ VariableSymbol::VariableSymbol(boost::property_tree::ptree const& node, Resolver
 		if (err) *err << "ERROR: Expected a 'sort' attribute in the declaration of variable \"" << *base() << "\"." << std::endl;
 	} else {
 
-		VariableSymbol const* s = (VariableSymbol const*)resolver->resolve(Symbol::SORT, sortname);
+		SortSymbol const* s = (SortSymbol const*)resolver->resolve(Symbol::Type::SORT, sortname);
 		if (!s) {
 			good(false);
 
 			if (err) {
 				// see if the symbol is declared elsewhere
-				if (resolver->resolve(~Symbol::SORT, sortname)) {
+				if (resolver->resolve(~Symbol::Type::SORT, sortname)) {
 					*err << "ERROR: Variable \"" << *base() << "\" has invalid 'sort' attribute. \"" << sortname << "\" is not a sort." << std::endl;
 				} else {
 					*err << "ERROR: Variable \"" << *base() << "\" has invlaid 'sort' attribute. \"" << sortname << "\" has not been declared." << std::endl;
@@ -48,6 +48,20 @@ VariableSymbol::VariableSymbol(boost::property_tree::ptree const& node, Resolver
 
 VariableSymbol::~VariableSymbol() {
 	// Intentionally left blank
+}
+
+bool VariableSymbol::integral() const {
+	return sort()->integral();
+}
+
+bool VariableSymbol::operator==(Symbol const& other) const {
+	if (!Symbol::operator==(other)) return false;
+	VariableSymbol const& o = (VariableSymbol const&)other;
+	
+	// we draw from the same set of symbols so we can use pointer comparison
+	if (sort() != o.sort()) return false;
+	return true;
+
 }
 
 void VariableSymbol::save(boost::property_tree::ptree& node) const {

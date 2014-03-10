@@ -6,6 +6,7 @@ namespace bcplus {
 namespace parser {
 namespace symbols {
 
+class Symbol;
 class SortSymbol;
 class VariableSymbol;
 class ObjectSymbol;
@@ -24,11 +25,15 @@ public:
 	virtual Symbol const* resolve(size_t typemask, std::string const& name, size_t arity = 0) const = 0;
 	virtual Symbol* resolve(size_t typemask, std::string const& name, size_t arity = 0) = 0;
 
+	/// Attempt to create register the provided symbol in the table.
+    /// @param symbol The symbol to register.
+    /// @return True if successful, false othwerise.
+    virtual bool create(Symbol* symbol) = 0;
+
 	/// Attempts to resolve a symbol matching the provided object and attempts to create it if not found.
 	/// @param symbol The symbol to match.
-	/// @param err An error stream to write to.
 	/// @return The symbol within the symbol table matching 'symbol' if one exists, 'symbol' if it was successfully added to the symbol table, and NULL if an error occurred adding the symbol.
-	virtual Symbol* resolveOrCreate(Symbol* symbol, std::ostream* err = NULL) = 0;
+	virtual Symbol* resolveOrCreate(Symbol* symbol) = 0;
 
 };
 

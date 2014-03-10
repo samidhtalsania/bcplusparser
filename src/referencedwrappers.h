@@ -13,10 +13,12 @@ template <typename T>
 class ReferencedWrapper : public Referenced, public T
 {
 	using T::operator=;
-	using T::T;
 
 public:
 	ReferencedWrapper();
+
+	template <typename T2>
+	ReferencedWrapper(T2 const& other);
 
 	virtual ~ReferencedWrapper();
 
@@ -30,6 +32,12 @@ public:
 template <typename T>
 ReferencedWrapper<T>::ReferencedWrapper() {
 	// Intentionally left blank
+}
+
+template <typename T>
+template <typename T2>
+ReferencedWrapper<T>::ReferencedWrapper(T2 const& other) {
+	*this = other;
 }
 
 

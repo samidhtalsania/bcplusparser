@@ -10,14 +10,16 @@
 #include <boost/iostreams/device/null.hpp>
 
 #include "Referenced.h"
+#include "pointers.h"
+#include "referencedwrappers.h"
+
+namespace bcplus {
 
 /// Container for option enumeration information
 struct Option {
 	enum Value {
-		MOD_FILE,			///< Specify the XML file providing the module definitions.
-		VERIFY,				///< Sets whether we should verify the module definitions.
-		STATE_DIR,			///< Specify the directory to write the state files in.
-		INPUT_FILE,			///< Specify the file containing the input events.
+		SYMTAB_INPUT,		///< Input file to initialize symbol table from.
+		SYMTAB_OUTPUT,		///< Output file to save symbol table to.
 		VERBOSITY,			///< Specify the application verbosity level.
 		HELP,				///< Show help dialog.
 		VERSION,			///< Show the application version
@@ -38,9 +40,10 @@ struct Verb {
 
 	enum Level {
 		ERROR = 0,			/// Error Messages
-		STD = 1,			/// Standard Messages
-		OP = 2,				/// Operation-level messages
-		DETAIL = 3			/// Detailed debug Messages
+		WARN = 1,			/// warning messages
+		STD = 2,			/// Standard Messages
+		OP = 3,				/// Operation-level messages
+		DETAIL = 4			/// Detailed debug Messages
 	};
 };
 
@@ -54,33 +57,23 @@ public:
 	/***************************************************************************/
 	/* Constants */
 	/***************************************************************************/
-	/// Default state directory value
-	static const fs::path DEFAULT_STATE_DIR;
-
-	/// Default module verification value
-	static const bool DEFAULT_VERIFY_MODULES;
 
 	/// Default verbosity level
 	static const size_t DEFAULT_VERB_LEVEL;
-
-	/// Application version
-	static const std::string VERSION;
 
 private:
 
 	/***************************************************************************/
 	/* Private Members */
 	/***************************************************************************/
-	std::string _version;					///< The version of this application.
-	std::string _bin_name;					///< The name of the executable.
-	fs::path _mod_file;						///< The file that defines the modules
-	bool _verify;							///< Whether we should attempt to verify module integrity.
-	fs::path _state_dir;					///< The directory used to store the state files in.
-	fs::path _input;						///< The file containing the event inputs for this run.
-	size_t _verb;							///< The user defined verbosity level.	
+	ref_ptr<const ReferencedString> _version;		///< The version of this application.
+	ref_ptr<const ReferencedString> _bin_name;		///< The name of the executable.
 
+	ref_ptr<const ReferencedPath> _symtab_in;		///< Input file (if any) for the symbol table.
+	ref_ptr<const ReferencedPath> _symtab_out;		///< Output file (if any) for the symbol table.
+	size_t _verb;									///< The user defined verbosity level.	
 
-	ios::stream<ios::null_sink>	_nullstream;///< Output stream to a null device in the event the verbosity is squelched.
+	ios::stream<ios::null_sink>	_nullstream;		///< Output stream to a null device in the event the verbosity is squelched.
 
 
 public:
@@ -89,12 +82,12 @@ public:
 	/***************************************************************************/
 	/// Default constructor
 	/// Initializes all parameters to defaults.
-	/// @param version The version of this application
-	Configuration(std::string const& version);
+	/// @param bin The name of the binary
+	/// @param version The system version.
+	Configuration(char const* bin, char const* version);
 
 	/// Destructor
 	virtual ~Configuration();
-
 
 	/***************************************************************************/
 	/* Public Methods */
@@ -107,30 +100,24 @@ public:
 
 	/// Verifies the integrity of the configuration parameters.
 	/// @return True if the parameters appear to be correct. False otherwise.
-	bool verify();
+	bool good();
 
 	// -------------------------------------------------------------------------
 
 	/// Get the application version
-	inline std::string const& version() const					{ return _version; }
+	inline ReferencedString const* version() const				{ return _version; }
 
 	/// Get the name of this executable file
-	inline std::string const& binaryName() const				{ return _bin_name; }
-	inline void binaryName(std::string const& name)				{ _bin_name = name; }	
+	inline ReferencedString const* binaryName() const			{ return _bin_name; }
 
-	inline fs::path const& moduleFile() const					{ return _mod_file; }
-	inline void moduleFile(fs::path const& p) 					{ _mod_file = p; }
+	/// Get/set the input file for the symbol table
+	inline ReferencedPath const* symtabInput() const			{ return _symtab_in; }
+	inline void symtabInput(ReferencedPath const* input)		{ _symtab_in = input; }
 
-	inline bool verifyModules() const							{ return _verify; }
-	inline void verifyModule(bool verify) 						{ _verify = verify; }
-
-	inline fs::path const& stateDirectory() const				{ return _state_dir; }
-	inline void stateDirectory(fs::path const& p)				{ _state_dir = p; }
-
-	inline fs::path const& inputFile() const					{ return _input; }
-	inline void inputFile(fs::path const& p)					{ _input = p; }
-
-
+	/// Get/set the output file for the symbol table
+	inline ReferencedPath const* symtabOutput() const			{ return _symtab_out; }
+	inline void symtabOutput(ReferencedPath const* output)		{ _symtab_out = output; }
+	
 	/// Get/set the application verbosity level
 	inline size_t verbosity() const								{ return _verb; }
 	inline void verbosity(size_t verb)							{ _verb = verb; }
@@ -155,7 +142,6 @@ public:
 	/// @return out
 	std::ostream& outputHelp(std::ostream& out) const;
 
-
 private:
 	/***************************************************************************/
 	/* Private Methods */
@@ -168,4 +154,4 @@ private:
 
 };
 
-
+};
