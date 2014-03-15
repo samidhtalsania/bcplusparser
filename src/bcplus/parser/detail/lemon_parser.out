@@ -1,0 +1,248 @@
+State 0:
+          start ::= * statement_list EOF
+      (1) statement_list ::= *
+          statement_list ::= * error
+          statement_list ::= * statement_list statement
+
+                         error shift  7
+                         start accept
+                statement_list shift  2
+                     {default} reduce 1
+
+State 1:
+          incl_stmt ::= COLON_DASH INCLUDE * incl_lst PERIOD
+          incl_lst ::= * incl_item
+          incl_lst ::= * incl_lst incl_sep incl_item
+          incl_item ::= * STRING_LITERAL
+          incl_item ::= * IDENTIFIER
+          incl_item ::= * INTEGER
+
+                       INTEGER shift  11
+                    IDENTIFIER shift  12
+                STRING_LITERAL shift  13
+                      incl_lst shift  4
+                     incl_item shift  8
+
+State 2:
+          start ::= statement_list * EOF
+          statement_list ::= statement_list * statement
+          statement ::= * incl_stmt
+          incl_stmt ::= * COLON_DASH INCLUDE incl_lst PERIOD
+
+                    COLON_DASH shift  5
+                           EOF shift  6
+                     statement shift  17
+                     incl_stmt shift  16
+
+State 3:
+          incl_lst ::= incl_lst incl_sep * incl_item
+          incl_item ::= * STRING_LITERAL
+          incl_item ::= * IDENTIFIER
+          incl_item ::= * INTEGER
+
+                       INTEGER shift  11
+                    IDENTIFIER shift  12
+                STRING_LITERAL shift  13
+                     incl_item shift  14
+
+State 4:
+          incl_stmt ::= COLON_DASH INCLUDE incl_lst * PERIOD
+          incl_lst ::= incl_lst * incl_sep incl_item
+          incl_sep ::= * SEMICOLON
+          incl_sep ::= * COMMA
+
+                        PERIOD shift  15
+                     SEMICOLON shift  10
+                         COMMA shift  9
+                      incl_sep shift  3
+
+State 5:
+          incl_stmt ::= COLON_DASH * INCLUDE incl_lst PERIOD
+
+                       INCLUDE shift  1
+
+State 6:
+      (0) start ::= statement_list EOF *
+
+                             $ reduce 0
+
+State 7:
+      (2) statement_list ::= error *
+
+                     {default} reduce 2
+
+State 8:
+      (6) incl_lst ::= incl_item *
+
+                     {default} reduce 6
+
+State 9:
+     (12) incl_sep ::= COMMA *
+
+                     {default} reduce 12
+
+State 10:
+     (11) incl_sep ::= SEMICOLON *
+
+                     {default} reduce 11
+
+State 11:
+     (10) incl_item ::= INTEGER *
+
+                     {default} reduce 10
+
+State 12:
+      (9) incl_item ::= IDENTIFIER *
+
+                     {default} reduce 9
+
+State 13:
+      (8) incl_item ::= STRING_LITERAL *
+
+                     {default} reduce 8
+
+State 14:
+      (7) incl_lst ::= incl_lst incl_sep incl_item *
+
+                     {default} reduce 7
+
+State 15:
+      (5) incl_stmt ::= COLON_DASH INCLUDE incl_lst PERIOD *
+
+                     {default} reduce 5
+
+State 16:
+      (4) statement ::= incl_stmt *
+
+                     {default} reduce 4
+
+State 17:
+      (3) statement_list ::= statement_list statement *
+
+                     {default} reduce 3
+
+----------------------------------------------------
+Symbols:
+    0: $:
+    1: INTEGER
+    2: IDENTIFIER
+    3: STRING_LITERAL
+    4: ASP_GR
+    5: ASP_CP
+    6: LUA_GR
+    7: LUA_CP
+    8: F2LP_GR
+    9: F2LP_CP
+   10: COMMENT
+   11: CONSTANTS
+   12: INCLUDE
+   13: MACROS
+   14: OBJECTS
+   15: QUERY
+   16: SHOW
+   17: SORTS
+   18: VARIABLES
+   19: ABACTION
+   20: ACTION
+   21: ADDITIVEACTION
+   22: ADDITIVEFLUENT
+   23: AFTER
+   24: ALWAYS
+   25: ASSUMING
+   26: ATTRIBUTE
+   27: BY
+   28: CAUSED
+   29: CAUSES
+   30: IMPOSSIBLE
+   31: CONSTRAINT
+   32: DECREMENTS
+   33: DEFAULT
+   34: EXTERNALACTION
+   35: EXOGENOUS
+   36: EXOGENOUSACTION
+   37: IF
+   38: IFCONS
+   39: INCREMENTS
+   40: INERTIAL
+   41: INERTIALFLUENT
+   42: LABEL
+   43: MAY_CAUSE
+   44: MAXADDITIVE
+   45: MAXAFVALUE
+   46: MAXSTEP
+   47: NEVER
+   48: NOCONCURRENCY
+   49: STRONG_NOCONCURRENCY
+   50: NONEXECUTABLE
+   51: OF
+   52: POSSIBLY_CAUSED
+   53: RIGID
+   54: SDFLUENT
+   55: SIMPLEFLUENT
+   56: EXTERNALFLUENT
+   57: UNLESS
+   58: WHERE
+   59: FALSE
+   60: NONE
+   61: TRUE
+   62: ABS
+   63: AT
+   64: BRACKET_L
+   65: BRACKET_R
+   66: COLON_DASH
+   67: CBRACKET_L
+   68: CBRACKET_R
+   69: PAREN_L
+   70: PAREN_R
+   71: PERIOD
+   72: PIPE
+   73: TILDE
+   74: DBL_COLON
+   75: ARROW_LEQ
+   76: ARROW_REQ
+   77: ARROW_LDASH
+   78: COLON
+   79: EQ
+   80: DBL_EQ
+   81: NEQ
+   82: NOT_EQ
+   83: LTHAN
+   84: GTHAN
+   85: LTHAN_EQ
+   86: GTHAN_EQ
+   87: DBL_PERIOD
+   88: BIG_CONJ
+   89: BIG_DISJ
+   90: POUND
+   91: SEMICOLON
+   92: EQUIV
+   93: IMPL
+   94: ARROW_RDASH
+   95: DBL_PLUS
+   96: AMP
+   97: DBL_AMP
+   98: COMMA
+   99: NOT
+  100: DASH
+  101: PLUS
+  102: DBL_GTHAN
+  103: STAR
+  104: INT_DIV
+  105: MOD
+  106: UMINUS
+  107: EOF
+  108: ERR_IO
+  109: ERR_UNKNOWN_SYMBOL
+  110: ERR_UNTERMINATED_STRING
+  111: ERR_UNTERMINATED_ASP
+  112: ERR_UNTERMINATED_LUA
+  113: ERR_UNTERMINATED_F2LP
+  114: ERR_UNTERMINATED_BLK_COMMENT
+  115: error:
+  116: start: COLON_DASH EOF
+  117: statement_list: <lambda> COLON_DASH
+  118: statement: COLON_DASH
+  119: incl_stmt: COLON_DASH
+  120: incl_lst: INTEGER IDENTIFIER STRING_LITERAL
+  121: incl_item: INTEGER IDENTIFIER STRING_LITERAL
+  122: incl_sep: SEMICOLON COMMA

@@ -3,8 +3,8 @@
 
 AC_PREREQ([2.68])
 AC_INIT(cplus2asp, 2.0, jbabb1@asu.edu)
-AC_CONFIG_SRCDIR([src/utils.h])
-AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_SRCDIR([src/bcplus/Configuration.r2c])
+AC_CONFIG_HEADERS([include/config.h])
 AC_CONFIG_AUX_DIR([build-scripts])
 AC_CONFIG_MACRO_DIR([build-scripts])
 m4_include([build-scripts/boost.m4])
@@ -73,7 +73,7 @@ BOOST_REQUIRE([1.44])
 BOOST_STRING_ALGO([$rt_type])
 BOOST_SYSTEM([$rt_type])
 BOOST_FILESYSTEM([$rt_type])
-
+BOOST_IOSTREAMS([$rt_type])
 
 # Checks for libraries.
 

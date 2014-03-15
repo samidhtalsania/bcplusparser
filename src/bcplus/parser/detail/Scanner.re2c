@@ -1,0 +1,557 @@
+
+#include <sstream>
+
+#include <boost/filesystem.hpp>
+#include <boost/filesystem/fstream.hpp>
+
+#include "bcplus/parser/detail/Scanner.h"
+#include "bcplus/parser/detail/lemon_parser.h"
+
+#include "bcplus/Location.h"
+#include "bcplus/parser/Token.h"
+
+#include "bcplus/parser/detail/ScannerSource.h"
+#include "bcplus/parser/detail/ScannerRawSource.h"
+#include "bcplus/parser/detail/ScannerTokenSource.h"
+#include "bcplus/parser/detail/ScannerFileSource.h"
+#include "bcplus/parser/detail/ScannerBufferSource.h"
+
+namespace u = babb::utils; 
+namespace fs = boost::filesystem;
+
+namespace bcplus {
+namespace parser {
+namespace detail {
+
+Scanner::Scanner(Configuration* config)
+	: _cond(yycNORMAL), _config(config) {
+	// Intentionally left blank
+}
+
+Scanner::~Scanner() {
+	// Intentionally left blank
+}
+
+bool Scanner::push_front(fs::path const& file, bool squelch) {
+	u::ref_ptr<ScannerFileSource> src = new ScannerFileSource(_config, file, squelch);
+	if (!src->good()) return false;
+	_sources.push_front(src.get());
+	return true;
+}
+
+bool Scanner::push_back(fs::path const& file, bool squelch) {
+	u::ref_ptr<ScannerFileSource> src = new ScannerFileSource(_config, file, squelch);
+	if (!src->good()) return false;
+	_sources.push_back(src.get());
+	return true;
+}
+
+void Scanner::push_front(char const* buffer, Location const& loc) {
+	u::ref_ptr<ScannerBufferSource> src = new ScannerBufferSource(_config, buffer, loc);
+	_sources.push_front(src.get());
+}
+
+void Scanner::push_back(char const* buffer, Location const& loc) {
+	u::ref_ptr<ScannerBufferSource> src = new ScannerBufferSource(_config, buffer, loc);
+	_sources.push_back(src.get());
+}
+
+void Scanner::push_back(Token const* token) {
+	if (!_sources.size() || _sources.back()->type() != ScannerSource::Type::TOKENS) {
+		_sources.push_back(new ScannerTokenSource(token));
+	} else ((ScannerTokenSource*)_sources.back().get())->push_back(token);
+}
+
+void Scanner::push_front(Token const* token) {
+	if (!_sources.size() || _sources.front()->type() != ScannerSource::Type::TOKENS) {
+		_sources.push_front(new ScannerTokenSource(token));
+	} else ((ScannerTokenSource*)_sources.front().get())->push_front(token);
+}
+
+void Scanner::push_back(TokenList* tokens) {
+	if (!_sources.size() || _sources.back()->type() != ScannerSource::Type::TOKENS) {
+		_sources.push_back(new ScannerTokenSource(tokens));
+	} else ((ScannerTokenSource*)_sources.back().get())->push_back(tokens);
+}
+
+void Scanner::push_front(TokenList* tokens) {
+	if (!_sources.size() || _sources.front()->type() != ScannerSource::Type::TOKENS) {
+		_sources.push_front(new ScannerTokenSource(tokens));
+	} else ((ScannerTokenSource*)_sources.front().get())->push_front(tokens);
+}
+
+
+Token const* Scanner::readToken() {
+	u::ref_ptr<const Token> token = NULL;
+	if (!size()) {
+		Location l = loc();
+		token  = new Token(T_EOF, new ReferencedString("<EOF1>"), l, l);
+	} else {
+		do {
+			ScannerSource* src = _sources.front();
+			_config->ostream(Verb::TRACE) << "TRACE: " << size() << " sources, reading from \"" << src->loc().file()->native() << "\"." << std::endl;
+			switch(src->type()) {
+			case ScannerSource::Type::RAW:
+				token = tokenize((ScannerRawSource*)src);
+				break;
+			case ScannerSource::Type::TOKENS:
+				token = ((ScannerTokenSource*)src)->next();
+				break;
+			}
+	
+			if (!token || token->type() == T_ERR_IO) {
+				_sources.pop_front();
+			} else if (token->type() == T_EOF) _sources.pop_front();
+		} while (token && token->type() == T_EOF && size());
+	}
+	
+	if (!token) {
+		Location l = loc();
+		token  = new Token(T_ERR_IO, new ReferencedString("<IO ERROR>"), l, l);
+	}
+
+	_config->ostream(Verb::TRACE) << "TRACE: ";
+	token->begin().output(_config->ostream(Verb::TRACE));
+	_config->ostream(Verb::TRACE) << ": (" << token->typeString() << "): \"" << *(token->str()) << "\"." << std::endl;
+
+	return token.release();
+}
+
+
+#define BLK_INIT(s) \
+	blk.str(s); \
+	use_blk = true; \
+	source->token() = source->cursor() + 1;
+
+#define BLK_LINE \
+	source->newline(); \
+    blk.write(source->token(), (size_t)(source->cursor() - source->token())); \
+	source->token() = source->cursor() + 1;		
+
+#define BLK_FINISH(sz) \
+	blk.write(source->token(), (size_t)(source->cursor() - source->token() - sz));
+
+Token const* Scanner::tokenize(ScannerRawSource* source) {
+	if (source->eof()) return new Token(T_EOF, new ReferencedString("<EOF2>"), source->loc(), source->loc());
+	else if (!source->good()) return new Token(T_ERR_IO, new ReferencedString("<IO ERROR>"), source->loc(), source->loc());
+
+
+	std::stringstream blk;
+	int ret;
+	Location begin;
+	bool use_blk = false;
+	size_t preskip = 0;
+	size_t postskip = 0;
+
+re2c_start:
+	source->token() = source->cursor();
+	begin = source->loc();
+
+	/*!re2c
+		re2c:define:YYCTYPE				= char;
+		re2c:define:YYMARKER			= source->marker();
+		re2c:define:YYCURSOR			= source->cursor();
+		re2c:define:YYLIMIT				= source->limit();
+		re2c:define:YYGETCONDITION		= _cond;
+		re2c:define:YYGETCONDITION:naked= 1;
+		re2c:define:YYFILL				= source->fill;
+
+		ALPH 							= [a-zA-Z_];
+		AN 								= [a-zA-Z0-9_];
+		NUM								= [0-9];
+		WS						 		= [ \t\v\f];
+		NL						 		= [\n];
+		EOF								= [\X0000];
+
+		INTEGER							= NUM+;
+		IDENTIFIER						= ALPH AN*;
+
+		<NORMAL> NL						{ source->newline();		 					goto re2c_start; 					}
+		<NORMAL> WS						{ 												goto re2c_start; 					}
+		<NORMAL> EOF					{ ret = T_EOF; 									goto re2c_finish; 					}
+		<NORMAL> ["]					{ _cond = yycDBL_STRING;	preskip = 1;		goto yyc_DBL_STRING;				}
+		<NORMAL> [']					{ _cond = yycSGL_STRING; 	preskip = 1;		goto yyc_SGL_STRING;				}
+		<NORMAL> "%"					{ _cond = yycCOMMENT; 							goto yyc_COMMENT;	 				}
+		<NORMAL> [/][*]					{ 
+										  _cond = yycBLK_COMMENT; 
+										  BLK_INIT("% ");
+										  goto yyc_BLK_COMMENT; 				
+										}
+		<NORMAL>":-" WS* "begin_asp" WS* [.]
+										{
+										  _cond = yycASP_CP;
+										  BLK_INIT("");
+										  goto yyc_ASP_CP;
+										}
+		<NORMAL>":-" WS* "begin" WS+ "asp" WS* [.]
+										{
+										  _cond = yycASP_CP;
+										  BLK_INIT("");
+										  goto yyc_ASP_CP;
+										}
+		<NORMAL> "#begin_asp" WS* [.]?	{
+										  _cond = yycASP_GR;
+										  BLK_INIT("");
+										  goto yyc_ASP_GR;
+										}
+		<NORMAL>":-" WS* "begin_lua" WS* [.]
+										{
+										  _cond = yycLUA_CP;
+										  BLK_INIT("");
+										  goto yyc_LUA_CP;
+										}
+		<NORMAL>":-" WS* "begin" WS+ "lua" WS* [.]
+										{
+										  _cond = yycLUA_CP;
+										  BLK_INIT("");
+										  goto yyc_LUA_CP;
+										}
+		<NORMAL> "#begin_lua" WS* [.]?	{
+										  _cond = yycLUA_GR;
+										  BLK_INIT("");
+										  goto yyc_LUA_GR;
+										}
+		<NORMAL>":-" WS* "begin_f2lp" WS* [.]
+										{
+										  _cond = yycF2LP_CP;
+										  BLK_INIT("");
+										  goto yyc_F2LP_CP;
+										}
+		<NORMAL>":-" WS* "begin" WS+ "f2lp" WS* [.]
+										{
+										  _cond = yycF2LP_CP;
+										  BLK_INIT("");
+										  goto yyc_F2LP_CP;
+										}
+		<NORMAL> "#begin_f2lp" WS* [.]?	{
+										  _cond = yycF2LP_GR;
+										  BLK_INIT("");
+										  goto yyc_F2LP_GR;
+										}
+
+
+
+		<NORMAL> "include"						{ ret = T_INCLUDE;						goto re2c_finish;					}
+		<NORMAL> "macros"						{ ret = T_MACROS;						goto re2c_finish;					}
+		<NORMAL> "objects"						{ ret = T_OBJECTS;						goto re2c_finish;					}
+		<NORMAL> "query"						{ ret = T_QUERY;						goto re2c_finish;					}
+		<NORMAL> "show"							{ ret = T_SHOW;							goto re2c_finish;					}
+		<NORMAL> "sorts"						{ ret = T_SORTS;						goto re2c_finish;					}
+		<NORMAL> "variables"					{ ret = T_VARIABLES;					goto re2c_finish;					}
+		<NORMAL> "abAction"						{ ret = T_ABACTION;						goto re2c_finish;					}
+		<NORMAL> "action"						{ ret = T_ACTION;						goto re2c_finish;					}
+		<NORMAL> "additiveAction"				{ ret = T_ADDITIVEACTION;				goto re2c_finish;					}
+		<NORMAL> "additiveFluent"				{ ret = T_ADDITIVEFLUENT;				goto re2c_finish;					}
+		<NORMAL> "after"						{ ret = T_AFTER;						goto re2c_finish;					}
+		<NORMAL> "always"						{ ret = T_ALWAYS;						goto re2c_finish;					}
+		<NORMAL> "assuming"						{ ret = T_ASSUMING;						goto re2c_finish;					}
+		<NORMAL> "attribute"					{ ret = T_ATTRIBUTE;					goto re2c_finish;					}
+		<NORMAL> "by"							{ ret = T_BY;							goto re2c_finish;					}
+		<NORMAL> "caused"						{ ret = T_CAUSED;						goto re2c_finish;					}
+		<NORMAL> "causes"						{ ret = T_CAUSES;						goto re2c_finish;					}
+		<NORMAL> "constants"					{ ret = T_CONSTANTS;					goto re2c_finish;					}
+		<NORMAL> "constraint"					{ ret = T_CONSTRAINT;					goto re2c_finish;					}
+		<NORMAL> "decrements"					{ ret = T_DECREMENTS;					goto re2c_finish;					}
+		<NORMAL> "default"						{ ret = T_DEFAULT;						goto re2c_finish;					}
+		<NORMAL> "externalAction"				{ ret = T_EXTERNALACTION;				goto re2c_finish;					}
+		<NORMAL> "externalFluent"				{ ret = T_EXTERNALFLUENT;				goto re2c_finish;					}
+		<NORMAL> "exogenous"					{ ret = T_EXOGENOUS;					goto re2c_finish;					}
+		<NORMAL> "exogenousAction"				{ ret = T_EXOGENOUSACTION;				goto re2c_finish;					}
+		<NORMAL> "if"							{ ret = T_IF;							goto re2c_finish;					}
+		<NORMAL> "ifcons"						{ ret = T_IFCONS;						goto re2c_finish;					}
+		<NORMAL> "impossible"					{ ret = T_IMPOSSIBLE;					goto re2c_finish;					}
+		<NORMAL> "increments"					{ ret = T_INCREMENTS;					goto re2c_finish;					}
+		<NORMAL> "inertial"						{ ret = T_INERTIAL;						goto re2c_finish;					}
+		<NORMAL> "inertialFluent"				{ ret = T_INERTIALFLUENT;				goto re2c_finish;					}
+		<NORMAL> "label"						{ ret = T_LABEL;						goto re2c_finish;					}
+		<NORMAL> "may" WS+ "cause"				{ ret = T_MAY_CAUSE;					goto re2c_finish;					}
+		<NORMAL> "maxAdditive"					{ ret = T_MAXADDITIVE;					goto re2c_finish;					}
+		<NORMAL> "maxAFValue"					{ ret = T_MAXAFVALUE;					goto re2c_finish;					}
+		<NORMAL> "maxstep"						{ ret = T_MAXSTEP;						goto re2c_finish;					}
+		<NORMAL> "never"						{ ret = T_NEVER;						goto re2c_finish;					}
+		<NORMAL> "noconcurrency"				{ ret = T_NOCONCURRENCY;				goto re2c_finish;					}
+		<NORMAL> "nonexecutable"				{ ret = T_NONEXECUTABLE;				goto re2c_finish;					}
+		<NORMAL> "of"							{ ret = T_OF;							goto re2c_finish;					}
+		<NORMAL> "possibly" WS+ "caused"		{ ret = T_POSSIBLY_CAUSED;				goto re2c_finish;					}
+		<NORMAL> "rigid"						{ ret = T_RIGID;						goto re2c_finish;					}
+		<NORMAL> "sdFluent"						{ ret = T_SDFLUENT;						goto re2c_finish;					}
+		<NORMAL> "simpleFluent"					{ ret = T_SIMPLEFLUENT;					goto re2c_finish;					}
+		<NORMAL> "strong" WS+ "noconcurrency"	{ ret = T_STRONG_NOCONCURRENCY;			goto re2c_finish;					}
+		<NORMAL> "strong_noconcurrency"			{ ret = T_STRONG_NOCONCURRENCY;			goto re2c_finish;					}
+		<NORMAL> "nonexecutable"				{ ret = T_NONEXECUTABLE;				goto re2c_finish;					}
+		<NORMAL> "of"							{ ret = T_OF;							goto re2c_finish;					}
+		<NORMAL> "unless"						{ ret = T_UNLESS;						goto re2c_finish;					}
+		<NORMAL> "where"						{ ret = T_WHERE;						goto re2c_finish;					}
+		<NORMAL> ":-"							{ ret = T_COLON_DASH;					goto re2c_finish;					}
+		<NORMAL> "::"							{ ret = T_DBL_COLON;					goto re2c_finish;					}
+		<NORMAL> ":"							{ ret = T_COLON;						goto re2c_finish;					}
+		<NORMAL> "~"							{ ret = T_TILDE;						goto re2c_finish;					}
+		<NORMAL> "->"							{ ret = T_IMPL;							goto re2c_finish;					}
+		<NORMAL> "-> "							{ ret = T_ARROW_RDASH;					goto re2c_finish;					}
+		<NORMAL> "-"							{ ret = T_DASH;							goto re2c_finish;					}
+		<NORMAL> "<-> "							{ ret = T_EQUIV;						goto re2c_finish;					}
+		<NORMAL> "<-"							{ ret = T_ARROW_LDASH;					goto re2c_finish;					}
+		<NORMAL> "<>"							{ ret = T_NEQ;							goto re2c_finish;					}
+		<NORMAL> "<"							{ ret = T_LTHAN;						goto re2c_finish;					}
+		<NORMAL> "<="							{ ret = T_LTHAN_EQ;						goto re2c_finish;					}
+		<NORMAL> ">"							{ ret = T_GTHAN;						goto re2c_finish;					}
+		<NORMAL> ">="							{ ret = T_GTHAN_EQ;						goto re2c_finish;					}
+		<NORMAL> ">>"							{ ret = T_DBL_GTHAN;					goto re2c_finish;					}
+		<NORMAL> "@<"							{ ret = T_LTHAN;						goto re2c_finish;					}
+		<NORMAL> "@>"							{ ret = T_GTHAN;						goto re2c_finish;					}
+		<NORMAL> "@<="							{ ret = T_LTHAN_EQ;						goto re2c_finish;					}
+		<NORMAL> "@>="							{ ret = T_GTHAN_EQ;						goto re2c_finish;					}
+		<NORMAL> "@=<"							{ ret = T_LTHAN_EQ;						goto re2c_finish;					}
+		<NORMAL> "@=>"							{ ret = T_GTHAN_EQ;						goto re2c_finish;					}
+		<NORMAL> "=<"							{ ret = T_LTHAN_EQ;						goto re2c_finish;					}
+		<NORMAL> "=>"							{ ret = T_GTHAN_EQ;						goto re2c_finish;					}
+		<NORMAL> "=="							{ ret = T_DBL_EQ;						goto re2c_finish;					}
+		<NORMAL> "="							{ ret = T_EQ;							goto re2c_finish;					}
+		<NORMAL> "&&"							{ ret = T_DBL_AMP;						goto re2c_finish;					}
+		<NORMAL> "&"							{ ret = T_AMP;							goto re2c_finish;					}
+		<NORMAL> "++"							{ ret = T_DBL_PLUS;						goto re2c_finish;					}
+		<NORMAL> "+"							{ ret = T_PLUS;							goto re2c_finish;					}
+		<NORMAL> ".."							{ ret = T_DBL_PERIOD;					goto re2c_finish;					}
+		<NORMAL> "."							{ ret = T_PERIOD;						goto re2c_finish;					}
+		<NORMAL> "\\="							{ ret = T_NEQ;							goto re2c_finish;					}
+		<NORMAL> "\\/"							{ ret = T_BIG_DISJ;						goto re2c_finish;					}
+		<NORMAL> "//"							{ ret = T_INT_DIV;						goto re2c_finish;					}
+		<NORMAL> "/\\"							{ ret = T_BIG_CONJ;						goto re2c_finish;					}
+		<NORMAL> ","							{ ret = T_COMMA;						goto re2c_finish;					}
+		<NORMAL> ";"							{ ret = T_SEMICOLON;					goto re2c_finish;					}
+		<NORMAL> "|"							{ ret = T_PIPE;							goto re2c_finish;					}
+		<NORMAL> "#"							{ ret = T_POUND;						goto re2c_finish;					}
+		<NORMAL> "*"							{ ret = T_STAR;							goto re2c_finish;					}
+		<NORMAL> "@"							{ ret = T_AT;							goto re2c_finish;					}
+		<NORMAL> "["							{ ret = T_BRACKET_L;					goto re2c_finish;					}
+		<NORMAL> "]"							{ ret = T_BRACKET_R;					goto re2c_finish;					}
+		<NORMAL> "{"							{ ret = T_CBRACKET_L;					goto re2c_finish;					}
+		<NORMAL> "}"							{ ret = T_CBRACKET_R;					goto re2c_finish;					}
+		<NORMAL> "("							{ ret = T_PAREN_L;						goto re2c_finish;					}
+		<NORMAL> ")"							{ ret = T_PAREN_R;						goto re2c_finish;					}
+		<NORMAL> "abs"							{ ret = T_ABS;							goto re2c_finish;					}
+		<NORMAL> "eq"							{ ret = T_EQ;							goto re2c_finish;					}
+		<NORMAL> "false"						{ ret = T_FALSE;						goto re2c_finish;					}
+		<NORMAL> "mod"							{ ret = T_MOD;							goto re2c_finish;					}
+		<NORMAL> "neq"							{ ret = T_NEQ;							goto re2c_finish;					}
+		<NORMAL> "none"							{ ret = T_NONE;							goto re2c_finish;					}
+		<NORMAL> "not"							{ ret = T_NOT;							goto re2c_finish;					}
+		<NORMAL> "true"							{ ret = T_TRUE;							goto re2c_finish;					}
+		<NORMAL> INTEGER						{ ret = T_INTEGER;						goto re2c_finish;					}
+		<NORMAL> IDENTIFIER						{ ret = T_IDENTIFIER;					goto re2c_finish;					}
+
+
+
+
+		<DBL_STRING> NL					{ source->newline();				 			goto yyc_DBL_STRING; 				}
+		<DBL_STRING> [\\]["]			{ 												goto yyc_DBL_STRING; 				}
+		<DBL_STRING> ["]				{ 
+										  _cond = yycNORMAL; 
+										  ret = T_STRING_LITERAL;	
+										  postskip = 1;
+										  goto re2c_finish;					
+										}
+		<DBL_STRING> .					{												goto yyc_DBL_STRING;				}
+		<DBL_STRING> EOF				{
+										  ret = T_ERR_UNTERMINATED_STRING;
+										  _cond = yycNORMAL;
+										  source->cursor()--;
+										  goto re2c_finish;					
+										}
+		
+		<SGL_STRING> NL					{ source->newline();				 			goto yyc_SGL_STRING; 				}
+		<SGL_STRING> [\\][']			{ 												goto yyc_SGL_STRING; 				}
+		<SGL_STRING> [']				{ 
+										  _cond = yycNORMAL; 
+										  ret = T_STRING_LITERAL;	
+										  postskip = 1;
+										  goto re2c_finish;					
+										}
+		<SGL_STRING> .					{												goto yyc_SGL_STRING;				}
+		<SGL_STRING> EOF				{ 
+										  ret = T_ERR_UNTERMINATED_STRING;				
+										  _cond = yycNORMAL;
+										  source->cursor--;
+										  goto re2c_finish;					
+										}
+
+		<COMMENT> NL					{ 
+										  source->cursor()--; 
+										  _cond = yycNORMAL; 
+										  ret = T_COMMENT;			
+										  goto re2c_finish;
+										}
+		<COMMENT> [^\n]+				{ 												goto yyc_COMMENT;					}
+		<COMMENT> EOF					{ 
+										  source->cursor()--; 
+										  _cond = yycNORMAL; 
+										  ret = T_COMMENT;			
+										  goto re2c_finish;					
+										}
+
+		<BLK_COMMENT> NL				{ BLK_LINE;
+										  blk << "% "; 
+										  goto yyc_BLK_COMMENT;				
+										}
+		<BLK_COMMENT> [*][/]			{ 
+										  BLK_FINISH(2);
+										  _cond = yycNORMAL; 
+										  ret = T_COMMENT; 
+										  goto re2c_finish;					
+										}
+		<BLK_COMMENT> EOF				{ 
+										  BLK_FINISH(1);
+										  ret = T_ERR_UNTERMINATED_BLK_COMMENT;			
+										  _cond = yycNORMAL;
+										  source->cursor()--;
+										  goto re2c_finish;					
+										}
+		<BLK_COMMENT> .					{												goto yyc_BLK_COMMENT;				}
+		
+		<ASP_GR> NL						{ BLK_LINE;
+										  goto yyc_ASP_GR;				
+										}
+		<ASP_GR> "#end_asp" WS* [.]		{ 
+										  _cond = yycNORMAL; 
+										  ret = T_ASP_GR; 
+										  goto re2c_finish;					
+										}
+		<ASP_GR> EOF					{ 
+										  BLK_FINISH(1);
+										  ret = T_ERR_UNTERMINATED_ASP;			
+										  _cond = yycNORMAL;
+										  source->cursor()--;
+										  goto re2c_finish;					
+										}
+		<ASP_GR> .						{												goto yyc_ASP_GR;					}
+
+		<ASP_CP> NL						{ BLK_LINE;										goto yyc_ASP_CP;					}
+		<ASP_CP> ":-" WS* "end_asp" WS* [.]
+										{ 
+										  _cond = yycNORMAL; 
+										  ret = T_ASP_CP; 
+										  goto re2c_finish;					
+										}
+		<ASP_CP> ":-" WS* "end" WS+ "asp" WS* [.]
+										{ 
+										  _cond = yycNORMAL; 
+										  ret = T_ASP_CP; 
+										  goto re2c_finish;					
+										}
+		<ASP_CP> EOF					{ 
+										  BLK_FINISH(1);
+										  ret = T_ERR_UNTERMINATED_ASP;			
+										  _cond = yycNORMAL;
+										  source->cursor()--;
+										  goto re2c_finish;					
+										}
+		<ASP_CP> .						{												goto yyc_ASP_CP;					}
+
+
+		<LUA_GR> NL						{ BLK_LINE;
+										  goto yyc_LUA_GR;				
+										}
+		<LUA_GR> "#end_lua" WS* [.]		{ 
+										  _cond = yycNORMAL; 
+										  ret = T_LUA_GR; 
+										  goto re2c_finish;					
+										}
+		<LUA_GR> EOF					{ 
+										  BLK_FINISH(1);
+										  ret = T_ERR_UNTERMINATED_LUA;			
+										  _cond = yycNORMAL;
+										  source->cursor()--;
+										  goto re2c_finish;					
+										}
+		<LUA_GR> .						{												goto yyc_LUA_GR;					}
+
+		<LUA_CP> NL						{ BLK_LINE;										goto yyc_LUA_CP;					}
+		<LUA_CP> ":-" WS* "end_lua" WS* [.]
+										{ 
+										  _cond = yycNORMAL; 
+										  ret = T_LUA_CP; 
+										  goto re2c_finish;					
+										}
+		<LUA_CP> ":-" WS* "end" WS+ "lua" WS* [.]
+										{ 
+										  _cond = yycNORMAL; 
+										  ret = T_LUA_CP; 
+										  goto re2c_finish;					
+										}
+		<LUA_CP> EOF					{ 
+										  BLK_FINISH(1);
+										  ret = T_ERR_UNTERMINATED_LUA;			
+										  _cond = yycNORMAL;
+										  source->cursor()--;
+										  goto re2c_finish;					
+										}
+		<LUA_CP> .						{												goto yyc_LUA_CP;					}
+
+
+		<F2LP_GR> NL					{ BLK_LINE;
+										  goto yyc_F2LP_GR;				
+										}
+		<F2LP_GR> "#end_f2lp" WS* [.]		{ 
+										  _cond = yycNORMAL; 
+										  ret = T_F2LP_GR; 
+										  goto re2c_finish;					
+										}
+		<F2LP_GR> EOF					{ 
+										  BLK_FINISH(1);
+										  ret = T_ERR_UNTERMINATED_F2LP;			
+										  _cond = yycNORMAL;
+										  source->cursor()--;
+										  goto re2c_finish;					
+										}
+		<F2LP_GR> .						{												goto yyc_F2LP_GR;					}
+
+		<F2LP_CP> NL					{ BLK_LINE;										goto yyc_F2LP_CP;					}
+		<F2LP_CP> ":-" WS* "end_f2lp" WS* [.]
+										{ 
+										  _cond = yycNORMAL; 
+										  ret = T_F2LP_CP; 
+										  goto re2c_finish;					
+										}
+		<F2LP_CP> ":-" WS* "end" WS+ "f2lp" WS* [.]
+										{ 
+										  _cond = yycNORMAL; 
+										  ret = T_F2LP_CP; 
+										  goto re2c_finish;					
+										}
+		<F2LP_CP> EOF					{ 
+										  BLK_FINISH(1);
+										  ret = T_ERR_UNTERMINATED_F2LP;			
+										  _cond = yycNORMAL;
+										  source->cursor()--;
+										  goto re2c_finish;					
+										}
+		<F2LP_CP> .						{												goto yyc_F2LP_CP;					}
+
+
+
+
+		<*> .							{ ret = T_ERR_UNKNOWN_SYMBOL;					goto re2c_finish;	}
+
+	*/
+
+re2c_finish:
+	u::ref_ptr<ReferencedString> str = new ReferencedString();
+	if (ret != T_EOF) {
+		if (use_blk)
+			str->assign(blk.str());
+		else
+			str->assign(source->token() + preskip, (size_t)(source->cursor() - source->token() - preskip - postskip));
+	} else {
+		str->assign("<EOF3>");
+	}
+
+	return new Token(ret, str, begin, source->loc());
+}
+
+void Scanner::close() {
+	_sources.clear();
+}
+
+
+
+}}}

@@ -22,7 +22,7 @@ else
 
 	mkdir -p build-scripts && \
 		libtoolize && \
-		aclocal _I build-scripts --install && \
+		aclocal -I build-scripts --install && \
 		autoheader && \
 		automake --add-missing && \
 		autoconf && \
