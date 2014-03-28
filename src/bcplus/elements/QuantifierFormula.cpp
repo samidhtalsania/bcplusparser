@@ -1,4 +1,7 @@
 
+#include "bcplus/Location.h"
+#include "bcplus/DomainType.h"
+#include "bcplus/elements/Element.h"
 #include "bcplus/elements/QuantifierFormula.h"
 
 namespace bcplus {
@@ -47,10 +50,17 @@ void QuantifierFormula::outputQuantifier(Quantifier const& q, std::ostream& out)
 	switch (q.first) {
 	case Operator::CONJ:				out << "/\\";	break;
 	case Operator::DISJ:				out << "\\/";	break;
+	default:							out << "<BAD_QUANTIFIER>"; break;
 	}
 	q.second->output(out);
 
 }
+
+
+DomainType::type QuantifierFormula::domainType() const {
+	return DomainType::NO_DOMAIN;
+}
+
 }}
 
 

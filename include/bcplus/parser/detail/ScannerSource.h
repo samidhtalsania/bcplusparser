@@ -16,7 +16,7 @@ public:
 	/*****************************************************************************************************/
 	/// Encapsulating structure for subtypes
 	struct Type {
-		enum Value {
+		enum type {
 			RAW,			///< The input is raw text
 			TOKENS			///< The input is a preparsed token stream
 		};
@@ -28,7 +28,7 @@ private:
 	/* Private members */
 	/*****************************************************************************************************/
 	/// The source type
-	Type::Value _type;
+	Type::type _type;
 
 
 public:
@@ -37,7 +37,7 @@ public:
 	/*****************************************************************************************************/
 	/// Basic Constructor
 	/// @param type The subtype of this source
-	ScannerSource(Type::Value type);
+	ScannerSource(Type::type type);
 
 	/// Destructor stub
 	virtual ~ScannerSource();
@@ -47,7 +47,7 @@ public:
 	/* Public Members */
 	/*****************************************************************************************************/
 	/// Get the subtype of this source
-	inline Type::Value type() const													{ return _type; }
+	inline Type::type type() const													{ return _type; }
 
 
 	/// Get the location that the source stream is at

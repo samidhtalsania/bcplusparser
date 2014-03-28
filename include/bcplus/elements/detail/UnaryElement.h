@@ -12,13 +12,15 @@ namespace bcplus {
 namespace elements {
 namespace detail {
 
-/// template class for binary elements such as binary formulas and terms
+/// template class for unary elements such as binary formulas and terms
 /// @param BaseType The base class for this template
 /// @param type The type flag to indicate the specialization of the type
 /// @param Op The type for the operators that are allowed
+/// @param Sub The type for the sub element
 /// @param preOpString A functor to call to get the pre-subelement string corresponding to the operation.
 /// @param postOpString A functor to call to get the post-subelement string corresponding to the operation
-template <typename BaseType, int type, typename Op, typename preOpString, typename postOpString>
+/// @param dt A functor to call to determine the domain type of this element.
+template <typename BaseType, int type, typename Op, typename Sub, typename preOpString, typename postOpString, typename dt>
 class UnaryElement : public BaseType
 {
 
@@ -37,10 +39,10 @@ private:
     /****************************************************************************/
 
     /// The operator
-    Op _op;
+    typename Op::type _op;
 
 	/// The subformula
-	babb::utils::ref_ptr<BaseType> _sub;
+	babb::utils::ref_ptr<Sub> _sub;
 
 
 public:
@@ -53,7 +55,7 @@ public:
     /// @param begin The beginning location of this element
     /// @param end The ending location of this element
     /// @param parens Whether the element is surrounded by parentheses
-    UnaryElement(Op const& op, BaseType* sub, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+    UnaryElement(typename Op::type const& op, Sub* sub, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
     /// Destructor stub
     virtual ~UnaryElement();
@@ -63,16 +65,16 @@ public:
     /****************************************************************************/
 
 	/// The operator for the formula
-	inline Op const& op() const				{ return _op; }
+	inline typename Op::type const& op() const	{ return _op; }
 
 	/// The subformula
-	inline BaseType* sub()						{ return _sub; }
-	inline BaseType const* sub() const			{ return _sub; }
+	inline Sub* sub()							{ return _sub; }
+	inline Sub const* sub() const				{ return _sub; }
 
 	// inherited from Element
     virtual Element* copy() const;
     virtual void output(std::ostream& out) const;
-
+	virtual DomainType::type domainType() const;
 };
 
 }}}

@@ -1,6 +1,9 @@
 
+#include <cstring>
+
 #include "babb/utils/utils.h"
 
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/detail/BaseSymbol.h"
 #include "bcplus/symbols/ObjectSymbol.h"
@@ -14,29 +17,39 @@ namespace symbols {
 
 ObjectSymbol::ObjectSymbol(ReferencedString const* b, SortList const* args) 
 	: BaseSymbol(Symbol::Type::OBJECT, b, args) {
-	// figure out if we're integral
-	if (arity()) _integral = false;
-	else _integral = u::fromString(base()->c_str(), _int);
+	initDomainType();
 }
 
 ObjectSymbol::ObjectSymbol(boost::property_tree::ptree const& node, Resolver const* resolver, std::ostream* err)
 	: BaseSymbol(Symbol::Type::OBJECT, node, resolver, err) {
-	// figure out if we're integral
-	if (arity()) _integral = false;
-	else _integral = u::fromString(base()->c_str(), _int);
+	initDomainType();
 }
 
 ObjectSymbol::~ObjectSymbol() {
 	// Intentionally left blank
 }
 
-bool ObjectSymbol::integral() const {
-	return _integral;
+DomainType::type ObjectSymbol::domainType() const {
+	return _dt;
 }
 
-int const* ObjectSymbol::integer() const {
-	return (integral() ? &_int : NULL);
+void ObjectSymbol::initDomainType() {
+	if (arity()) _dt = DomainType::OTHER;
+	else {
+		char const* cstr = base()->c_str();
+		if (!strcmp(cstr, "true")) {
+			_dt = DomainType::BOOLEAN;
+			_bool = true;
+		} else if (!strcmp(cstr, "false")) {
+			_dt = DomainType::BOOLEAN;
+			_bool = false;
+		} else if (u::fromString(base()->c_str(), _int)) {
+			_dt = DomainType::INTEGRAL;
+		} else _dt = DomainType::OTHER;
+	}
+
 }
+
 
 }}
 

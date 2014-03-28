@@ -1,4 +1,5 @@
 
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Resolver.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/VariableSymbol.h"
@@ -49,8 +50,8 @@ VariableSymbol::~VariableSymbol() {
 	// Intentionally left blank
 }
 
-bool VariableSymbol::integral() const {
-	return sort()->integral();
+DomainType::type VariableSymbol::domainType() const {
+	return sort()->domainType();
 }
 
 bool VariableSymbol::operator==(Symbol const& other) const {
@@ -68,6 +69,9 @@ void VariableSymbol::save(boost::property_tree::ptree& node) const {
 	node.put("<xmlattr>.sort", *(sort()->base()));
 }
 
+void VariableSymbol::outputDefinition(std::ostream& out) const {
+	out << *base();
+}
 
 }}
 

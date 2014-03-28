@@ -9,6 +9,7 @@
 #include "babb/utils/memory.h"
 #include "memwrappers.h"
 
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Symbol.h"
 
 namespace bcplus {
@@ -28,7 +29,7 @@ public:
 	/* Public Types */
 	/*************************************************************************************/
 
-	typedef ReferencedList<babb::utils::ref_ptr<const SortSymbol> >::type SortList;
+	typedef ReferencedVector<babb::utils::ref_ptr<const SortSymbol> >::type SortList;
 	typedef SortList::iterator iterator;
 	typedef SortList::const_iterator const_iterator;
 
@@ -49,14 +50,14 @@ public:
 	/// @param type The type of symbol this is.
 	/// @param name The name of the symbol
 	/// @param args A list of argument sorts or NULL to indicate there are no sorts.
-	BaseSymbol(Symbol::Type::Value type, ReferencedString const* name, SortList const* args = NULL);
+	BaseSymbol(Symbol::Type::type type, ReferencedString const* name, SortList const* args = NULL);
 
 	/// Loads the sort from the property tree node
 	/// @param type The type of symbol this is.
 	/// @param node The node to load the symbol from
 	/// @param err An error stream to write to (or NULL)
 	/// Sets the symbol's good flag if it was successful
-	BaseSymbol(Symbol::Type::Value type, boost::property_tree::ptree const& node, Resolver const* resolver, std::ostream* err = NULL);
+	BaseSymbol(Symbol::Type::type type, boost::property_tree::ptree const& node, Resolver const* resolver, std::ostream* err = NULL);
 
 	/// Destructor stub
 	virtual ~BaseSymbol();
@@ -73,7 +74,8 @@ public:
 
 	virtual bool operator==(Symbol const& other) const;
 	virtual void save(boost::property_tree::ptree& node) const;
-	virtual bool integral() const = 0;
+	virtual void outputDefinition(std::ostream& out) const;
+	virtual DomainType::type domainType() const = 0;
 
 };
 

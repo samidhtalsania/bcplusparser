@@ -1,16 +1,17 @@
 include $(top_srcdir)/src/Makefile.rls
 
-bin_PROGRAMS = bcplusparser
+bin_PROGRAMS = ../bcplusparser
 
-bcplusparser_CPPFLAGS = $(BOOST_CPPFLAGS)
-bcplusparser_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
-bcplusparser_LDADD = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+___bcplusparser_CPPFLAGS = $(BOOST_CPPFLAGS)
+___bcplusparser_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
+___bcplusparser_LDADD = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
 
 BUILT_SOURCES = \
 	bcplus/Configuration.cpp \
 	bcplus/symbols/Symbol.cpp \
 	bcplus/parser/detail/Scanner.cpp \
-	bcplus/parser/detail/lemon_parser.cpp
+	bcplus/parser/detail/lemon_parser.cpp \
+	bcplus/parser/detail/lemon_macro.cpp
 
 #cplus2asp_SOURCES = \
 #	Configuration.cpp \
@@ -34,7 +35,7 @@ BUILT_SOURCES = \
 #	parser/detail/ScannerSource.cpp 
 
 
-bcplusparser_SOURCES = \
+___bcplusparser_SOURCES = \
 	main.cpp \
 	bcplus/Configuration.cpp \
 	bcplus/Location.cpp \
@@ -42,6 +43,8 @@ bcplusparser_SOURCES = \
 	bcplus/elements/Element.cpp \
 	bcplus/elements/QuantifierFormula.cpp \
 	bcplus/elements/Macro.cpp \
+	bcplus/elements/CardinalityFormula.cpp \
+	bcplus/elements/BindingFormula.cpp \
 	bcplus/languages/Language.cpp \
 	bcplus/languages/BCPlus.cpp \
 	bcplus/symbols/ConstantSymbol.cpp \
@@ -50,13 +53,17 @@ bcplusparser_SOURCES = \
 	bcplus/symbols/Symbol.cpp \
 	bcplus/symbols/VariableSymbol.cpp \
 	bcplus/symbols/MacroSymbol.cpp \
+	bcplus/symbols/QuerySymbol.cpp \
 	bcplus/symbols/detail/BaseSymbol.cpp  \
 	bcplus/symbols/SymbolTable.cpp \
 	bcplus/statements/Statement.cpp \
-	bcplus/statements/IncludeStatement.cpp \
+	bcplus/statements/QueryStatement.cpp \
+	bcplus/statements/detail/ObjectBinding.cpp \
 	bcplus/parser/Token.cpp \
 	bcplus/parser/BCParser.cpp \
 	bcplus/parser/detail/lemon_parser.cpp \
+	bcplus/parser/detail/MacroParser.cpp \
+	bcplus/parser/detail/lemon_macro.cpp \
 	bcplus/parser/detail/Scanner.cpp \
 	bcplus/parser/detail/ScannerSource.cpp \
 	bcplus/parser/detail/ScannerTokenSource.cpp \

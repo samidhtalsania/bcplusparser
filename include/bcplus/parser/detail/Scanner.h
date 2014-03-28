@@ -34,17 +34,19 @@ private:
 	/***********************************************************/
 	/// Condition type for the scanner
 	enum YYCONDTYPE {
-		yycNORMAL,
-		yycSGL_STRING,
-		yycDBL_STRING,
-		yycCOMMENT,
-		yycBLK_COMMENT,
-		yycASP_GR,
-		yycASP_CP,
-		yycLUA_GR,
-		yycLUA_CP,
-		yycF2LP_GR,
-		yycF2LP_CP
+		yycNORMAL,						///< Standard condition 
+		yycSGL_STRING,					///< Inside a single quoted string
+		yycDBL_STRING,					///< Inside a doubel quoted string
+		yycCOMMENT,						///< Inside a line comment
+		yycBLK_COMMENT,					///< Inside a block comment
+		yycASP_GR,						///< Gringo style ASP block
+		yycASP_CP,						///< CCalc style ASP block
+		yycLUA_GR,						///< Gringo style LUA block
+		yycLUA_CP,						///< CCalc style LUA block
+		yycF2LP_GR,						///< Gringo style F2LP block
+		yycF2LP_CP,						///< CCalc style F2LP block
+		yycARG,							///< Inside an unparsed argument
+		yycMACRO						///< Macro definition string (anything following "->" and preceding ".").
 	};
 
 	/***********************************************************/
@@ -58,13 +60,17 @@ private:
 	YYCONDTYPE _cond;
 
 	/// System-wide configuration information
-	babb::utils::ref_ptr<Configuration> _config;
+	babb::utils::ref_ptr<const Configuration> _config;
+
+	/// Whether we're scanning a macro definition
+	bool _in_macro;
+
 public:
 	/***********************************************************/
 	/* Constructors */
 	/***********************************************************/
 	/// @param config System wide configuration information
-	Scanner(Configuration* config);
+	Scanner(Configuration const* config);
 
 	/// Destructor
 	virtual ~Scanner();
@@ -88,20 +94,22 @@ public:
 	/// Injects the provided null-terminated buffer into the front of the stream being read by the scanner.
 	/// @param buffer The null-terminated buffer to read from.
 	/// @param loc The location to display in messages partaining to this buffer.
-	void push_front(char const* buffer, Location const& loc = Location(NULL, 0, 0));
+	/// @param track_position Whether the position should be tracked within this buffer (starting from {@ref loc})
+	void push_front(char const* buffer, Location const& loc = Location(NULL, 0, 0), bool track_position = false);
 	
 	/// Appends the provided null-terminated buffer to the end of the stream being read by the scanner.
 	/// @param buffer The null-terminated buffer to read from.
 	/// @param loc The location to display in messages partaining to this buffer.
-	void push_back(char const* buffer, Location const& loc = Location(NULL, 0, 0));
+	/// @param track_position Whether the position should be tracked within this buffer (starting from {@ref loc})
+	void push_back(char const* buffer, Location const& loc = Location(NULL, 0, 0), bool track_position = false);
 
 	/// Injects the provided token into the from of the stream being read by the scanner
 	/// @param token The token to inject
-	void push_front(Token const* token);
+	void push_front(Token* token);
 	
 	/// Appends the provided token to the end of the stream being read by the scanner
 	/// @param token The token to inject
-	void push_back(Token const* token);
+	void push_back(Token* token);
 
 	/// Injects the provided tokens into the from of the stream being read by the scanner
 	/// @param tokens The tokens to inject
@@ -116,7 +124,7 @@ public:
 
 	/// Reads a token from the currently open file.
 	/// @return The token that was read in.
-	Token const* readToken();
+	Token* readToken();
 
 	/// Gets the current location of the scanner
 	inline Location loc() const									{ return (_sources.size() ? _sources.front()->loc() : Location(NULL, 0, 0)); }
@@ -128,7 +136,7 @@ private:
 
 	/// Tokenizes the input from the provided raw source
 	/// @param source The source input to tokenize
-	Token const* tokenize(ScannerRawSource* source);
+	Token* tokenize(ScannerRawSource* source);
 
 };
 

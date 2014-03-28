@@ -7,6 +7,7 @@
 
 #include "babb/utils/memory.h"
 
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/SortSymbol.h"
 
@@ -42,9 +43,10 @@ public:
 	/// Get the variable's sort
 	SortSymbol const* sort() const									{ return _sort; }
 
-	virtual bool integral() const;
+	virtual DomainType::type domainType() const;
 	virtual bool operator==(Symbol const& other) const;
 	virtual void save(boost::property_tree::ptree& node) const;
+	virtual void outputDefinition(std::ostream& out) const;
 
 
 };

@@ -7,6 +7,7 @@
 
 #include "babb/utils/memory.h"
 
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/SortSymbol.h"
 #include "bcplus/symbols/detail/BaseSymbol.h"
@@ -17,6 +18,25 @@ namespace symbols {
 class Resolver;
 
 class ConstantSymbol : public detail::BaseSymbol {
+public:
+	/*************************************************************************************/
+	/* Public Types */
+	/*************************************************************************************/
+	/// The different types a constant can be
+	struct Type {
+		enum type {
+			ABACTION,
+			ACTION,
+			ADDITIVEFLUENT,
+			ADDITIVEACTION,
+			EXTERNALACTION,
+			EXTERNALFLUENT,
+			EXOGENOUSACTION,
+			INERTIALFLUENT,
+			RIGID,
+			SIMPLEFLUENT
+		};
+	};
 
 private:
 	/*************************************************************************************/
@@ -25,12 +45,16 @@ private:
 	/// The sort this constant ranges over
 	babb::utils::ref_ptr<const SortSymbol> _sort;
 
+	/// The constant type
+	Type::type _type;
+
 public:
 	/// Basic constructor
+	/// @param type The type that this constant is
 	/// @param base The name of this object
 	/// @param sort The sort that this constant ranges over
 	/// @param args The sorts for each of the arguments for this object.
-	ConstantSymbol(ReferencedString const* base, SortSymbol const* sort, SortList const* args = NULL);
+	ConstantSymbol(Type::type type, ReferencedString const* base, SortSymbol const* sort, SortList const* args = NULL);
 
 	/// Loads the object from the property tree node
 	/// @param node The node to load the symbol from
@@ -44,8 +68,12 @@ public:
 	/// Get the sort this symbol ranges over
 	SortSymbol const* sort() const						{ return _sort; }
 
+	/// Get the type that this constant is
+	Type::type constType() const						{ return _type; }
+
+	// inherited
 	virtual bool operator==(Symbol const& other) const;
-	virtual bool integral() const;
+	virtual DomainType::type domainType() const;
 	virtual void save(boost::property_tree::ptree& node) const;
 
 };

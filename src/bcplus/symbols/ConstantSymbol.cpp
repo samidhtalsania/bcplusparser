@@ -1,6 +1,7 @@
 
 #include <ostream>
 
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Resolver.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/detail/BaseSymbol.h"
@@ -11,8 +12,8 @@
 namespace bcplus {
 namespace symbols {
 
-ConstantSymbol::ConstantSymbol(ReferencedString const* base, SortSymbol const* sort, SortList const* args) 
-	: BaseSymbol(Symbol::Type::CONSTANT, base, args) , _sort(sort){
+ConstantSymbol::ConstantSymbol(Type::type type, ReferencedString const* base, SortSymbol const* sort, SortList const* args) 
+	: BaseSymbol(Symbol::Type::CONSTANT, base, args) , _sort(sort), _type(type) {
 	// intentionally left blank
 }
 
@@ -39,8 +40,8 @@ ConstantSymbol::~ConstantSymbol() {
 }
 
 
-bool ConstantSymbol::integral() const {
-	return _sort->integral();
+DomainType::type ConstantSymbol::domainType() const {
+	return _sort->domainType();
 }
 
 bool ConstantSymbol::operator==(Symbol const& other) const {

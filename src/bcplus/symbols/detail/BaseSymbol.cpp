@@ -18,14 +18,14 @@ namespace bcplus {
 namespace symbols{
 namespace detail {
 
-BaseSymbol::BaseSymbol(Symbol::Type::Value type, ReferencedString const* base, SortList const* args)
+BaseSymbol::BaseSymbol(Symbol::Type::type type, ReferencedString const* base, SortList const* args)
 	: Symbol(type, base, (args ? args->size() : 0)) {
 	if (args) _args = args;
 	else _args = new SortList();
 
 }
 
-BaseSymbol::BaseSymbol(Symbol::Type::Value type, boost::property_tree::ptree const& node, Resolver const* resolver, std::ostream* err)
+BaseSymbol::BaseSymbol(Symbol::Type::type type, boost::property_tree::ptree const& node, Resolver const* resolver, std::ostream* err)
 	: Symbol(type, node, err) {
 
 	u::ref_ptr<SortList> l = new SortList();
@@ -76,6 +76,23 @@ void BaseSymbol::save(boost::property_tree::ptree& node) const {
 	size_t arg = 0;
 	BOOST_FOREACH(SortSymbol const* sort, *_args) {
 		node.put("<xmlattr>.arg" + boost::lexical_cast<std::string>(arg++), *(sort->base()));
+	}
+}
+
+void BaseSymbol::outputDefinition(std::ostream& out) const {
+	out << *base();
+	if (arity()) {
+		out << "(";
+		for (const_iterator it = begin(); it != end(); ) {
+
+			out << *(*it)->base();
+
+			it++;
+			if (it != end()) {
+				out << ", ";
+			}
+		}
+		out << ")";
 	}
 }
 

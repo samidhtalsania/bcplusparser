@@ -9,19 +9,21 @@
 #include "bcplus/elements/Element.h"
 #include "bcplus/elements/detail/IdentifierElement.h"
 #include "bcplus/elements/terms.h"
+#include "bcplus/parser/Token.h"
 
 namespace bcplus {
 namespace elements {
 /**
  * @brief An arbitrary macro instance 'm(...)'.
  */
-class Macro : public detail::IdentifierElement<Element, Element::Type::MACRO, symbols::MacroSymbol, Element>
+class Macro : public detail::IdentifierElement<Element, Element::Type::MACRO, symbols::MacroSymbol, parser::Token>
 {
 public:
+
 	/************************************************************************************************/
 	/* Public Types */
 	/************************************************************************************************/
-
+	
 private:
 	/************************************************************************************************/
 	/* Private Members */

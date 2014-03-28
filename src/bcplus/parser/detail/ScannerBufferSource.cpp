@@ -9,8 +9,8 @@ namespace bcplus {
 namespace parser {
 namespace detail {
 
-ScannerBufferSource::ScannerBufferSource(Configuration* config, char const* buffer, Location const& loc)
-	: ScannerRawSource(config), _loc(loc) {
+ScannerBufferSource::ScannerBufferSource(Configuration const* config, char const* buffer, Location const& loc, bool track_position)
+	: ScannerRawSource(config), _file(loc.file()), _line(loc.line()), _first_col(loc.col()), _track(track_position) {
 	
 	// figure out the size of the buffer
 	_buffer_sz = strlen(buffer) + 1;
@@ -19,8 +19,9 @@ ScannerBufferSource::ScannerBufferSource(Configuration* config, char const* buff
 
 	cursor() = _buffer;
 	token() = _buffer;
+	marker() = _buffer;
 	limit() = _buffer + _buffer_sz;
-
+	_newline = _buffer - loc.col();
 }
 
 ScannerBufferSource::~ScannerBufferSource() {
@@ -28,15 +29,17 @@ ScannerBufferSource::~ScannerBufferSource() {
 }
 
 void ScannerBufferSource::newline() {
-	// location is not tracked internally...
-	// intentionally left blank
+	if (_track) {
+		_line++;
+		_newline = cursor();
+	}
 }
 
 Location ScannerBufferSource::loc() const {
-	return _loc;
+	return Location(file(), line(), col());
 }
 
-ScannerBufferSource::Status::Value ScannerBufferSource::status() const {
+ScannerBufferSource::Status::type ScannerBufferSource::status() const {
 	if (cursor() && !*cursor()) return Status::END_INPUT;
 	else return Status::OK;
 }
@@ -73,10 +76,12 @@ void ScannerBufferSource::fill(size_t n) {
     size_t marker_offset = (size_t)(marker() - first);
     size_t token_offset = (size_t)(token() - first);
     size_t cursor_offset = (size_t)(cursor() - first);
+	size_t newline_offset = (size_t)(_newline - first);
 
     cursor() = _buffer + cursor_offset;
     marker() = _buffer + marker_offset;
     token() = _buffer + token_offset;
+	_newline = _buffer + newline_offset;
 
     // Fill the remainder of the buffer
     char* readpos = _buffer + remaining;

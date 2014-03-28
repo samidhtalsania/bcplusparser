@@ -9,9 +9,9 @@ AM_CXXFLAGS = -I $(INCLUDE)
 # Debugging Flags
 if DEBUG
 
-AM_CPPFLAGS += -DDEBUG -g3 -O0 -Wall
-AM_CFLAGS += -DDEBUG -g3 -O0 -Wall
-AM_CXXFLAGS += -DDEBUG -g3 -O0 -Wall
+AM_CPPFLAGS += -DDEBUG -g3 -O0 -Wall -fno-inline 
+AM_CFLAGS += -DDEBUG -g3 -O0 -Wall -fno-inline
+AM_CXXFLAGS += -DDEBUG -g3 -O0 -Wall -fno-inline
 
 else
 

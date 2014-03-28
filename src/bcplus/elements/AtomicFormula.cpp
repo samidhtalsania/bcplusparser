@@ -1,4 +1,5 @@
 
+#include "bcplus/DomainType.h"
 #include "bcplus/elements/formulas.h"
 #include "bcplus/elements/terms.h"
 #include "bcplus/elements/AtomicFormula.h"
@@ -25,6 +26,10 @@ void AtomicFormula::output(std::ostream& out) const {
 	out << "=";
 	v()->output(out);
 	if (parens()) out << ")";
+}
+
+DomainType::type AtomicFormula::domainType() const {
+	return DomainType::NO_DOMAIN;
 }
 
 }}

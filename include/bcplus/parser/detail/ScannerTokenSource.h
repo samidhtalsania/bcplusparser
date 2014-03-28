@@ -22,7 +22,7 @@ public:
 	/***********************************************************************/
 	/* Public Types */
 	/***********************************************************************/
-	typedef ReferencedList<babb::utils::ref_ptr<const Token> >::type TokenList;
+	typedef ReferencedList<babb::utils::ref_ptr<Token> >::type TokenList;
 
 
 	typedef TokenList::iterator iterator;
@@ -48,7 +48,7 @@ public:
 
 	/// Initializes the token stream with one or no tokens
 	/// @param token The token to add to the token stream (or NULL to create an empty stream)
-	ScannerTokenSource(Token const* token = NULL);
+	ScannerTokenSource(Token* token = NULL);
 
 	/// Destructor stub
 	virtual ~ScannerTokenSource();
@@ -60,19 +60,19 @@ public:
 
 	/// injects a token into the stream to be read next
 	/// @param token the token to inject
-	inline void push_front(Token const* token)			{ _stream->push_front(token); }
+	inline void push_front(Token* token)			{ _stream->push_front(token); }
 
 	/// injects tokens into the stream to be read next
 	/// @param tokens the tokens to inject
-	void push_front(TokenList const* tokens);
+	void push_front(TokenList* tokens);
 
 	/// Adds a token to the end of the stream to be read last
 	/// @param token The token to inject
-	inline void push_back(Token const* token)			{ _stream->push_back(token); }
+	inline void push_back(Token* token)				{ _stream->push_back(token); }
 	
 	/// Adds tokens to the end of the stream to be read last
 	/// @param tokens The tokens to inject
-	void push_back(TokenList const* tokens);
+	void push_back(TokenList* tokens);
 
 	/// Determines how many tokens are in the stream
 	/// @param the number of tokens in the stream
@@ -80,16 +80,18 @@ public:
 
 	/// Pops the next token in the stream and returns it
 	/// @return The next token or NULL if the stream is empty
-	Token const* next();
+	Token* next();
 
 	/// Peaks at the next token in the stream
 	/// @return The next token or NULL if the stream is empty
-	Token const* peak() const;
+	Token* peak() const;
 
 
 	/// Iterates over the token stream
 	inline const_iterator begin() const					{ return _stream->begin(); }
+	inline iterator begin()								{ return _stream->begin(); }
 	inline const_iterator end() const					{ return _stream->end(); }
+	inline iterator end() 								{ return _stream->end(); }
 
 	
 	// inherited

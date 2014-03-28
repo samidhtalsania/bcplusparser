@@ -16,8 +16,11 @@ namespace detail {
 /// @param BaseType The base class for this template
 /// @param type The type flag to indicate the specialization of the type
 /// @param Op The type for the operators that are allowed
+/// @param LHS The type for the left-hand side
+/// @param RHS The type for the right-hand side
 /// @param opString A functor to convert operators to cstrings
-template <typename BaseType, int type, typename Op, typename opString>
+/// @param dt A functor to call to determine the domain type of the element
+template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
 class BinaryElement : public BaseType
 {
 
@@ -36,13 +39,13 @@ private:
     /****************************************************************************/
 
     /// The operator
-    Op _op;
+    typename Op::type _op;
 
 	/// The left subformula
-	babb::utils::ref_ptr<BaseType> _left;
+	babb::utils::ref_ptr<LHS> _left;
 
 	/// The right subformula
-	babb::utils::ref_ptr<BaseType> _right;
+	babb::utils::ref_ptr<RHS> _right;
 
 
 public:
@@ -56,7 +59,7 @@ public:
     /// @param begin The beginning location of this element
     /// @param end The ending location of this element
     /// @param parens Whether the element is surrounded by parentheses
-    BinaryElement(Op const& op, BaseType* left, BaseType* right, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+    BinaryElement(typename Op::type const& op, LHS* left, RHS* right, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
     /// Destructor stub
     virtual ~BinaryElement();
@@ -66,21 +69,20 @@ public:
     /****************************************************************************/
 
 	/// The left-hand subformula
-	inline BaseType* left()							{ return _left; }
-	inline BaseType const* left() const				{ return _left; }	
+	inline LHS* left()								{ return _left; }
+	inline LHS const* left() const					{ return _left; }	
 
 	/// The operator for the formula
-	inline Op const& op() const				{ return _op; }
+	inline typename Op::type const& op() const		{ return _op; }
 
 	/// The right-hand subformula
-	inline BaseType* right()						{ return _right; }
-	inline BaseType const* right() const			{ return _right; }
+	inline RHS* right()								{ return _right; }
+	inline RHS const* right() const					{ return _right; }
 
 	// inherited from Element
     virtual Element* copy() const;
     virtual void output(std::ostream& out) const;
-
-
+	virtual DomainType::type domainType() const;
 };
 
 }}}

@@ -13,10 +13,11 @@
 
 #include "bcplus/Configuration.h"
 #include "bcplus/languages/Language.h"
-#include "bcplus/parser/detail/Scanner.h"
+#include "bcplus/parser/detail/MacroParser.h"
 #include "bcplus/statements/Statement.h"
 #include "bcplus/symbols/SymbolTable.h"
 #include "bcplus/elements/Element.h"
+
 
 namespace bcplus {
 namespace parser {
@@ -29,17 +30,16 @@ public:
 	/***********************************************************************************/
 	/// Container for status codes
 	struct Status {
-		enum Value {
+		enum type {
 			OK,				///< Everything is fine and dandy
 			SYNTAX_ERR,		///< A syntax error has occurred
 			IO_ERR,
-			SOFT_EOF,		///< The end of input has been reached by the scanner, the parser may still accept additional input
-			HARD_EOF		///< The end of input has been reached by the parser. No more input may be accepted.
+			END_INPUT		///< The end of input has been reached by the parser. No more input may be accepted.
 		};
 	};
 
 	/// The type returned by the parse function
-	typedef std::pair<Status::Value, babb::utils::ref_ptr<const statements::Statement> > ParseType;
+	typedef std::pair<Status::type, babb::utils::ref_ptr<statements::Statement> > ParseType;
 
 private:
 	/***********************************************************************************/
@@ -47,10 +47,10 @@ private:
 	/***********************************************************************************/
 
 	/// System wide configuration information
-	babb::utils::ref_ptr<Configuration> _config;
+	babb::utils::ref_ptr<const Configuration> _config;
 
 	/// The scanner object we're reading from
-	babb::utils::ref_ptr<detail::Scanner> _scanner;
+	babb::utils::ref_ptr<detail::MacroParser> _scanner;
 
 	/// The symbol table 
 	babb::utils::ref_ptr<symbols::SymbolTable> _symtab;
@@ -62,10 +62,10 @@ private:
 	void* _parser;
 
 	/// Temporary storage for a statement that's been parsed
-	babb::utils::ref_ptr<const statements::Statement> _stmt;
+	babb::utils::ref_ptr<statements::Statement> _stmt;
 
 	/// Our current parse status
-	Status::Value _stat;
+	Status::type _stat;
 
 	/// Whether we've just encountered a soft end of file
 	bool _soft_eof;
@@ -80,7 +80,7 @@ public:
 	/// @param config The system-wide configuration information 
 	/// @param lang The language specification that we will be enforcing
 	/// @param symtab The symbol table to use, or NULL to create one using the configuration options.
-	BCParser(Configuration* config, languages::Language const* lang, symbols::SymbolTable* symtab = NULL);
+	BCParser(Configuration const* config, languages::Language const* lang, symbols::SymbolTable* symtab = NULL);
 
 	/// Destructor
 	virtual ~BCParser();
@@ -96,22 +96,11 @@ public:
 	/// Resets the parser clearing all previous input
 	void reset();
 
-    /// Attempts to open the provided file and inject it into the front of the stream being read by the scanner.
-    /// @param file The file to read from.
-    /// @param squelch Whether to silence all errors resulting from this call.
-    /// @return True if successful, false otherwise.
-    bool push_front(boost::filesystem::path const& file, bool squelch = false);
-
     /// Attempts to open the provided file and append it to the end of the stream being read by the scanner.
     /// @param file The file to read from.
     /// @param squelch Whether to silence all errors resulting from this call.
     /// @return True if successful, false otherwise.
     bool push_back(boost::filesystem::path const& file, bool squelch = false);
-
-    /// Injects the provided null-terminated buffer into the front of the stream being read by the scanner.
-    /// @param buffer The null-terminated buffer to read from.
-    /// @param loc The location to display in messages partaining to this buffer.
-    void push_front(char const* buffer, Location const& loc = Location(NULL, 0, 0));
 
     /// Appends the provided null-terminated buffer to the end of the stream being read by the scanner.
     /// @param buffer The null-terminated buffer to read from.
@@ -135,26 +124,24 @@ public:
 	/// INTERNAL FUNCTION
 	/// Reports the use of an unsupported feature.
 	/// @param feature The unsupported feature that was used.
-	void _feature_error(languages::Language::Feature::Value feature);
+	/// @param loc The location of the error.
+	void _feature_error(languages::Language::Feature::type feature, Location const* loc = NULL);
 
 	/// INTERNAL FUNCTION
 	/// Registers a parse error.
 	/// @param err The error to register
-	void _parse_error(std::string const& err);
+	/// @param loc The location of the error.
+	void _parse_error(std::string const& err, Location const* loc = NULL);
 
-	elements::Element const* _resolve(ReferencedString const* name, size_t arity);
-
-	void _handle_stmt(statements::Statement const* stmt);	
+	void _handle_stmt(statements::Statement* stmt);	
 
 private:
-
-	/// Prepares the parser for an input to be injected at its current location
-	/// @param popState whether the top of the parser's state stack should be popped in the process.
-	void preInjectPrep(bool popState = false);
+	/// Makes a comment statement if there are comments waiting in the macro parser's buffer
+	/// @return The comment statement made from the comments, or NULL if there are no comments.
+	statements::Statement* makeCommentStmt();
 
 };
 
 
 }}
-
 

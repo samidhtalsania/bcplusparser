@@ -6,7 +6,7 @@ namespace bcplus {
 namespace elements  {
 
 
-Element::Element(Type::Value type, Location const& begin, Location const& end, bool parens)
+Element::Element(Type::type type, Location const& begin, Location const& end, bool parens)
 	: _parens(parens), _type(type), _begin(begin), _end(end) {
 	/* Intentionally left blank */
 }

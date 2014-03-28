@@ -57,7 +57,7 @@ public:
 	// Inherited from element
 	virtual Element* copy() const;
 	virtual void output(std::ostream& out) const;
-
+	virtual DomainType::type domainType() const;
 };
 
 /// Version of IdentifierElement with arguments
@@ -75,7 +75,7 @@ public:
 
 	/// Argument type aliases
 	typedef ArgType Argument;
-	typedef typename ReferencedList<babb::utils::ref_ptr<const Argument> >::type ArgumentList;
+	typedef typename ReferencedVector<babb::utils::ref_ptr<const Argument> >::type ArgumentList;
 	    
 
 	/// Argument iterators
@@ -118,7 +118,6 @@ public:
 	inline const_iterator begin() const					{ return _args->begin(); }
 	inline iterator end()								{ return _args->end(); }
 	inline const_iterator end() const					{ return _args->end(); }
-
 
 	// Inherited from element
 	virtual Element* copy() const;

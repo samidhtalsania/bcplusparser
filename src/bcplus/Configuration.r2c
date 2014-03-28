@@ -6,6 +6,7 @@
 #define BOOST_FILESYSTEM_VERSION 3
 #endif
 #include <boost/filesystem.hpp>
+#include <boost/iostreams/stream.hpp>
 #include <boost/iostreams/device/null.hpp>
 
 #include "babb/utils/memory.h"
@@ -21,11 +22,11 @@ namespace bcplus {
 const size_t Configuration::DEFAULT_VERB_LEVEL = Verb::STD;
 
 Configuration::Configuration(char const* bin, char const* version)
-	: _nullstream( ios::null_sink() )
 { 
 	_verb = DEFAULT_VERB_LEVEL;
 	_version = new ReferencedString(version);
 	_bin_name = new ReferencedString(fs::path(bin).filename().native());
+	_parse_trace = false;
 }
 
 
@@ -48,7 +49,7 @@ Option::Status Configuration::load(int argc, char const** argv) {
 	for (int i = 1; i < argc; i++) {
 		val = NULL;
 
-		Option::Value opt = parseOption(argv[i], val);
+		Option::type opt = parseOption(argv[i], val);
 
 		switch (opt) {
 		case Option::SYMTAB_INPUT:
@@ -78,6 +79,16 @@ Option::Status Configuration::load(int argc, char const** argv) {
 				verbosity(int_v);	
 			}
 			break;
+		case Option::PARSE_TRACE:
+			if (!strcmp(val, "true")) {
+				_parse_trace = true;
+			} else if (!strcmp(val, "false")) {
+				_parse_trace = false;
+			} else {
+				ret = Option::STAT_BAD_ARG;
+				std::cerr << "ERROR: unknown valud provided for command line option. Expected \"true\" or \"false\" in \"" << opt <<"." << std::endl;
+			}
+			break;
 
 		case Option::HELP:
 			return Option::STAT_HELP;
@@ -102,13 +113,15 @@ bool Configuration::good() {
 	return good;
 }
 
-std::ostream& Configuration::ostream(Verb::Level v) {
-	if (v > _verb) return _nullstream;
+std::ostream& Configuration::ostream(Verb::Level v) const {
+	static ios::stream<ios::null_sink> NULLSTREAM( (ios::null_sink()) );
+
+	if (v > _verb) return NULLSTREAM;
 	else if (v == Verb::ERROR) return std::cerr;
 	else return std::cout;
 }
 
-Option::Value Configuration::parseOption(char const* opt, char const*& val) {
+Option::type Configuration::parseOption(char const* opt, char const*& val) {
     char const* marker;
 
     val = NULL;
@@ -123,6 +136,8 @@ Option::Value Configuration::parseOption(char const* opt, char const*& val) {
 		"-s="|"--symtab-in="					{ val = opt; return Option::SYMTAB_INPUT; }
 		"--symtab-out="							{ val = opt; return Option::SYMTAB_OUTPUT; }
 		"--verb="								{ val = opt; return Option::VERBOSITY; }
+		"--parse-trace="						{ val = opt; return Option::PARSE_TRACE; }
+		"--parse-trace"							{ val = "true"; return Option::PARSE_TRACE; }
 		"-h"|"-?"|"--help"						{ val = NULL; return Option::HELP; }
 		"-v"|"--version"						{ val = NULL; return Option::VERSION; }
 		.										{ val = NULL; return Option::BAD; }

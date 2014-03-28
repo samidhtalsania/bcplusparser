@@ -189,7 +189,7 @@ typedef struct yyParser yyParser;
 #ifndef NDEBUG
 #include <stdio.h>
 static FILE *yyTraceFILE = 0;
-static char *yyTracePrompt = 0;
+static char const*yyTracePrompt = 0;
 #endif /* NDEBUG */
 
 #ifndef NDEBUG
@@ -210,7 +210,7 @@ static char *yyTracePrompt = 0;
 ** Outputs:
 ** None.
 */
-void ParseTrace(FILE *TraceFILE, char *zTracePrompt){
+void ParseTrace(FILE *TraceFILE, char const*zTracePrompt){
   yyTraceFILE = TraceFILE;
   yyTracePrompt = zTracePrompt;
   if( yyTraceFILE==0 ) yyTracePrompt = 0;
@@ -558,7 +558,7 @@ static const struct {
 /*
 ** Flags that a syntax error has occurred. 
 */
-#define YYERROR { yypParser->yysyntaxerr = 1; }
+#define YYERROR { yypParser->yysyntaxerr = 1; yypParser->yyerrcnt = 3; }
 
 static void yy_accept(yyParser*);  /* Forward Declaration */
 
@@ -699,10 +699,9 @@ static void yy_accept(
 /*
 ** Handles a syntax error within the parser.
 */
-static void yy_handle_err(yyParser* yypParser) {
+static void yy_handle_err(yyParser* yypParser, int* yyerrorhit) {
       int yyact;
 #ifdef YYERRORSYMBOL
-  int yyerrorhit = 0;   /* True if yymajor has invoked an error */
   int yymx;
 #endif
 #ifndef NDEBUG
@@ -735,7 +734,7 @@ static void yy_handle_err(yyParser* yypParser) {
         yy_syntax_error(yypParser,yypParser->yylookmajor,yypParser->yylookminor);
       }
       yymx = yypParser->yystack[yypParser->yyidx].major;
-      if( yymx==YYERRORSYMBOL || yyerrorhit ){
+      if( yymx==YYERRORSYMBOL || *yyerrorhit ){
 #ifndef NDEBUG
         if( yyTraceFILE ){
           fprintf(yyTraceFILE,"%sDiscard input token %s\n",
@@ -767,7 +766,7 @@ static void yy_handle_err(yyParser* yypParser) {
         }
       }
       yypParser->yyerrcnt = 3;
-      yyerrorhit = 1;
+      *yyerrorhit = 1;
 #elif defined(YYNOERRORRECOVERY)
       /* If the YYNOERRORRECOVERY macro is defined, then do not attempt to
       ** do any kind of error recovery.  Instead, simply invoke the syntax
@@ -852,22 +851,22 @@ char const* ParseTokenName(int tok) {
 ** Checks to see if there is a next-token independent reduction rule
 ** and executes it.
 */
-void ParseAttemptReduce(void* yyp) {
-	yyParser* pParser = (yyParser*)yyp;
+void ParseAttemptReduce(void* yyp ParseARG_PDECL) {
+	yyParser* yypParser = (yyParser*)yyp;
+	ParseARG_STORE;
 	int act = 0;
+	int yyerrorhit = 0;
 	do {
-		pParser->yysyntaxerr = 0;
-		act = yy_find_reduce_action(pParser->yystack[pParser->yyidx].stateno, YYNOCODE);
+		yypParser->yysyntaxerr = 0;
+		act = yy_find_reduce_action(yypParser->yystack[yypParser->yyidx].stateno, YYNOCODE);
 		if (act >= YYNSTATE && act < YYNSTATE + YYNRULE) {
 			// There is a reduce action. Do it.
-			yy_reduce(pParser, act-YYNSTATE);	
+			yy_reduce(yypParser, act-YYNSTATE);	
 		}
 
-		if (pParser->yysyntaxerr) {
-			yy_handle_err(pParser);
+		if (yypParser->yysyntaxerr) {
+			yy_handle_err(yypParser, &yyerrorhit);
 		}
-
-
 
 	} while (act >= YYNSTATE && act < YYNSTATE + YYNRULE);
 }
@@ -899,6 +898,7 @@ void Parse(
 ){
   int yyact;            /* The parser action. */
   int yyendofinput;     /* True if we are at the end of input */
+  int yyerrorhit = 0;
   yyParser *yypParser;  /* The parser */
 
   /* (re)initialize the parser, if necessary */
@@ -945,7 +945,7 @@ void Parse(
 	}
 	
 	if (yypParser->yysyntaxerr) {
-		yy_handle_err(yypParser);
+		yy_handle_err(yypParser, &yyerrorhit);
     }
   }while( yypParser->yylookmajor!=YYNOCODE && yypParser->yyidx>=0 );
   return;

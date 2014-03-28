@@ -16,10 +16,11 @@ namespace bcplus {
 
 /// Container for option enumeration information
 struct Option {
-	enum Value {
+	enum type {
 		SYMTAB_INPUT,		///< Input file to initialize symbol table from.
 		SYMTAB_OUTPUT,		///< Output file to save symbol table to.
 		VERBOSITY,			///< Specify the application verbosity level.
+		PARSE_TRACE,		///< Whether we should display lemon parser trace information.
 		HELP,				///< Show help dialog.
 		VERSION,			///< Show the application version
 		BAD					///< Unknown option.
@@ -38,12 +39,19 @@ struct Option {
 struct Verb {
 
 	enum Level {
-		ERROR = 0,			/// Error Messages
-		WARN = 1,			/// warning messages
-		STD = 2,			/// Standard Messages
-		OP = 3,				/// Operation-level messages
-		DETAIL = 4,			/// Detailed debug Messages
-		TRACE = 5			/// Extremely verbose debug messages
+		ERROR = 0,					/// Error Messages
+		WARN = 1,					/// warning messages
+		STD = 2,					/// Standard Messages
+		OP = 3,						/// Operation-level messages
+		DETAIL = 4,					/// Detailed debug Messages
+
+		// extremely verbose debug messages
+		TRACE_PARSER = 10,			/// verbose parser trace messages
+		TRACE_SYMTAB = 11,			/// verbose symbol table trace messages
+		TRACE_MACRO_PARSER = 12,	/// verbose macro parser trace messages
+		TRACE_SCANNER = 13			/// verbose scanner tracing messages
+
+
 	};
 };
 
@@ -60,6 +68,10 @@ public:
 	static const size_t DEFAULT_VERB_LEVEL;
 
 private:
+	/***************************************************************************/
+	/* Private Static Members */
+	/***************************************************************************/
+	
 
 	/***************************************************************************/
 	/* Private Members */
@@ -69,10 +81,9 @@ private:
 
 	babb::utils::ref_ptr<const ReferencedPath> _symtab_in;		///< Input file (if any) for the symbol table.
 	babb::utils::ref_ptr<const ReferencedPath> _symtab_out;		///< Output file (if any) for the symbol table.
-	size_t _verb;									///< The user defined verbosity level.	
-
-	boost::iostreams::stream<boost::iostreams::null_sink>	_nullstream;		///< Output stream to a null device in the event the verbosity is squelched.
-
+	size_t _verb;												///< The user defined verbosity level.	
+	bool _parse_trace;											///< Whether we should display parser trace information.
+	
 
 public:
 	/***************************************************************************/
@@ -120,9 +131,13 @@ public:
 	inline size_t verbosity() const								{ return _verb; }
 	inline void verbosity(size_t verb)							{ _verb = verb; }
 
+	/// Determine whether we should display parser trace information
+	inline bool parseTrace() const								{ return _parse_trace; }
+	inline void parseTrace(bool trace)							{ _parse_trace = trace; }
+
 	/// Get the output stream for the provided verbosity level
 	/// This will return a null-sink, std::cerr, or std::cout.
-	std::ostream& ostream(Verb::Level v);
+	std::ostream& ostream(Verb::Level v) const;
 
 	// --------------------------------------------------------------------------
 	/// Outputs the current configuration to a stream.
@@ -148,7 +163,7 @@ private:
 	/// @param opt The option string to parse.
 	/// @param[out] val The value the option is set to, where applicable.
 	/// @return The option contained within the string or BAD.
-	Option::Value parseOption(char const* opt, char const*& val);
+	Option::type parseOption(char const* opt, char const*& val);
 
 };
 

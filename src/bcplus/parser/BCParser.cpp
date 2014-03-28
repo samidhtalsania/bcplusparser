@@ -9,11 +9,12 @@
 
 #include "bcplus/Configuration.h"
 #include "bcplus/statements/Statement.h"
-#include "bcplus/statements/IncludeStatement.h"
+#include "bcplus/statements/blocks.h"
 #include "bcplus/parser/detail/lemon_parser.h"
 #include "bcplus/parser/BCParser.h"
 #include "bcplus/parser/Token.h"
 #include "bcplus/parser/detail/Scanner.h"
+#include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/SymbolTable.h"
 
 namespace u = babb::utils;
@@ -24,44 +25,72 @@ void*       lemon_parserAlloc(void* (*mallocProc)(size_t));
 void*       lemon_parserFree(void* yyp, void (*freeProc)(void*));
 void        lemon_parser(void* yyp, int tokentype, bcplus::parser::Token const* token, bcplus::parser::BCParser* parser);
 int         lemon_parserPreInject(void* yyp, int pop, bcplus::parser::Token const** token);
-void		lemon_parserAttemptReduce(void* yyp);
+void		lemon_parserAttemptReduce(void* yyp, bcplus::parser::BCParser* parser);
+void 		lemon_parserTrace(FILE *TraceFILE, char const*zTracePrompt);
 namespace bcplus {
 namespace parser {
 
 
 
-BCParser::BCParser(Configuration* config, languages::Language const* lang, symbols::SymbolTable* symtab)
+BCParser::BCParser(Configuration const* config, languages::Language const* lang, symbols::SymbolTable* symtab)
 	: _config(config), _lang(lang) {
 	if (symtab) _symtab = symtab;
 	else _symtab = new symbols::SymbolTable(config);
-	_scanner = new detail::Scanner(config);
+	_scanner = new detail::MacroParser(config, lang, _symtab);
 	_parser = lemon_parserAlloc(malloc);
 	_stat = Status::OK;
-	_soft_eof = false;
+
 }
 
 BCParser::~BCParser() {
 	lemon_parserFree(_parser, free);
 }
 
+statements::Statement* BCParser::makeCommentStmt() {
+	u::ref_ptr<const Token> token = _scanner->comment();
+	if (token != NULL) {
+		u::ref_ptr<statements::CommentBlock::ElementList> l = new statements::CommentBlock::ElementList();
+
+		do {
+			l->push_back(token);
+	
+			token = _scanner->comment();
+		} while (token != NULL);
+
+		return new statements::CommentBlock(l, l->front()->beginLoc(), l->back()->endLoc());
+	} else return NULL;
+}
 
 BCParser::ParseType BCParser::parse() {
+	u::ref_ptr<const Token> token;
+	u::ref_ptr<statements::Statement> stmt;
 
-	u::ref_ptr<const statements::Statement> stmt;
 
-	// pick up any statement that was generated simultaneously with an error (just in case)
+	
+	// output any comments
+	if (stmt = makeCommentStmt()) return ParseType(Status::OK, stmt);
+
+	// output existing statement
 	if (_stmt) {
 		stmt = _stmt;
 		_stmt = NULL;
 		return ParseType(Status::OK, stmt);
 	}
 
+	// if we're at the end of input don't bother progressing
+	if (_stat == Status::END_INPUT) {
+		return ParseType(Status::END_INPUT, NULL);
+	}
+
+
 	_stat = Status::OK;
+	
+	if (_config->parseTrace()) 
+		lemon_parserTrace(stdout, "TRACE: Parser: ");
 
-	u::ref_ptr<const Token> token;
+	// parse a new statement
 	do {
-
-		token = _scanner->readToken();
+		token = _scanner->next();
 
 		int type = token->type();
 
@@ -72,94 +101,83 @@ BCParser::ParseType BCParser::parse() {
 
 		case T_ERR_IO:
 			// an IO error occurred
-			_config->ostream(Verb::ERROR) << "ERROR: An IO error occurred while reading from input \"" << token->begin().filename() << "\"." << std::endl;
-			_stat = Status::IO_ERR;
+			_parse_error("An IO error occurred reading from \"" + token->beginLoc().filename() + "\".", &token->beginLoc());
 			break;
 
 		case T_ERR_UNTERMINATED_STRING:
-
-			_config->ostream(Verb::ERROR) << "ERROR: ";
-			token->begin().output(_config->ostream(Verb::ERROR));
-			_config->ostream(Verb::ERROR) << ": Unexpected end of input: unterminated string literal." << std::endl;
-			_stat = Status::SYNTAX_ERR;
+			_parse_error("Unexpected end of input. Unterminated string.", &token->beginLoc());
 			break;
 		
 		case T_ERR_UNTERMINATED_ASP:
-
-			_config->ostream(Verb::ERROR) << "ERROR: ";
-			token->begin().output(_config->ostream(Verb::ERROR));
-			_config->ostream(Verb::ERROR) << ": Unexpected end of input: unterminated asp code block." << std::endl;
-			_stat = Status::SYNTAX_ERR;
+			_parse_error("Unexpected end of input. Unterminated ASP code block.", &token->beginLoc());
 			break;
 		
 		case T_ERR_UNTERMINATED_LUA:
-
-			_config->ostream(Verb::ERROR) << "ERROR: ";
-			token->begin().output(_config->ostream(Verb::ERROR));
-			_config->ostream(Verb::ERROR) << ": Unexpected end of input: unterminated lua code block." << std::endl;
-			_stat = Status::SYNTAX_ERR;
+			_parse_error("Unexpected end of input. Unterminated LUA code block.", &token->beginLoc());
 			break;
 		
 		case T_ERR_UNTERMINATED_F2LP:
-
-			_config->ostream(Verb::ERROR) << "ERROR: ";
-			token->begin().output(_config->ostream(Verb::ERROR));
-			_config->ostream(Verb::ERROR) << ": Unexpected end of input: unterminated f2lp code block." << std::endl;
-			_stat = Status::SYNTAX_ERR;
+			_parse_error("Unexpected end of input. Unterminated F2LP code block.", &token->beginLoc());
 			break;
 		
 		case T_ERR_UNTERMINATED_BLK_COMMENT:
+			_parse_error("Unexpected end of input. Unterminated block comment.", &token->beginLoc());
+			break;
 
-			_config->ostream(Verb::ERROR) << "ERROR: ";
-			token->begin().output(_config->ostream(Verb::ERROR));
-			_config->ostream(Verb::ERROR) << ": Unexpected end of input: unterminated block comment." << std::endl;
-			_stat = Status::SYNTAX_ERR;
+		case T_ERR_SYNTAX:
+			_parse_error("Syntax error.", &token->beginLoc());
 			break;
 
 		case T_ERR_UNKNOWN_SYMBOL:
-			_config->ostream(Verb::ERROR) << "ERROR: ";
-			token->begin().output(_config->ostream(Verb::ERROR));
-			_config->ostream(Verb::ERROR) << ": Encountered an unknown symbol \"" << *token->str() << "\"." << std::endl;
-			_stat = Status::SYNTAX_ERR;
+			_parse_error("Unknown symbol \"" + *token->str() + "\".", &token->beginLoc());
+			break;
+
+		case T_ERR_PAREN_MISMATCH:
+			_parse_error("Detected umatched open parentheses.", &token->beginLoc());
 			break;
 
 		case T_EOF:
-			// only fed it to the parser if it's a hard EOF (i.e. we already encoutnered a soft EOF)
-			if (_soft_eof) {
-				_config->ostream(Verb::TRACE) << "TRACE: Hard EOF." << std::endl;
-				_last_token = token;
-				lemon_parser(_parser, type, token.release(), this);
-				_stat = Status::HARD_EOF;
-			} else {
-				_config->ostream(Verb::TRACE) << "TRACE: Soft EOF." << std::endl;
-				_soft_eof = true;
-				_stat = Status::SOFT_EOF;
-				lemon_parserAttemptReduce(_parser);
-			}
+			_config->ostream(Verb::TRACE_PARSER) << "TRACE: Hard EOF." << std::endl;
+			_last_token = token;
+			lemon_parser(_parser, type, token.release(), this);
+			lemon_parserAttemptReduce(_parser, this);
+			_stat = Status::END_INPUT;
 			break;
 
 		default:
 			_last_token = token;
 			lemon_parser(_parser, type, token.release(), this);
+
+			// This forces this parser to reduce each previous statement before
+			// looking ahead. This allows the MacroParser to perform just-in-time
+			// identifier binding to disambiguate our grammer at this level.
+			if (type == T_PERIOD) {
+				lemon_parserAttemptReduce(_parser, this);
+			}
+
 			break;
 		} 
 	} while (!_stmt && _stat == Status::OK);
 	
-
-
+	if (_config->parseTrace()) 
+		lemon_parserTrace(NULL, NULL);
+	
 	// Figure out exactly why we stopped
-	if (_stat != Status::OK && _stat != Status::SOFT_EOF) {
+	if (_stat != Status::OK && _stat != Status::END_INPUT) {
 		return ParseType(_stat, NULL);
+	} else if (stmt = makeCommentStmt()) {
+		return ParseType(Status::OK, stmt);
 	} else {
 		stmt = _stmt;
 		_stmt = NULL;
-		return ParseType(_stat, stmt);
+		return ParseType(Status::OK, stmt);
 	}
+	
 }
 
 
 void BCParser::reset() {
-	_scanner = new detail::Scanner(_config);
+	_scanner->reset();
 	lemon_parserFree(_parser, free);
 	_parser = lemon_parserAlloc(malloc);
 	_stat = Status::OK;
@@ -168,142 +186,49 @@ void BCParser::reset() {
 }
 
 
-bool BCParser::push_front(fs::path const& file, bool squelch) {
-	preInjectPrep();
-	return _scanner->push_front(file, squelch);
-} 
 
 bool BCParser::push_back(fs::path const& file, bool squelch) {
-	if (!_scanner->size()) preInjectPrep();
 	return _scanner->push_back(file, squelch);
 }
 
-void BCParser::push_front(char const* buffer, Location const& loc) {
-	preInjectPrep();
-	_scanner->push_front(buffer, loc);
-}
-
 void BCParser::push_back(char const* buffer, Location const& loc) {
-	if (!_scanner->size()) preInjectPrep();
 	_scanner->push_back(buffer, loc);
 }
 
-void BCParser::_feature_error(languages::Language::Feature::Value feature) {
-	Token const* t = _last_token;
+void BCParser::_feature_error(languages::Language::Feature::type feature, Location const* loc) {
 	std::ostream& out = _config->ostream(Verb::ERROR);
 	out << "ERROR: ";
-	if (t) {
-		out << t->begin() << ": \"" << *t << "\": ";
+	if (loc) {
+		out << *loc << ": ";
+	} else {
+		Token const* t = _last_token;
+		if (t) {
+			out << t->beginLoc() << ": \"" << *t << "\": ";
+		}
 	}
 	out << lang()->featureDescription(feature) << " are not supported by language " << lang()->name() << "." << std::endl;
 	_stat = Status::SYNTAX_ERR;
 }
 
-void BCParser::_parse_error(std::string const& error) {
-	Token const* t = _last_token;
+void BCParser::_parse_error(std::string const& error, Location const* loc) {
 	std::ostream& out = _config->ostream(Verb::ERROR);
 	out << "ERROR: ";
-	if (t) {
-		out << t->begin() << ": \"" << *t << "\": ";
+	if (loc) {
+		out << *loc << ": ";
+	} else {
+		Token const* t = _last_token;
+		if (t) {
+			out << t->beginLoc() << ": \"" << *t << "\": ";
+		}
 	}
 	out << error << std::endl;
 	_stat = Status::SYNTAX_ERR;
 }
 
-elements::Element const* BCParser::_resolve(ReferencedString const* name, size_t arity) {
-	// TODO
-	return NULL;
-}
+void BCParser::_handle_stmt(statements::Statement* stmt) {
+	_config->ostream(Verb::TRACE_PARSER) << "TRACE: Got statement of type \"" << stmt->typeString() << "\"." << std::endl;
 
-void BCParser::_handle_stmt(statements::Statement const* stmt) {
-	_config->ostream(Verb::DETAIL) << "TRACE: Got statement \"";
-	stmt->output(_config->ostream(Verb::DETAIL));
-	_config->ostream(Verb::DETAIL) << "\"." << std::endl;
-	
-
-	// Handle include statements internally
-	if ( stmt->type() == statements::Statement::Type::INCLUDE ) {
-		Location l = stmt->beginLoc();
-	
-		BOOST_FOREACH(ReferencedString const* name, *((statements::IncludeStatement*)stmt)) {
-			fs::path p = fs::path(*name);
-			try {
-				// Try to resolve the name
-				fs::path fullpath;
-
-				// try to resolve the path of the file
-
-				if (p.is_absolute() || !l.file()) {
-					fullpath = p;
-				} else if (!l.file()) {
-					fullpath = fs::current_path() / p;
-				} else {
-					// Try a path relative to the current file we're in first
-					// Then try resolving with our default path.
-					fullpath = l.file()->parent_path() / p;
-					if (!fs::exists(fullpath) || fs::is_directory(fullpath)) {
-						fullpath = fs::current_path() / p;
-					}
-				}
-	
-				if (!fs::exists(fullpath)) {
-					// We were unable to resolve the file..
-					std::ostream& out = _config->ostream(Verb::ERROR);
-					out << "ERROR: ";
-					l.output(out);
-					out << ": Could not open file \"" << p.native() << "\". File does not exist." << std::endl;
-
-					_stat = Status::SYNTAX_ERR;
-					break;
-				}
-
-				if (fs::is_directory(fullpath)) {
-					// We were unable to resolve the file..
-					std::ostream& out = _config->ostream(Verb::ERROR);
-					out << "ERROR: ";
-					l.output(out);
-					out << ": Could not open file \"" << p.native() << "\". The file is a directory." << std::endl;
-
-					_stat = Status::SYNTAX_ERR;
-					break;
-					// We can't open a directory.
-				}
-
-				// The file appears to be good.
-				if (!push_front(fullpath, false)) {
-					std::ostream& out = _config->ostream(Verb::ERROR);
-					out << "ERROR: ";
-					l.output(out);
-					out << ": An error occurred openning file \"" << p.native() << "\"." << std::endl;
-
-					_stat = Status::IO_ERR;
-					break;
-				}
-
-			} catch (fs::filesystem_error& err) {
-					std::ostream& out = _config->ostream(Verb::ERROR);
-					out << "ERROR: ";
-					l.output(out);
-					out << ": An error occurred openning file \"" << p.native() << "\"." << std::endl;
-
-					_stat = Status::IO_ERR;
-					break;
-			}
-		}
-	} else {
-		_stmt = stmt;
-	}
-}
-
-void BCParser::preInjectPrep(bool pop_stack) {
-	Token const* tok = NULL;
-	int t = lemon_parserPreInject(_parser, pop_stack, &tok);
-	if (t) {
-		_config->ostream(Verb::TRACE) << "TRACE: " << tok->begin() << ": Retracted (" << tok->typeString() << ") \"" << *tok << "\"." << std::endl;
-		_scanner->push_front(tok);
-	} else {
-		_config->ostream(Verb::TRACE) << "TRACE: No token to retract from the parser." << std::endl;
-	}
+	_stmt = stmt;
 }
 
 }}

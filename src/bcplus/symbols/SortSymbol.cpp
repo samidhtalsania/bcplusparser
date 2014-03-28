@@ -5,7 +5,7 @@
 
 #include "babb/utils/memory.h"
 
-
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Resolver.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/ObjectSymbol.h"
@@ -32,12 +32,10 @@ SortSymbol::SortSymbol(ReferencedString const* base, ObjectList* objects, SortLi
 		}
 	}
 
-	_integral = true;
+	_dt = DomainType::NO_DOMAIN;
 	BOOST_FOREACH(ObjectSymbol const* obj, *_objects) {
-		if (!obj->integral()) {
-			_integral = false;
-			break;
-		}
+		if (_dt == DomainType::NO_DOMAIN) _dt = obj->domainType();
+		else if (_dt != obj->domainType()) _dt = DomainType::OTHER;
 	}
 }
 
@@ -47,6 +45,8 @@ SortSymbol::SortSymbol(boost::property_tree::ptree const& node, std::ostream* er
 	_objects = new ObjectList();
 	_supersorts = new SortList();
 	_subsorts = new SortList();	
+
+	_dt = DomainType::NO_DOMAIN;
 
 	// Ensure arity = 0 for sorts
 	if (good() && arity()) {
@@ -62,6 +62,10 @@ SortSymbol::~SortSymbol() {
 
 bool SortSymbol::add(ObjectSymbol const* obj) {
 	if (_objects->insert(obj).second) {
+		// update domain type
+		if (_dt == DomainType::NO_DOMAIN) _dt = obj->domainType();
+		else if (_dt != obj->domainType()) _dt = DomainType::OTHER;
+
 		// update any supersorts
 		BOOST_FOREACH(SortSymbol* sort, *_supersorts) {
 			sort->add(obj);
@@ -148,7 +152,8 @@ bool SortSymbol::operator==(Symbol const& other) const {
 
 
 	if (!Symbol::operator==(other)) return false;
-/*
+	SortSymbol const& o = (SortSymbol const&)other;
+
 	// check objects
 	{
 		const_iterator oit = o.begin();
@@ -183,9 +188,13 @@ bool SortSymbol::operator==(Symbol const& other) const {
 			oit++;
 		}
 		if (oit != o.endSubSorts()) return false;
-	} */
+	}
 	return true;
 
+}
+
+DomainType::type SortSymbol::domainType() const {
+	return _dt;
 }
 
 void SortSymbol::save(boost::property_tree::ptree& node) const {
@@ -200,6 +209,10 @@ void SortSymbol::save(boost::property_tree::ptree& node) const {
 		boost::property_tree::ptree& tmp = node.add("subsort", "");
 		tmp.put("<xmlattr>.name", *(sort->base()));
 	}
+}
+
+void SortSymbol::outputDefinition(std::ostream& out) const {
+	out << *base();
 }
 
 }}

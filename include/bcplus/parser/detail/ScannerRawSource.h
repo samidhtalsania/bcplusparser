@@ -25,7 +25,7 @@ public:
 	/***********************************************************/
 
 	struct Status {
-			enum Value {
+			enum type {
 				OK,
 				FAIL,
 				CLOSED,
@@ -40,7 +40,7 @@ private:
 	/***********************************************************/
 
 	/// Configuration
-	babb::utils::ref_ptr<Configuration> _config;
+	babb::utils::ref_ptr<const Configuration> _config;
 
 	/// Scanner State
 	char const* _cursor;
@@ -53,7 +53,7 @@ public:
 	/* Constructors */
 	/***********************************************************/
 	/// @param config The system wide configuration information
-	ScannerRawSource(Configuration* config);
+	ScannerRawSource(Configuration const* config);
 
 	/// Destructor
 	virtual ~ScannerRawSource();
@@ -64,7 +64,6 @@ public:
 
 	/// Gets the system configuration
 	inline Configuration const* config() const	{ return _config; }
-	inline Configuration* config()				{ return _config; }
 
 	/// Scanner state accessors / mutators
 
@@ -95,7 +94,7 @@ public:
 	virtual Location loc() const = 0;
 	
 	/// Determines the status of the source
-	virtual Status::Value status() const = 0;
+	virtual Status::type status() const = 0;
 
 	/// Closes the source
 	virtual void close() = 0; 

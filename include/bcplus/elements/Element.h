@@ -6,7 +6,7 @@
 
 #include "babb/utils/memory.h"
 
-
+#include "bcplus/DomainType.h"
 #include "bcplus/Location.h"
 
 
@@ -24,13 +24,14 @@ public:
 
 	/// Container of enumeration of possible types
 	struct Type {
-		enum Value {
+		enum type {
 			STATEMENT,
 			FORMULA,
 			TERM,
 			MACRO
 		};
 	};
+
 
 
 
@@ -43,7 +44,7 @@ private:
 	bool _parens;
 
 	/// The type of element we're looking at
-	Type::Value _type;
+	Type::type _type;
 
 	/// The start/end of this element in the original file
 	Location _begin;
@@ -59,7 +60,7 @@ public:
 	/// @param begin The beginning location of this element
 	/// @param end The ending location of this element
 	/// @param parens Whether the element is surrounded by parentheses
-	Element(Type::Value type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+	Element(Type::type type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
 	/// Destructor stub
 	virtual ~Element();
@@ -73,13 +74,15 @@ public:
 	inline void parens(bool p)							{ _parens = p; }
 
 	/// Determines the type of the element
-	inline Type::Value type() const						{ return _type; }
+	inline Type::type type() const						{ return _type; }
 
-	/// Get the starting location of this element
+	/// Get/set the starting location of this element
 	inline Location const& beginLoc() const				{ return _begin; }
-	
+    inline void beginLoc(Location const& loc)           { _begin = loc; }
+
 	/// Get the ending location of this element
 	inline Location const& endLoc() const				{ return _end; }
+    inline void endLoc(Location const& loc)             { _end = loc; }
 
 	/// Helper function to output a string representing this element.
 	inline std::string str() const						{ std::stringstream out; output(out); return out.str(); }
@@ -90,11 +93,16 @@ public:
 	/// Outputs the element to the given stream
 	/// @param out The output stream to write to
 	virtual void output(std::ostream& out) const = 0;
-
-
+	
+	/// Get a description of the domain this element ranges over.
+	virtual DomainType::type domainType() const = 0;
 };
 
 }}
 
+/// Element output operator
+inline std::ostream& operator<<(std::ostream& out, bcplus::elements::Element const& elem) {
+	elem.output(out); return out;
+}
 
 

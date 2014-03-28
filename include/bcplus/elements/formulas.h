@@ -1,9 +1,10 @@
 #pragma once
 
+#include "bcplus/elements/terms.h"
 #include "bcplus/elements/detail/ElementClass.h"
 #include "bcplus/elements/detail/BinaryElement.h"
 #include "bcplus/elements/detail/UnaryElement.h"
-
+#include "bcplus/elements/detail/NullaryElement.h"
 namespace bcplus {
 namespace elements {
 
@@ -11,58 +12,89 @@ namespace detail {
 
 /// Container of enumeration of possible types
 struct FormulaType {
-	enum Value {
+	enum type {
 		BINARY,
+		COMPARISON,
 		UNARY,
 		QUANTIFIER,
-		ATOMIC
+		ATOMIC,
+		NULLARY,
+		CARDINALITY
 	};
 };
 
 /// Structure descrbing binary formula operators.
 struct BinaryFormulaOperator {
-		enum Value {
+		enum type {
 			AND,
 			OR,
 			EQUIV,
 			IMPL,
-			REV_IMPL, // fake operator to simulate F <- G.
-			EQ,
-			NEQ,
-			DBL_EQ,
-			LTHAN,
-			GTHAN,
-			LTHAN_EQ,
-			GTHAN_EQ,
-			BIND_STEP
+			BIND_STEP, // i:F
+			REV_IMPL // fake operator to simulate F <- G.
 		};
 
 	/// Functor to convert binary formula operators to cstrings.
 	struct cstr {
 
-		char const* operator() (Value op) {
+		char const* operator() (type op) {
 			switch (op) {
 			case AND:			return " & ";
 			case OR:			return " ++ ";
 			case EQUIV:			return " <-> ";
 			case IMPL:			return " -> ";
 			case REV_IMPL:		return " <- ";
-			case EQ:			return " = ";
+			default:			return "<UNKNOWN_BOP>";
+			}
+		}
+	};
+	
+	/// Functor to determine the domain type of the element
+	struct domaintype {
+		DomainType::type operator()(type op) {
+			return DomainType::NO_DOMAIN;
+		}
+	};
+};
+
+/// Structure descrbing comparison between two terms.
+struct ComparisonOperator {
+		enum type {
+			EQ,
+			NEQ,
+			LTHAN,
+			GTHAN,
+			LTHAN_EQ,
+			GTHAN_EQ
+		};
+
+	/// Functor to convert binary formula operators to cstrings.
+	struct cstr {
+
+		char const* operator() (type op) {
+			switch (op) {
+			case EQ:			return " == ";
 			case NEQ:			return " \\= ";
-			case DBL_EQ:		return " == ";
 			case LTHAN:			return " < ";
 			case GTHAN:			return " > ";
 			case LTHAN_EQ:		return " =< ";
 			case GTHAN_EQ:		return " >= ";
-			case BIND_STEP:		return " : ";
+			default:			return "<UNKNOWN_COMPARISON_OP>";
 			}
+		}
+	};
+	
+	/// Functor to determine the domain type of th element
+	struct domaintype {
+		DomainType::type operator()(type op) {
+			return DomainType::NO_DOMAIN;
 		}
 	};
 };
 
 /// Structure describing unary formula operators.
 struct UnaryFormulaOperator {
-	enum Value {
+	enum type {
 			NOT,
             NOT_DASH,
             STRONG_NOT,
@@ -76,7 +108,7 @@ struct UnaryFormulaOperator {
 
 	/// Functor to map unary formula operators to prenix symbols.
 	struct pre_cstr {
-			char const* operator()(Value op) {
+			char const* operator()(type op) {
 				switch (op) {
 				case NOT: 			return "not ";
 				case NOT_DASH:		return "-";
@@ -87,20 +119,52 @@ struct UnaryFormulaOperator {
 				case INERTIAL:		return "inertial ";
 				case RIGID:			return "rigid ";
 				case CHOICE:		return "{";
+				default:			return "<UNKNOWN_UOP>";
 				}
 			}
 	};
 
 	/// Functor to map unary formula operators to postnix symbols.
 	struct post_cstr {
-			char const* operator()(Value op) {
+			char const* operator()(type op) {
 				switch (op) {
 				case CHOICE:		return "}";
 				default:			return "";
 				}
 			}
 	};
+	
+	/// Functor to determine the domain type of the element
+	struct domaintype {
+		DomainType::type operator()(type op) {
+			return DomainType::NO_DOMAIN;
+		}
+	};
 
+};
+
+
+struct NullaryFormulaOperator {
+	enum type {
+		TRUE,
+		FALSE
+	};
+
+	struct cstr {
+		char const* operator()(type op) {
+			switch (op) {
+			case TRUE: return "true";
+			case FALSE: return "false";
+			default: return "<UNKNOWN_NOP>";
+			}
+		}
+	};
+
+	struct domaintype {
+		DomainType::type operator()(type op) {
+			return DomainType::NO_DOMAIN;
+		}
+	};	
 };
 
 }
@@ -116,23 +180,51 @@ typedef detail::ElementClass<
  * @brief A binary formula of the form (F @ G) where '@' is some operator.
  */
 typedef detail::BinaryElement<
-	Formula, 
+	Formula,
 	detail::FormulaType::BINARY, 
-	detail::BinaryFormulaOperator::Value, 
-	detail::BinaryFormulaOperator::cstr > BinaryFormula;
+	detail::BinaryFormulaOperator,
+	Formula, Formula, 
+	detail::BinaryFormulaOperator::cstr,
+	detail::BinaryFormulaOperator::domaintype > BinaryFormula;
+
+/** 
+ * @brief A binary formula of the form (F @ G) where '@' is some operator.
+ */
+typedef detail::BinaryElement<
+	Formula,
+	detail::FormulaType::COMPARISON, 
+	detail::ComparisonOperator, 
+	Term, Term,
+	detail::ComparisonOperator::cstr,
+	detail::ComparisonOperator::domaintype > ComparisonFormula;
+
 
 /**
- * @breif A unary formula of the form @F where '@' is some operator.
+ * @brief A unary formula of the form @F where '@' is some operator.
  */
 typedef detail::UnaryElement<
 	Formula, 
 	detail::FormulaType::UNARY,
-	detail::UnaryFormulaOperator::Value, 
+	detail::UnaryFormulaOperator, 
+	Formula,
 	detail::UnaryFormulaOperator::pre_cstr, 
-	detail::UnaryFormulaOperator::post_cstr > UnaryFormula;
+	detail::UnaryFormulaOperator::post_cstr,
+	detail::UnaryFormulaOperator::domaintype > UnaryFormula;
+
+
+/**
+ * @brief A nullary formula "true" or "false"
+ */
+typedef detail::NullaryElement<
+	Formula,
+	detail::FormulaType::NULLARY,
+	detail::NullaryFormulaOperator,
+	detail::NullaryFormulaOperator::cstr,
+	detail::NullaryFormulaOperator::domaintype > NullaryFormula;
+
 
 }}
-
 #include "bcplus/elements/AtomicFormula.h"
 #include "bcplus/elements/QuantifierFormula.h"
-
+#include "bcplus/elements/CardinalityFormula.h"
+#include "bcplus/elements/BindingFormula.h"

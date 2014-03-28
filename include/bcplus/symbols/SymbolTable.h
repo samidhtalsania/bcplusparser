@@ -48,7 +48,7 @@ public:
 	/* Public Types */
 	/*******************************************************************************/
 	typedef std::map<std::string,babb::utils::ref_ptr<Symbol> > SymbolMap;
-	typedef std::map<Symbol::Type::Value, SymbolMap> TypeMap;
+	typedef std::map<Symbol::Type::type, SymbolMap> TypeMap;
 
 	typedef boost::transform_iterator<get_second, SymbolMap::iterator> iterator;
 	typedef boost::transform_iterator<get_second, SymbolMap::const_iterator> const_iterator;
@@ -62,10 +62,13 @@ private:
 	TypeMap _symbols;
 
 	/// The system configuration information
-	babb::utils::ref_ptr<Configuration> _config;
+	babb::utils::ref_ptr<const Configuration> _config;
 
 	/// Whether the symbol table has been successfully loaded.
 	bool _good;
+
+	/// A convenient place to store metadata
+	Referenced* _metadata;
 
 public:
 
@@ -74,7 +77,7 @@ public:
 	/*******************************************************************************/
 	/// Creates a symbol table based on the provided configuration information.
 	/// @param config The system-wide configuration information to read from.
-	SymbolTable(Configuration* config);
+	SymbolTable(Configuration const* config);
 
 	/// Destructor for the symbol table. 
 	/// Saves the table state according to the configuration information.
@@ -86,14 +89,19 @@ public:
 
 
 	/// Iterate over the list of symbols matching the provided type
-	inline iterator begin(Symbol::Type::Value type) 							{ return iterator(_symbols[type].begin()); }
-	inline const_iterator begin(Symbol::Type::Value type) const					{ return const_iterator(_symbols.find(type)->second.begin()); }
+	inline iterator begin(Symbol::Type::type type) 							{ return iterator(_symbols[type].begin()); }
+	inline const_iterator begin(Symbol::Type::type type) const				{ return const_iterator(_symbols.find(type)->second.begin()); }
 
-	inline iterator end(Symbol::Type::Value type)								{ return iterator(_symbols[type].end()); }
-	inline const_iterator end(Symbol::Type::Value type) const					{ return const_iterator(_symbols.find(type)->second.end()); }
+	inline iterator end(Symbol::Type::type type)							{ return iterator(_symbols[type].end()); }
+	inline const_iterator end(Symbol::Type::type type) const				{ return const_iterator(_symbols.find(type)->second.end()); }
 	
 	/// Determines if the symbol table was successfully loaded
-	inline bool good() const													{ return _good; }
+	inline bool good() const												{ return _good; }
+
+	/// Get/set the symboltable metadata
+	inline Referenced const* metadata() const								{ return _metadata; }
+	inline Referenced* metadata() 											{ return _metadata; }
+	inline void metadata(Referenced* data)									{ _metadata = data; }
 
 
 	// Inherited from Resolver
@@ -106,6 +114,14 @@ private:
 	/*******************************************************************************/
 	/* Private Functions */
 	/*******************************************************************************/
+
+	/// internal resolve call to control tracing
+	/// @param typemask A mask of the types to resolve
+	/// @param name The base of the identifier to resolve
+	/// @param arity The arity of the identifier to resolve
+	/// @param trace Whether we should output trace information to the appropriate ostream.
+	Symbol * _resolve(size_t typemask, std::string const& name, size_t arity = 0, bool trace = true);
+	Symbol const* _resolve(size_t typemask, std::string const& name, size_t arity = 0, bool trace = true) const;
 
 
 	/// Attempts to load the symbol table from the provided file

@@ -12,24 +12,58 @@ public:
 	/******************************************************************************/
 	/// Container for language features to be supported
 	struct Feature {
-		enum Value {
+		enum type {
 			DECL_INCLUDE,				///< include statements.
-			DECL_MACRO,					///< macro definitions and expansion
+			DECL_MACRO,					///< macro definitions
 			DECL_SORT,					///< sort definition
 			DECL_OBJECT,				///< object definition
 			DECL_CONSTANT,				///< constant definition
 			DECL_VARIABLE,				///< variable definition
 			DECL_SHOW,					///< show statement
-			DECL_MAXAFVALUE,			///< Maximum additive fluent value (:- maxAFValue)
+			DECL_SHOW_ALL,				///< show all statement
+			DECL_HIDE,					///< hide statement
+			DECL_HIDE_ALL,				///< hide all statement
+			DECL_MAXAFVALUE,			///< Maximum additive fluent value (:- maxAFtype)
 			DECL_MAXADDITIVE,			///< Maximum additive fluent value (:- maxAdditive)
+			DECL_QUERY,					///< Query statements	
 
-			FORMULA_NESTED,				///< nested formulas (otherwise only conjunction is allowed)
-			FORMULA_CHOICE,				///< choice rules in the head of laws
-		
+			CONST_ABACTION,				///< abAction constant type
+			CONST_ACTION,
+			CONST_ADDITIVEFLUENT,		///< additiveFluent constant type
+			CONST_ADDITIVEACTION,		///< additiveAction constant type
+			CONST_EXTERNALACTION,		///< externalAction constant type
+			CONST_EXTERNALFLUENT,		///< externalFluent constant type
+			CONST_EXOGENOUSACTION,		///< exogenousAction constant type
+			CONST_INERTIALFLUENT,		///< inertialFluent constant type
+			CONST_RIGID,				///< rigid constant type
+			CONST_SIMPLEFLUENT,			///< simpleFluent constant type
+
+
+			FORMULA_NESTED,				///< nested formulas
+			FORMULA_CARDINALITY_BODY,	///< Cardinality rules in the body of laws
+			FORMULA_CARDINALITY_HEAD,	///< Cardinality (choice) rules in the head of laws
+			FORMULA_QUANTIFIER,			///< Quantifier formulas in the body of laws
+			FORMULA_NOT_KEYWORD,		///< Whether to allow the 'not' keyword in a formula
+			FORMULA_NOT_DASH,			///< Whether to allow the '-' symbol in a formula to indicate negation
+			FORMULA_NOT_DASH_HEAD,		///< Whether to allow the '-' symbol in the head of a law to indicate strong negation
+			FORMULA_TILDE_STRONG_NEG,	///< Whether to allow the '~' symbol indicating strong negation
+
+			MACRO,						///< Macro expansion
+			VARIABLE,					///< Variables
+			NUMRANGE_SORT,				///< Whether number ranges are allowed as dynamic sort declarations
+			STAR_SORT,					///< Whether dynamically declared star sorts "sortname*" are allowed
+			CARROT_SORT,				///< Whether dynamically declared carrot sorts "sortname^" are allowed		
+			MAXSTEP,					///< Allow use of the maxstep keyword
+			MAXADDITIVE,				///< Allow use of the maxAdditive keyword
+			MAXAFVALUE,					///< Allow use of the maxAFValue keyword
+			
+			QUERY_BIND_STEP,			///< Whether to accept step bindings (i:F) in query formulas.
+			QUERY_MAXSTEP,				///< Whether to accept a maxstep declaration within a query.
+			QUERY_LABEL,				///< Whether to accept a label declaration within a query
+
 			CLAUSE_IF,					///< "if G" optional rule body
 			CLAUSE_AFTER,				///< "after H" optional rule body
 			CLAUSE_IFCONS,				///< "ifcons M" optional rule body
-			CLAUSE_ASSUMING,			///< "assuming M" optional rule body
 			CLAUSE_UNLESS,				///< "unless ab" optional rule body
 			CLAUSE_WHERE,				///< "where M" optional rule body
 
@@ -64,8 +98,7 @@ public:
 			LAW_INERTIAL_D,				///< inertial c if G after H
 
 			LAW_NONEXECUTABLE,			///< nonexecutable F if G		
-			LAW_RIGID,					///< rigid c
-			
+			LAW_RIGID,					///< rigid c			
 			LAW_OBSERVED,				///< observed c=v at v2.
 
 			NOCONCURRENCY,				///< noconcurrency.
@@ -83,13 +116,13 @@ public:
 		/// Get a description of the provided feature
 		/// @param feature The feature to retrieve the description of
 		/// @return A short description of the feature
-		static char const* descr(Value feature);
+		static char const* descr(type feature);
 
 	};
 
 
 	/// Get the description of the provided feature
-	char const* featureDescription(Feature::Value feature) const				{ return Feature::descr(feature); }
+	char const* featureDescription(Feature::type feature) const				{ return Feature::descr(feature); }
 
 	/// Get the name of this language.
 	/// @return The language name
@@ -98,7 +131,7 @@ public:
 	/// Determine if this language supports the provided feature.
 	/// @param feature The feature to check
 	/// @param True if the language supports the feature, false otherwise.
-	virtual bool support(Feature::Value feature) const = 0;
+	virtual bool support(Feature::type feature) const = 0;
 
 
 };

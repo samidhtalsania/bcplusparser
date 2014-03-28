@@ -34,7 +34,7 @@ private:
 	/****************************************************************************/
 
 	/// The subtype we're looking at
-	typename Type::Value _subtype;
+	typename Type::type _subtype;
 
 public:
 	/****************************************************************************/
@@ -45,7 +45,7 @@ public:
 	/// @param begin The beginning location of this element
 	/// @param end The ending location of this element
 	/// @param parens Whether the element is surrounded by parentheses
-	ElementClass(typename Type::Value type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+	ElementClass(typename Type::type type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
 	/// Destructor stub
 	virtual ~ElementClass();
@@ -55,11 +55,13 @@ public:
 	/****************************************************************************/
 
 	/// Get the formula type
-	inline typename Type::Value subType() const				{ return _subtype; }
-	
+	inline typename Type::type subType() const				{ return _subtype; }
+
+
+	// inherited
 	virtual Element* copy() const = 0;
 	virtual void output(std::ostream& out) const = 0;
-
+	virtual DomainType::type domainType() const = 0;
 };
 
 }}}

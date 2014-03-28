@@ -16,6 +16,7 @@
 #include "bcplus/symbols/VariableSymbol.h"
 #include "bcplus/symbols/SortSymbol.h"
 #include "bcplus/symbols/MacroSymbol.h"
+#include "bcplus/symbols/QuerySymbol.h"
 #include "bcplus/symbols/SymbolTable.h"
 
 namespace u = babb::utils;
@@ -25,13 +26,13 @@ namespace pt = boost::property_tree;
 namespace bcplus {
 namespace symbols{
 
-SymbolTable::SymbolTable(Configuration* config)
+SymbolTable::SymbolTable(Configuration const* config)
 	: _config(config) {
 
 	// See if we should load anything from a file
 	if (config->symtabInput()) _good = load(*(config->symtabInput()));
 	else _good = true;
-
+	_metadata = NULL;
 }
 
 SymbolTable::~SymbolTable() {
@@ -39,76 +40,139 @@ SymbolTable::~SymbolTable() {
 	if (_config->symtabOutput() && good()) save(*(_config->symtabOutput()));
 }
 
+Symbol* SymbolTable::resolve(size_t typemask, std::string const& name, size_t arity) {
+	return _resolve(typemask, name, arity, true); 
+}
 
 Symbol const* SymbolTable::resolve(size_t typemask, std::string const& name, size_t arity) const {
-	std::string s = Symbol::genName(name, arity);
-
-	SymbolMap::const_iterator it;
-	size_t type = 0x0001;
-	while (type <= Symbol::Type::_LARGEST_) {
-		SymbolMap const& m = _symbols.find((Symbol::Type::Value)type)->second;
-		it = m.find(s);
-		if (it != m.end()) {
-			return it->second;
-		}
-	
-		type = (type << 1);
-	}
-	return NULL;
+	return _resolve(typemask, name, arity, true);
 }
 
-Symbol* SymbolTable::resolve(size_t typemask, std::string const& name, size_t arity)  {
-	std::string s = Symbol::genName(name, arity);
-
-	SymbolMap::iterator it;
-	size_t type = 0x0001;
-	while (type <= Symbol::Type::_LARGEST_) {
-		SymbolMap& m = _symbols[(Symbol::Type::Value)type];
-		it = m.find(s);
-		if (it != m.end()) {
-			return it->second;
-		}
-	
-		type = (type << 1);
-	}
-	return NULL;
-}
 
 bool SymbolTable::create(Symbol* symbol) {
 
 	// check for uniqueness
-	// sorts and other symbols are distinguished from each other
-	size_t mask = Symbol::Type::SORT;
-	if (symbol->type() != Symbol::Type::SORT) mask = ~mask;
+	// sorts and queries are distinguished from other symbols
+	_config->ostream(Verb::TRACE_SYMTAB) << "TRACE: Creating \"" << *symbol->name() << "\" of type \"" << symbol->typeString() << "\"... ";
 
-	if (resolve(mask, *(symbol->base()), symbol->arity())) {
+	size_t mask;
+	switch (symbol->type()) {
+	case Symbol::Type::SORT:
+		mask = Symbol::Type::SORT;
+		break;
+	case Symbol::Type::QUERY:
+		mask = Symbol::Type::QUERY;
+		break;
+	default:
+		mask = ~(Symbol::Type::SORT | Symbol::Type::QUERY);
+		break;
+	}
+
+	if (_resolve(mask, *(symbol->base()), symbol->arity(), false)) {
+		_config->ostream(Verb::TRACE_SYMTAB) << "Failed." << std::endl;
 		return false;
 	} 
 
 	// Add the symbol
 	_symbols[symbol->type()][*(symbol->name())] = symbol;
+	_config->ostream(Verb::TRACE_SYMTAB) << "Success!" << std::endl;
 	return true;
 }
 
 Symbol* SymbolTable::resolveOrCreate(Symbol* symbol) {
+	// reference pointer in order to ensure symbol is properly deallocated if they didn't save a reference to it
+	u::ref_ptr<Symbol> symbol_ptr = symbol;
+
+	_config->ostream(Verb::TRACE_SYMTAB) << "TRACE: Resolving \"" << *symbol->name() << "\" of type \"" << symbol->typeString() << "\"... ";
 	
-	// sorts and other symbols are distinguished from each other
-	size_t mask = Symbol::Type::SORT;
-	if (symbol->type() != Symbol::Type::SORT) mask = ~mask;
+	// sorts and queries are distinguished from other symbols
+	size_t mask;
+	switch (symbol->type()) {
+	case Symbol::Type::SORT:
+		mask = Symbol::Type::SORT;
+		break;
+	case Symbol::Type::QUERY:
+		mask = Symbol::Type::QUERY;
+		break;
+	default:
+		mask = ~(Symbol::Type::SORT | Symbol::Type::QUERY);
+		break;
+	}
 
 	// check if the symbol exists
 	Symbol* s;
 
-	if ((s = resolve(mask, *(symbol->base()), symbol->arity()))) {
+	if ((s = _resolve(mask, *(symbol->base()), symbol->arity(), false))) {
 		// the symbol exists, make sure the definition is compatible
-		if (*s == *symbol) return s;
-		else return NULL;
+
+		// handle sorts specially as symbol may be a partial specification...
+		if (symbol->type() != Symbol::Type::SORT || ((SortSymbol*)symbol)->numSuperSorts() || ((SortSymbol*)symbol)->numSubSorts() || ((SortSymbol*)symbol)->size()) {
+			if (*s == *symbol) {
+				_config->ostream(Verb::TRACE_SYMTAB) << "Found!" << std::endl;
+				return s;
+			} else {
+				_config->ostream(Verb::TRACE_SYMTAB) << "Found a conflicting identifier definition!" << std::endl;
+				return NULL;
+			}
+		} else {
+			// they've provided a sort that has no subsorts, supersorts, or elements.
+			// just skip the check and give them what we have.
+			_config->ostream(Verb::TRACE_SYMTAB) << "Found!" << std::endl;
+			return s;
+		}
 	} 
 
 
 	// Add the symbol
 	_symbols[symbol->type()][*(symbol->name())] = symbol;
+	_config->ostream(Verb::TRACE_SYMTAB) << "Not found.. creating it." << std::endl;
 	return symbol;
+}
+
+Symbol const* SymbolTable::_resolve(size_t typemask, std::string const& name, size_t arity, bool trace) const {
+	std::string s = Symbol::genName(name, arity);
+
+	if (trace) _config->ostream(Verb::TRACE_SYMTAB) << "TRACE: Resolving " << s << "... ";
+
+	SymbolMap::const_iterator it;
+	size_t type = 0x0001;
+	while (type <= Symbol::Type::_LARGEST_) {
+		if (type & typemask) {
+			TypeMap::const_iterator tit = _symbols.find((Symbol::Type::type)type);
+			if (tit != _symbols.end()) {
+				SymbolMap const& m = tit->second;
+				it = m.find(s);
+				if (it != m.end()) {
+					if (trace) _config->ostream(Verb::TRACE_SYMTAB) << "Found (" << it->second->typeString() << ")." << std::endl;
+					return it->second;
+				}
+			}
+		}
+		type = (type << 1);
+	} 
+	if (trace) _config->ostream(Verb::TRACE_SYMTAB) << "Not found." << std::endl;
+	return NULL;
+}
+
+Symbol* SymbolTable::_resolve(size_t typemask, std::string const& name, size_t arity, bool trace)  {
+	std::string s = Symbol::genName(name, arity);
+	if (trace) _config->ostream(Verb::TRACE_SYMTAB) << "TRACE: Resolving \"" << s << "\"... ";
+
+	SymbolMap::iterator it;
+	size_t type = 0x0001;
+	while (type <= Symbol::Type::_LARGEST_) {
+		if (type & typemask) {
+			SymbolMap& m = _symbols[(Symbol::Type::type)type];
+			it = m.find(s);
+			if (it != m.end()) {
+				if (trace) _config->ostream(Verb::TRACE_SYMTAB) << "Found (" << it->second->typeString() << ")." << std::endl;
+				return it->second;
+			}
+		}
+		type = (type << 1);
+	}
+	if (trace) _config->ostream(Verb::TRACE_SYMTAB) << "Not found." << std::endl;
+	return NULL;
 }
 
 bool SymbolTable::load(boost::filesystem::path const& path) {
@@ -204,10 +268,18 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 						case Symbol::Type::MACRO:
 							if (!pass2) {
 							} else {
-								// TODO
-								_config->ostream(Verb::WARN) << "WARN: Macros are currently not support. Ignoring macro definition." << std::endl;
+								sym = new symbols::MacroSymbol(s.second, &(_config->ostream(Verb::ERROR)));
 								add_sym = true;
 							}
+							break;
+
+						case Symbol::Type::QUERY:
+							if (!pass2) {
+							} else {
+								sym = new symbols::QuerySymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
+								add_sym = true;
+							}
+
 							break;
 
 						case Symbol::Type::ERR_INVALID_SYMBOL:
@@ -264,8 +336,8 @@ bool SymbolTable::save(boost::filesystem::path const& path) const {
 
 	size_t type = 0x0001;
 	while (type <= Symbol::Type::_LARGEST_) {
-		char const* typestr = Symbol::Type::cstr((Symbol::Type::Value)type);
-		for (const_iterator it = begin((Symbol::Type::Value)type); it != end((Symbol::Type::Value)type); it++) {
+		char const* typestr = Symbol::Type::cstr((Symbol::Type::type)type);
+		for (const_iterator it = begin((Symbol::Type::type)type); it != end((Symbol::Type::type)type); it++) {
 			pt::ptree& node = symbols.add(typestr, "");
 			(*it)->save(node);
 		}

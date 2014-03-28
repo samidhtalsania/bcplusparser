@@ -9,6 +9,7 @@
 #include "babb/utils/memory.h"
 #include "memwrappers.h"
 
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Symbol.h"
 
 namespace bcplus {
@@ -46,8 +47,8 @@ private:
 	/// The sort's subsorts
 	babb::utils::ref_ptr<SortList> _subsorts;
 
-	/// Whether this sort is completely composed of integers
-	bool _integral;
+	/// Information about what this sort is composed of
+	DomainType::type _dt;
 
 public:
 	/*************************************************************************************/
@@ -73,22 +74,28 @@ public:
 	/* Public Functions */
 	/*************************************************************************************/
 
-	/// Determines if this sort is composed exclusively of integers
-	inline bool integral() const								{ return _integral; }
-
 	/// Gets an iterator for the beginning of the object list
 	inline const_iterator begin() const							{ return _objects->begin(); }
 
 	/// Gets an iterator for the end of the object list
 	inline const_iterator end() const							{ return _objects->end(); }
 
+	/// Gets the number of elements in the sort
+	inline size_t size() const									{ return _objects->size(); }
+
 	/// Gets an iterator for the super sorts
 	inline SortList::const_iterator beginSuperSorts() const		{ return _supersorts->begin(); }
 	inline SortList::const_iterator endSuperSorts() const		{ return _supersorts->end(); }
 
+	/// Get the number of registered super sorts
+	inline size_t numSuperSorts() const							{ return _supersorts->size(); }
+
 	/// Gets an iterator for the sub sorts
 	inline SortList::const_iterator beginSubSorts() const		{ return _subsorts->begin(); }
 	inline SortList::const_iterator endSubSorts() const			{ return _subsorts->end(); }
+
+	/// Get the number of registered subsorts
+	inline size_t numSubSorts() const							{ return _subsorts->size(); }
 
 	/// Add an object symbol to the list of objects
 	/// @return True if successful, false if the object was already in the sort.
@@ -112,9 +119,11 @@ public:
 	/// @return True if successful, false otherwise.
 	bool loadDefinition(boost::property_tree::ptree const& node, Resolver* resolver, std::ostream* err = NULL);
 	
+	// inherited
 	virtual bool operator==(Symbol const& other) const;
 	virtual void save(boost::property_tree::ptree& node) const;
-
+	virtual void outputDefinition(std::ostream& out) const;
+	virtual DomainType::type domainType() const;
 
 };
 

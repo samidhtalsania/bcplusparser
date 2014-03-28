@@ -8,6 +8,7 @@
 #include "babb/utils/memory.h"
 #include "memwrappers.h"
 
+#include "bcplus/DomainType.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/detail/BaseSymbol.h"
 
@@ -23,10 +24,13 @@ private:
 	/* Private Members */
 	/*************************************************************************************/
 
-	bool _integral;
+	/// The domain type
+	DomainType::type _dt;
 
 	/// The integer represented by this symbol, if any.
 	int _int;
+	/// The boolean represented by this symbol, if any
+	bool _bool;
 
 public:
 	/// Basic constructor
@@ -43,10 +47,19 @@ public:
 	/// Destructor stub
 	virtual ~ObjectSymbol();
 
-	virtual bool integral() const;
-
 	/// Gets the integer represented by this object, if any.
 	int const* integer() const;
+
+	/// Gets the boolean value represented by this object, if any.
+	bool const* boolean() const;	
+
+	// inherited
+	DomainType::type domainType() const;
+
+private:
+
+	/// Determines the domain type of this object symbol and initializes the appropriate object members.
+	void initDomainType();
 
 };
 

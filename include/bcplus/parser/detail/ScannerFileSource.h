@@ -45,7 +45,7 @@ public:
 	/// @param config The system wide configuration information
 	/// @param file The file to read from
 	/// @param squelch Whether to silence all errors resulting from this call.
-	ScannerFileSource(Configuration* config, boost::filesystem::path const& file, bool squelch = false);
+	ScannerFileSource(Configuration const* config, boost::filesystem::path const& file, bool squelch = false);
 
 	/// Destructor
 	virtual ~ScannerFileSource();
@@ -67,7 +67,7 @@ public:
 	// inherited stuffs
 	virtual void newline();
 	virtual Location loc() const;
-	virtual Status::Value status() const;
+	virtual Status::type status() const;
 	virtual void close();
 	virtual void fill(size_t n);
 

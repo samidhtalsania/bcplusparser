@@ -7,6 +7,7 @@
 #include "memwrappers.h"
 
 #include "bcplus/Location.h"
+#include "bcplus/DomainType.h"
 
 #include "bcplus/elements/formulas.h"
 #include "bcplus/elements/terms.h"
@@ -27,14 +28,14 @@ public:
 
     /// Container of enumeration of possible operators
     struct Operator {
-        enum Value {
+        enum type {
 			CONJ,
 			DISJ
 		};
     };
 
 
-	typedef std::pair<Operator::Value, babb::utils::ref_ptr<Variable> > Quantifier;
+	typedef std::pair<Operator::type, babb::utils::ref_ptr<Variable> > Quantifier;
 	typedef ReferencedList<Quantifier>::type QuantifierList;
 
 	typedef QuantifierList::iterator iterator;
@@ -83,9 +84,10 @@ public:
 	inline Formula* subformula()					{ return _sub; }
 	inline Formula const* subformula() const		{ return _sub; }
 
+	// inherited
     virtual Element* copy() const;
     virtual void output(std::ostream& out) const;
-
+	virtual DomainType::type domainType() const;
 private:
 
     /****************************************************************************/

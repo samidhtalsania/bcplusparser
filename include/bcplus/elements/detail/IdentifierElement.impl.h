@@ -13,7 +13,7 @@ namespace elements {
 namespace detail {
 
 template <typename BaseType, int type, typename SymbolType>
-IdentifierElement_bare<BaseType, type, SymbolType>::IdentifierElement_bare(SymbolType const* symbol, Location const& begin, Location const& end, bool parens) : BaseType((typename BaseType::Type::Value)type, begin, end, parens), _sym(symbol) {
+IdentifierElement_bare<BaseType, type, SymbolType>::IdentifierElement_bare(SymbolType const* symbol, Location const& begin, Location const& end, bool parens) : BaseType((typename BaseType::Type::type)type, begin, end, parens), _sym(symbol) {
 	/* Intentionally left blank */
 }
 
@@ -32,6 +32,10 @@ void IdentifierElement_bare<BaseType, type, SymbolType>::output(std::ostream& ou
 	out << symbol()->base();
 }
 
+template <typename BaseType, int type, typename SymbolType>
+DomainType::type IdentifierElement_bare<BaseType, type, SymbolType>::domainType() const {
+	return symbol()->domainType();
+}
 
 template <typename BaseType, int type, typename SymbolType, typename ArgType>
 IdentifierElement<BaseType, type, SymbolType, ArgType>::IdentifierElement(SymbolType const* symbol, ArgumentList const* args, Location const& begin, Location const& end, bool parens) 
@@ -71,6 +75,8 @@ void IdentifierElement<BaseType, type, SymbolType, ArgType>::output(std::ostream
 		out << ")";
 	}
 }	
+
+
 
 }}}
 

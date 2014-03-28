@@ -11,7 +11,7 @@ namespace bcplus {
 namespace parser {
 namespace detail {
 
-ScannerFileSource::ScannerFileSource(Configuration* c, fs::path const& file, bool squelch)
+ScannerFileSource::ScannerFileSource(Configuration const* c, fs::path const& file, bool squelch)
 	: ScannerRawSource(c), _buffer(NULL), _buffer_sz(0), _line(1), _newline(NULL) {
 
 
@@ -56,7 +56,7 @@ void ScannerFileSource::close() {
 	if (_input.is_open()) _input.close();
 }
 
-ScannerFileSource::Status::Value ScannerFileSource::status() const {
+ScannerFileSource::Status::type ScannerFileSource::status() const {
 	if (_input.good() || (_input.eof() && cursor() && *cursor())) return Status::OK;
 	else if (_input.eof()) return Status::END_INPUT;
 	else if (!_input.is_open()) return Status::CLOSED;

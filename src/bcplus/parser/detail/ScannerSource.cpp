@@ -5,7 +5,7 @@ namespace bcplus {
 namespace parser {
 namespace detail {
 
-ScannerSource::ScannerSource(Type::Value type) 
+ScannerSource::ScannerSource(Type::type type) 
 	: _type(type) {
 	/* Intentionally left blank */
 }

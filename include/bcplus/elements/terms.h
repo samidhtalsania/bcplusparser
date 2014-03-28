@@ -6,7 +6,9 @@
 #include "bcplus/elements/detail/ElementClass.h"
 #include "bcplus/elements/detail/BinaryElement.h"
 #include "bcplus/elements/detail/UnaryElement.h"
+#include "bcplus/elements/detail/NullaryElement.h"
 #include "bcplus/elements/detail/IdentifierElement.h"
+#include "bcplus/elements/detail/AnonymousElement.h"
 
 namespace bcplus {
 namespace elements {
@@ -15,12 +17,15 @@ namespace detail {
 
 /// Container for the types of terms that we can have.
 struct TermType {
-	enum Value {
+	enum type {
 		BINARY,
 		UNARY,
 		OBJECT,
 		VARIABLE,
-		CONSTANT
+		CONSTANT,
+		LUA,
+		LOCAL_VARIABLE,
+		NULLARY
 	};
 };
 
@@ -28,7 +33,7 @@ struct TermType {
 /// Container describing the binary operators for terms
 struct BinaryTermOperator {
 		/// The possible binary operators.
-		enum Value {
+		enum type {
 			PLUS,
 			MINUS,
 			TIMES,
@@ -38,16 +43,24 @@ struct BinaryTermOperator {
 
 	/// Functor converting binary operators to cstrings
 	struct cstr {
-			char const* operator()(Value op) {
+			char const* operator()(type op) {
 				switch (op) {
 				case PLUS:		return " + ";
 				case MINUS:		return " - ";
 				case TIMES:		return " * ";
 				case DIVIDE:	return " / ";
 				case MOD:		return " mod ";
+				default:		return "<BAD_TERM_BOP>";
 				}
 			};
 
+	};
+	
+	/// Functor to determine if the term is domaintype
+	struct domaintype {
+		DomainType::type operator()(type op) {
+			return DomainType::INTEGRAL;
+		}
 	};
 
 };
@@ -55,7 +68,7 @@ struct BinaryTermOperator {
 /// Container describing unary oeprators for terms
 struct UnaryTermOperator {
 	/// The possible unary operators
-	enum Value {
+	enum type {
 		NEGATIVE,
 		ABS
 	};
@@ -63,10 +76,11 @@ struct UnaryTermOperator {
 	/// Functor mapping each operator to its prenix cstring
 	struct pre_cstr {
 
-			char const* operator()(Value op) {
+			char const* operator()(type op) {
 				switch (op) {
 				case NEGATIVE:		return "-";
 				case ABS:			return "abs ";
+				default:			return "<BAD_TERM_UOP> ";
 				}
 			}
 	};
@@ -74,13 +88,45 @@ struct UnaryTermOperator {
 	/// Functor mapping each operator to its postnix cstring
 	struct post_cstr {
 
-			char const* operator()(Value op) {
+			char const* operator()(type op) {
 				switch (op) {
 				default:			return "";
 				}
 			}
 	};
 
+	/// Functor to determine if the domain type of the term
+	struct domaintype {
+		DomainType::type operator()(type op) {
+			return DomainType::INTEGRAL;
+		}
+	};
+
+};
+
+struct NullaryTermOperator {
+	enum type {
+		MAXSTEP,
+		MAXADDITIVE,
+		MAXAFVALUE
+	};
+
+	struct cstr {
+		char const* operator()(type op) {
+			switch (op) {
+			case MAXSTEP: return "maxstep";
+			case MAXADDITIVE: return "maxAdditive";
+			case MAXAFVALUE: return "maxAFValue";
+			default: return "<UNKNOWN_NOP>";
+			}
+		}
+	};
+
+	struct domaintype {
+		DomainType::type operator()(type op) {
+			return DomainType::INTEGRAL;
+		}
+	};	
 };
 
 }
@@ -96,19 +142,33 @@ typedef detail::ElementClass<
  * @brief A binary operator term of the form T @ V where T,V are terms and @ is a binary operator.
  */
 typedef detail::BinaryElement<
-	Term, 
+	Term,
 	detail::TermType::BINARY, 
-	detail::BinaryTermOperator::Value, 
-	detail::BinaryTermOperator::cstr> BinaryTerm;
+	detail::BinaryTermOperator, 
+	Term, Term,
+	detail::BinaryTermOperator::cstr,
+	detail::BinaryTermOperator::domaintype> BinaryTerm;
 /**
  * @brief A unary operator term of the form @T where @ is a unary operator and T is a term.
  */
 typedef detail::UnaryElement<
-	Term, 
+	Term,
 	detail::TermType::UNARY,  
-	detail::UnaryTermOperator::Value, 
+	detail::UnaryTermOperator, 
+	Term,
 	detail::UnaryTermOperator::pre_cstr, 
-	detail::UnaryTermOperator::post_cstr> UnaryTerm;
+	detail::UnaryTermOperator::post_cstr,
+	detail::UnaryTermOperator::domaintype> UnaryTerm;
+
+/**
+ * @brief A LUA call.
+ */
+typedef detail::AnonymousElement<
+	Term,
+	detail::TermType::LUA,
+	Term> LuaTerm;
+
+
 
 /**
  * @brief An object constant 't'
@@ -126,6 +186,14 @@ typedef detail::IdentifierElement_bare<
 	Term, 
 	detail::TermType::VARIABLE, 
 	symbols::VariableSymbol> Variable;
+
+/**
+ * @brief A local variable
+ */
+typedef detail::AnonymousElement_bare<
+	Term,
+	detail::TermType::LOCAL_VARIABLE> LocalVariable;
+
 /** 
  * @brief A bare constant 'c'
  */
@@ -134,6 +202,18 @@ typedef detail::IdentifierElement<
 	detail::TermType::CONSTANT, 
 	symbols::ConstantSymbol, 
 	Term> Constant;
+
+/**
+ * @brief A nullary term, such as keyword "maxstep", "maxAFValue", and "maxAdditive"
+ */
+typedef detail::NullaryElement<
+	Term,
+	detail::TermType::NULLARY,
+	detail::NullaryTermOperator,
+	detail::NullaryTermOperator::cstr,
+	detail::NullaryTermOperator::domaintype > NullaryTerm;
+
+
 
 }}
 

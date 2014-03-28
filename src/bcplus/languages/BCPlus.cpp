@@ -9,7 +9,7 @@ char const* BCPlus::name() const {
 	return "BC+";
 }
 
-bool BCPlus::support(Feature::Value feature) const {
+bool BCPlus::support(Feature::type feature) const {
 	switch (feature) {
 		case Feature::DECL_INCLUDE:               
 		case Feature::DECL_MACRO:                 
@@ -18,14 +18,42 @@ bool BCPlus::support(Feature::Value feature) const {
 		case Feature::DECL_CONSTANT:              
 		case Feature::DECL_VARIABLE:              
 		case Feature::DECL_SHOW:                  
-		case Feature::DECL_MAXAFVALUE:            
+		case Feature::DECL_SHOW_ALL:
+		case Feature::DECL_HIDE:
+		case Feature::DECL_HIDE_ALL:
 		case Feature::DECL_MAXADDITIVE:           
-		case Feature::FORMULA_NESTED:             
-		case Feature::FORMULA_CHOICE:             
+		case Feature::DECL_QUERY:
+		case Feature::CONST_ABACTION:
+		case Feature::CONST_ACTION:
+		case Feature::CONST_ADDITIVEFLUENT:
+		case Feature::CONST_ADDITIVEACTION:
+		case Feature::CONST_EXTERNALACTION:
+		case Feature::CONST_EXTERNALFLUENT:
+		case Feature::CONST_EXOGENOUSACTION:
+		case Feature::CONST_INERTIALFLUENT:
+		case Feature::CONST_RIGID:
+		case Feature::CONST_SIMPLEFLUENT:
+		case Feature::FORMULA_NESTED:
+		case Feature::FORMULA_CARDINALITY_BODY:
+		case Feature::FORMULA_CARDINALITY_HEAD:
+		case Feature::FORMULA_QUANTIFIER:
+		case Feature::FORMULA_NOT_KEYWORD:
+		case Feature::FORMULA_NOT_DASH:
+		case Feature::FORMULA_NOT_DASH_HEAD:
+		case Feature::FORMULA_TILDE_STRONG_NEG:
+		case Feature::MACRO:
+		case Feature::NUMRANGE_SORT:
+		case Feature::VARIABLE:
+		case Feature::STAR_SORT:
+		case Feature::CARROT_SORT:
+		case Feature::MAXSTEP:
+		case Feature::MAXADDITIVE:
+		case Feature::QUERY_BIND_STEP:
+		case Feature::QUERY_MAXSTEP:
+		case Feature::QUERY_LABEL:
 		case Feature::CLAUSE_IF:                  
 		case Feature::CLAUSE_AFTER:               
 		case Feature::CLAUSE_IFCONS:              
-		case Feature::CLAUSE_ASSUMING:            
 		case Feature::CLAUSE_UNLESS:              
 		case Feature::CLAUSE_WHERE:               
 		case Feature::LAW_BASIC_S:                
@@ -58,6 +86,8 @@ bool BCPlus::support(Feature::Value feature) const {
 		case Feature::CODE_LUA_GR: 
 			return true;
 
+		case Feature::DECL_MAXAFVALUE:            
+		case Feature::MAXAFVALUE:
 		case Feature::LAW_CAUSED_S:               
 		case Feature::LAW_CAUSED_D:               
 		case Feature::LAW_PCAUSED_S:              

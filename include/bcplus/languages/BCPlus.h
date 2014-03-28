@@ -8,7 +8,7 @@ namespace languages {
 class BCPlus : public Language {
 
 	virtual char const* name() const;
-	virtual bool support(Feature::Value feature) const;
+	virtual bool support(Feature::type feature) const;
 
 };
 

@@ -10,6 +10,8 @@
 namespace bcplus {
 namespace statements {
 
+
+
 /// Abstract base class for a statement.
 class Statement : public babb::utils::Referenced {
 public:
@@ -18,9 +20,49 @@ public:
 	/****************************************************************************/
 	/// Container for the list of statement types
 	struct Type {
-		enum Value {
-			INCLUDE
+		enum type {
+			INCLUDE,					///< An include statement
+			MACROS,						///< macro definition
+			CONSTANTS,					///< constant definition
+			OBJECTS,					///< object definition
+			SORTS,						///< sort definition
+			VARIABLES,					///< variable definition
+			COMMENTS,					///< comment block
+			F2LP,						///< F2LP code block
+			LUA,						///< LUA code block
+			ASP,						///< ASP code block
+			SHOW,						///< Show statement
+			SHOW_ALL,					///< Show all statement
+			HIDE,						///< Hide statement
+			HIDE_ALL,					///< Hide all statement
+			NOCONCURRENCY,				///< noconcurrency statement
+			STRONG_NOCONCURRENCY,		///< strong noconcurrency statement
+			MAXAFVALUE,					///< maxAFValue statement
+			MAXADDITIVE,				///< maxAdditive statement
+			QUERY,						///< A query
+
+			LAW_BASIC,					///< F if G after H...
+			LAW_CAUSED,					///< caused F if G after H...
+			LAW_PCAUSED,				///< possibly caused F if G after H...
+			LAW_IMPL,					///< F <- G...
+			LAW_CAUSES,					///< G causes F if H...
+			LAW_INCREMENTS,				///< G increments F by V if H...
+			LAW_MCAUSE,					///< G may cause F if H...
+			LAW_ALWAYS,					///< always G after H...
+			LAW_CONSTRAINT,				///< constraint G after H...
+			LAW_IMPOSSIBLE,				///< impossible G after H...
+			LAW_NEVER,					///< never G after H...
+			LAW_DEFAULT,				///< default F if G after H...
+			LAW_EXOGENOUS,				///< exogenous c if G after H...
+			LAW_INERTIAL,				///< inertial c if G after H...
+			LAW_NONEXECUTABLE,			///< nonexecutable F after H...
+			LAW_RIGID,					///< rigid c...
+			LAW_OBSERVED				///< observed c=v at V...
 		};
+
+		/// Get the string representation of the provided type
+		static char const* typeString(type v);
+
 	};
 
 private:
@@ -35,7 +77,7 @@ private:
 	Location _end;
 
 	/// Statement type
-	Type::Value _type;
+	Type::type _type;
 
 public:
 
@@ -47,7 +89,7 @@ public:
 	/// @param type The statement type
 	/// @param begin The beginning location of the statmenet
 	/// @param end The ending location of the statement
-	Statement(Type::Value type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0));
+	Statement(Type::type type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0));
 
 	/// Destructor Stub
 	~Statement();
@@ -58,7 +100,10 @@ public:
 	/****************************************************************************/
 	
 	/// Get the type of this statement
-	inline Type::Value type() const									{ return _type; }
+	inline Type::type type() const									{ return _type; }
+
+	/// Get the string representation of the statement type
+	inline char const* typeString() const							{ return Type::typeString(type()); }
 
 	/// Get the beginning location of this statement
 	inline Location const& beginLoc() const							{ return _begin; }
@@ -66,16 +111,8 @@ public:
 	/// Get the ending location of this statement
 	inline Location const& endLoc() const							{ return _end; }
 
-	/// Helper function to output a string representation of this statement
-	inline std::string str() const									{ std::stringstream out; output(out); return out.str(); }
-
 	/// Perform a dep copy of this statement
 	virtual Statement* copy() const = 0;
-
-	/// Outputs this statement to the given stream
-	/// @param out The output stream to write to
-	virtual void output(std::ostream& out) const = 0;
-
 
 };
 }}

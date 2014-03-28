@@ -5,7 +5,7 @@
 
 #include "babb/utils/memory.h"
 
-
+#include "bcplus/DomainType.h"
 #include "bcplus/elements/formulas.h"
 #include "bcplus/Location.h"
 #include "bcplus/elements/terms.h"
@@ -56,9 +56,10 @@ public:
 	inline Term* v()								{ return _v; }
 	inline Term const* v() const					{ return _v; }
 
+	// inherited
     virtual Element* copy() const;
     virtual void output(std::ostream& out) const;
-
+	virtual DomainType::type domainType() const;
 private:
 
 };

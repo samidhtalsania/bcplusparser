@@ -5,24 +5,24 @@ namespace bcplus {
 namespace elements {
 namespace detail {
 
-template <typename BaseType, int type, typename Op, typename opString>
-BinaryElement<BaseType, type, Op, opString>::BinaryElement(Op const& op, BaseType* left, BaseType* right, Location const& begin, Location const& end, bool parens)
-	: BaseType(type, begin, end, parens), _left(left), _op(op), _right(right) {
+template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
+BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::BinaryElement(typename Op::type const& op, LHS* left, RHS* right, Location const& begin, Location const& end, bool parens)
+	: BaseType((typename BaseType::Type::type)type, begin, end, parens), _op(op), _left(left), _right(right) {
 	/* Intentionally left blank */
 }
 
-template <typename BaseType, int type, typename Op, typename opString>
-BinaryElement<BaseType, type, Op, opString>::~BinaryElement() {
+template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
+BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::~BinaryElement() {
 	/* Intentionally left blank */
 }
 
-template <typename BaseType, int type, typename Op, typename opString>
-Element* BinaryElement<BaseType, type, Op, opString>::copy() const {
-	return new BinaryElement(op(), left()->copy(), right()->copy(), ((BaseType*)this)->beginLoc(), ((BaseType*)this)->bendLoc(), ((BaseType*)this)->bparens());
+template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
+Element* BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::copy() const {
+	return new BinaryElement(op(), (LHS*)left()->copy(), (RHS*)right()->copy(), ((BaseType*)this)->beginLoc(), ((BaseType*)this)->endLoc(), ((BaseType*)this)->parens());
 }
 
-template <typename BaseType, int type, typename Op, typename opString>
-void BinaryElement<BaseType, type, Op, opString>::output(std::ostream& out) const {
+template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
+void BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::output(std::ostream& out) const {
 	if (((BaseType*)this)->parens()) out << "(";
 	left()->output(out);
 	opString cstr;
@@ -30,6 +30,13 @@ void BinaryElement<BaseType, type, Op, opString>::output(std::ostream& out) cons
 	right()->output(out);
 	if (((BaseType*)this)->parens()) out << ")";
 }
+
+template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
+DomainType::type BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::domainType() const {
+	dt dtype;
+	return dtype(op());
+}
+
 }}}
 
 

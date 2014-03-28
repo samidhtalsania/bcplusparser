@@ -8,6 +8,8 @@
 
 #include "babb/utils/memory.h"
 
+#include "bcplus/DomainType.h"
+
 namespace bcplus {
 namespace symbols {
 
@@ -23,13 +25,14 @@ public:
 	/// Container for the types of symbols
 	struct Type {
 		/// Enumeration of possible values
-		enum Value {
+		enum type {
 			SORT		= 0x0001,
 			CONSTANT	= 0x0002,
 			VARIABLE	= 0x0004,
 			OBJECT		= 0x0008,
 			MACRO		= 0x0010,
-			_LARGEST_	= 0x0010,			///< placeholder for the largest type value	
+			QUERY		= 0x0020,
+			_LARGEST_	= 0x0020,			///< placeholder for the largest type value	
 			ERR_INVALID_SYMBOL = 0x1000		///< placeholder for invalid value
 		};
 
@@ -42,25 +45,26 @@ public:
 		};
 
 		/// Conversion to a cstring
-		static char const* cstr(Value v);
+		static char const* cstr(type v);
 
 		/// Conversion from a cstring
-		static Value val(char const* c);
+		static type val(char const* c);
 
 	};
-
 
 
 private:
 	/************************************************************************/
 	/* Private Members */
 	/************************************************************************/
-	Type::Value _type;
+	Type::type _type;
 	size_t _arity;
 	babb::utils::ref_ptr<const babb::utils::ReferencedString> _base;
 	babb::utils::ref_ptr<const babb::utils::ReferencedString> _name;
 	bool _good;
 
+	/// A convenient place to put additional metadata
+	babb::utils::ref_ptr<Referenced> _metadata;
 
 public:
 	/************************************************************************/
@@ -76,14 +80,14 @@ public:
 	/// @param type The type of symbol being instantiated
 	/// @param base The base name of the symbol
 	/// @param arity The arity of symbol
-	Symbol(Type::Value type, babb::utils::ReferencedString const* base, size_t arity);
+	Symbol(Type::type type, babb::utils::ReferencedString const* base, size_t arity);
 	
 	/// Attempts to load the symbol from the property tree node.
 	/// @param type The type of symbol being instantiated
 	/// @param node The node to load the symbol from
 	/// @param err An error stream to write to or NULL.
 	/// Sets the symbol's good flag if it was successful.
-	Symbol(Type::Value type, boost::property_tree::ptree const& node, std::ostream* err = NULL);
+	Symbol(Type::type type, boost::property_tree::ptree const& node, std::ostream* err = NULL);
 
 	/// Destructor stub
 	virtual ~Symbol();
@@ -93,9 +97,8 @@ public:
 	/************************************************************************/
 
 
-
 	/// Get the symbol type
-	inline Type::Value type() const					{ return _type; }
+	inline Type::type type() const					{ return _type; }
 
 	/// Get the symbol type as a cstring
 	inline char const* typeString() const			{ return Type::cstr(type()); }
@@ -121,18 +124,28 @@ public:
 	/// @param n The full name of the symbol to match against (base/arity)
 	inline bool match(std::string const&n) const	{ return n == *name(); }
 	
+	/// Get/set the metadata
+	inline Referenced const* metadata() const			{ return _metadata; }
+	inline Referenced* metatdata()						{ return _metadata; }
+	inline void metadata(Referenced* data)				{ _metadata = data; }
+	
 
 	/// Check to see if two symbols are equal
 	/// @param other The other symbol to compare this one to
 	/// @return True if they are equal, false otherwise.
 	virtual bool operator==(Symbol const& other) const;
 
+	inline bool operator!=(Symbol const& other) const{ return !(*this == other); }
+
 	/// Outputs the symbol to the provided property tree node
 	/// @param node The node to write to
  	virtual void save(boost::property_tree::ptree& node) const;
 
-	/// Whether this symbol ranges over integers or is an integer
-	virtual bool integral() const = 0;
+	/// Determine the domain type of this symbol.
+	virtual DomainType::type domainType() const = 0;
+
+	/// Output the definition of this symbol
+	virtual void outputDefinition(std::ostream& out) const = 0;
 
 protected:
 
