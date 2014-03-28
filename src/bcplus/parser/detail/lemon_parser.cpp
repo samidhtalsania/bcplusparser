@@ -1538,7 +1538,7 @@ void lemon_parserTrace(FILE *TraceFILE, char const*zTracePrompt){
 }
 #endif /* NDEBUG */
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
 /* For tracing shifts, the names of all terminals and nonterminals
 ** are required.  The following table supplies these names */
 static const char *const yyTokenName[] = { 
@@ -1603,7 +1603,7 @@ static const char *const yyTokenName[] = {
   "law_impossible",  "law_never",     "law_default",   "law_exogenous",
   "law_inertial",  "law_nonexecutable",  "law_rigid",     "law_observed",
 };
-#endif /* NDEBUG */
+//#endif /* NDEBUG */
 
 #ifndef NDEBUG
 /* For tracing reduce actions, the names of all rules are required.

@@ -307,7 +307,7 @@ void lemon_macroTrace(FILE *TraceFILE, char const*zTracePrompt){
 }
 #endif /* NDEBUG */
 
-#ifndef NDEBUG
+//#ifndef NDEBUG
 /* For tracing shifts, the names of all terminals and nonterminals
 ** are required.  The following table supplies these names */
 static const char *const yyTokenName[] = { 
@@ -319,7 +319,7 @@ static const char *const yyTokenName[] = {
   "incl_lst",      "incl_lst_sc",   "incl_lst_c",    "incl_item",   
   "arg_lst",     
 };
-#endif /* NDEBUG */
+//#endif /* NDEBUG */
 
 #ifndef NDEBUG
 /* For tracing reduce actions, the names of all rules are required.
