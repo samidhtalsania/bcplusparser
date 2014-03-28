@@ -117,7 +117,10 @@ std::ostream& Configuration::ostream(Verb::Level v) const {
 	static ios::stream<ios::null_sink> NULLSTREAM( (ios::null_sink()) );
 
 	if (v > _verb) return NULLSTREAM;
-	else if (v == Verb::ERROR) return std::cerr;
+	else if (v == Verb::ERROR || v == Verb::WARN) return std::cerr;
+#ifdef NDEBUG
+	else if (v > Verb::STD) return NULLSTREAM;
+#endif
 	else return std::cout;
 }
 
@@ -179,6 +182,7 @@ std::ostream& Configuration::outputHelp(std::ostream& out) const {
 		<< "                        " << Verb::ERROR 		<< "  - Error output only"				<< std::endl
 		<< "                        " << Verb::WARN 		<< "  - Warnings"						<< std::endl
 		<< "                        " << Verb::STD	 		<< "  - Standard messages [default]"	<< std::endl
+		<< "                     Only available when compiled in debug mode:"						<< std::endl
 		<< "                        " << Verb::OP 			<< "  - Operation level trace output" 	<< std::endl
 		<< "                        " << Verb::DETAIL	 	<< "  - Detailed debugging messages"	<< std::endl
 		<< "                        " << Verb::TRACE_PARSER	<< "+ - Parser debugging messages"		<< std::endl

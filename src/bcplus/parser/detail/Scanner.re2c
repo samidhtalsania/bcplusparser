@@ -89,7 +89,9 @@ Token* Scanner::readToken() {
 	} else {
 		do {
 			ScannerSource* src = _sources.front();
+#ifndef NDEBUG
 			_config->ostream(Verb::TRACE_SCANNER) << "TRACE: " << size() << " sources, reading from \"" 
+#endif
 				<< (src->loc().file() ? src->loc().file()->native() : std::string("<NULL>")) << "\"." << std::endl;
 			switch(src->type()) {
 			case ScannerSource::Type::RAW:
@@ -101,10 +103,14 @@ Token* Scanner::readToken() {
 			}
 	
 			if (!token || token->type() == T_ERR_IO) {
+#ifndef NDEBUG
 				_config->ostream(Verb::TRACE_SCANNER) << "TRACE: Scanner encountered IO error." << std::endl;
+#endif
 				_sources.pop_front();
 			} else if (token->type() == T_EOF) {
+#ifndef NDEBUG
 				_config->ostream(Verb::TRACE_SCANNER) << "TRACE: Scanner encountered end of input source." << std::endl;
+#endif
 				_sources.pop_front();
 			}
 		} while (token && token->type() == T_EOF && size());
@@ -112,11 +118,15 @@ Token* Scanner::readToken() {
 	
 	if (!token) {
 		Location l = loc();
+#ifndef NDEBUG
 		_config->ostream(Verb::TRACE_SCANNER) << "TRACE: Scanner got a null token." << std::endl;
+#endif
 		token  = new Token(T_ERR_IO, new ReferencedString("<IO ERROR>"), l, l);
 	}
 
+#ifndef NDEBUG
 	_config->ostream(Verb::TRACE_SCANNER) << "TRACE: " << token->beginLoc() << ": (" << token->typeString() << "): \"" << *token << "\": Read from scanner." << std::endl;
+#endif
 
 	return token.release();
 }

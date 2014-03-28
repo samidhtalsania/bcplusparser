@@ -26,7 +26,9 @@ void*       lemon_parserFree(void* yyp, void (*freeProc)(void*));
 void        lemon_parser(void* yyp, int tokentype, bcplus::parser::Token const* token, bcplus::parser::BCParser* parser);
 int         lemon_parserPreInject(void* yyp, int pop, bcplus::parser::Token const** token);
 void		lemon_parserAttemptReduce(void* yyp, bcplus::parser::BCParser* parser);
+#ifndef NDEBUG
 void 		lemon_parserTrace(FILE *TraceFILE, char const*zTracePrompt);
+#endif
 namespace bcplus {
 namespace parser {
 
@@ -85,9 +87,10 @@ BCParser::ParseType BCParser::parse() {
 
 	_stat = Status::OK;
 	
+#ifndef NDEBUG
 	if (_config->parseTrace()) 
 		lemon_parserTrace(stdout, "TRACE: Parser: ");
-
+#endif
 	// parse a new statement
 	do {
 		token = _scanner->next();
@@ -137,7 +140,9 @@ BCParser::ParseType BCParser::parse() {
 			break;
 
 		case T_EOF:
+#ifndef NDEBUG
 			_config->ostream(Verb::TRACE_PARSER) << "TRACE: Hard EOF." << std::endl;
+#endif
 			_last_token = token;
 			lemon_parser(_parser, type, token.release(), this);
 			lemon_parserAttemptReduce(_parser, this);
@@ -159,9 +164,11 @@ BCParser::ParseType BCParser::parse() {
 		} 
 	} while (!_stmt && _stat == Status::OK);
 	
+#ifndef NDEBUG
 	if (_config->parseTrace()) 
 		lemon_parserTrace(NULL, NULL);
-	
+#endif	
+
 	// Figure out exactly why we stopped
 	if (_stat != Status::OK && _stat != Status::END_INPUT) {
 		return ParseType(_stat, NULL);
@@ -226,7 +233,9 @@ void BCParser::_parse_error(std::string const& error, Location const* loc) {
 }
 
 void BCParser::_handle_stmt(statements::Statement* stmt) {
+#ifndef NDEBUG
 	_config->ostream(Verb::TRACE_PARSER) << "TRACE: Got statement of type \"" << stmt->typeString() << "\"." << std::endl;
+#endif
 
 	_stmt = stmt;
 }

@@ -68,12 +68,16 @@ Token const* MacroParser::next() {
 			case T_EOF:
 				// only fed it to the parser if it's a hard EOF (i.e. we already encoutnered a soft EOF)
 				if (soft_eof) {
+#ifndef NDEBUG
 					_config->ostream(Verb::TRACE_MACRO_PARSER) << "TRACE: Macro parser hard EOF." << std::endl;
+#endif
 					_last_token = token;
 					lemon_macro(_parser, macro_type, token.release(), this);
 					_stat = Status::END_INPUT;
 				} else {
+#ifndef NDEBUG
 					_config->ostream(Verb::TRACE_MACRO_PARSER) << "TRACE: Macro parser soft EOF." << std::endl;
+#endif
 					soft_eof = true;
 					lemon_macroAttemptReduce(_parser, this);
 				}
@@ -103,8 +107,9 @@ Token const* MacroParser::next() {
 			token = new Token(T_ERR_SYNTAX, new ReferencedString("<ERR_SYNTAX>"), _scanner->loc(), _scanner->loc());
 		}
 	}
-
+#ifndef NDEBUG
 	_config->ostream(Verb::TRACE_MACRO_PARSER) << "TRACE: " << token->beginLoc() << ": (" << token->typeString() << "): \"" << *token << "\": Read from macro parser." << std::endl;
+#endif
 	return token.release();
 }
 
@@ -173,8 +178,10 @@ void MacroParser::_token(Token* t) {
 }
 
 void MacroParser::_handle_include(statements::IncludeStatement const* stmt) {
+#ifndef NDEBUG
 	_config->ostream(Verb::DETAIL) << "TRACE: Got include statement!" << std::endl;
-	
+#endif
+
 	Location l = stmt->beginLoc();
 	
 	BOOST_FOREACH(ReferencedString const* name, *stmt) {
@@ -253,11 +260,16 @@ void MacroParser::preInjectPrep(bool pop_stack) {
 	Token* tok = NULL;
 	int t = lemon_macroPreInject(_parser, pop_stack, &tok);
 	if (t) {
+#ifndef NDEBUG
 		_config->ostream(Verb::TRACE_MACRO_PARSER) << "TRACE: " << tok->beginLoc() << ": Retracted (" << tok->typeString() << ") \"" << *tok << "\"." << std::endl;
+#endif
 		_scanner->push_front(tok);
-	} else {
+	} 
+#ifndef NDEBUG
+	else {
 		_config->ostream(Verb::TRACE_MACRO_PARSER) << "TRACE: No token to retract from the parser." << std::endl;
 	}
+#endif
 }
 
 void MacroParser::_handle_macro(elements::Macro const* macro) {
