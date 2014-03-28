@@ -1,10 +1,16 @@
 include $(top_srcdir)/src/Makefile.rls
 
+
+lib_LIBRARIES = ../libbcplusparser.a
 bin_PROGRAMS = ../bcplusparser
 
 ___bcplusparser_CPPFLAGS = $(BOOST_CPPFLAGS)
 ___bcplusparser_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
-___bcplusparser_LDADD = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+___bcplusparser_LDADD = ../libbcplusparser.a $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+___libbcplusparser_a_CPPFLAGS = $(BOOST_CPPFLAGS)
+___libbcplusparser_a_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAGS)
+#___libbcplusparser_a_LIBADD = $(BOOST_FILESYSTEM_LIBS) $(BOOST_SYSTEM_LIBS)
+#___bcplusparser_LDADD = ../libbcplusparser.a
 
 BUILT_SOURCES = \
 	bcplus/Configuration.cpp \
@@ -36,7 +42,9 @@ BUILT_SOURCES = \
 
 
 ___bcplusparser_SOURCES = \
-	main.cpp \
+	main.cpp
+
+___libbcplusparser_a_SOURCES =\
 	bcplus/Configuration.cpp \
 	bcplus/Location.cpp \
 	bcplus/elements/AtomicFormula.cpp \
