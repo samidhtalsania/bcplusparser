@@ -44,9 +44,19 @@ int Configuration::load(int argc, char const** argv) {
 	// parse arguments
 
 	for (int i = 1; i < argc; i++) {
-		if ((ret = parseOption(argv[i])) == Status::STAT_HELP 
-			|| ret == Status::STAT_VERSION || ret == Status::STAT_BAD_ARG) return ret;
-		
+		ret = parseOption(argv[i]);
+
+		switch (ret) {
+		case Status::STAT_BAD_ARG:
+			std::cerr << "ERROR: Unrecognized option: \"" << argv[i] << "\".";
+			/* no break */
+		case Status::STAT_HELP:
+		case Status::STAT_VERSION:
+			return ret;
+		default:
+			continue;
+		};
+
 
 	}
 	return ret;
@@ -182,7 +192,6 @@ re2c_finish:
 	case Option::BAD:			
 	default:
 		ret = Status::STAT_BAD_ARG;
-		std::cerr << "ERROR: Unrecognized option: \"" << token << "\"." << std::endl;
 		break;
 	}
 	return ret;
