@@ -28,17 +28,34 @@ namespace symbols{
 
 SymbolTable::SymbolTable(Configuration const* config)
 	: _config(config) {
-
+	_good = true;
+	
 	// See if we should load anything from a file
 	if (config->symtabInput()) _good = load(*(config->symtabInput()));
-	else _good = true;
-	_metadata = NULL;
+	_good = _good && loadMacros(config);
 }
+
+
 
 SymbolTable::~SymbolTable() {
 	// See if we should write anything to a file
 	if (_config->symtabOutput() && good()) save(*(_config->symtabOutput()));
 }
+
+
+ReferencedString const* SymbolTable::getData(std::string const& key) const {
+	DataMap::const_iterator it = _metadata.find(key);
+	if (it == _metadata.end()) return NULL;
+	else return it->second;
+}
+
+bool SymbolTable::setData(std::string const& key, ReferencedString const* data, bool override) {
+	u::ref_ptr<const ReferencedString> data_ptr = data;
+	if (!override && getData(key)) return false;
+	_metadata[key] = data;
+	return true;	
+}
+
 
 Symbol* SymbolTable::resolve(size_t typemask, std::string const& name, size_t arity) {
 	return _resolve(typemask, name, arity, true); 
@@ -200,107 +217,143 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 			// scan the file for sorts first then rescan for everything else
 			for (int pass2 = 0; pass2 < 2; pass2++) {
 				BOOST_FOREACH(pt::ptree::value_type& symbols, xml) {
-					if (!boost::iequals(symbols.first, "symbols")) {
-						_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected top-level key \"" << symbols.first << "\" in symbol table file \"" << path.native() << "\". Expected \"symbols\"." << std::endl;
-						good = false;
-					}
+					if (boost::iequals(symbols.first, "symbols")) {
+						BOOST_FOREACH(pt::ptree::value_type& s, symbols.second) {
+							bool add_sym = false;
+							u::ref_ptr<Symbol> sym;
+							u::ref_ptr<Symbol> tmp;
 
-					BOOST_FOREACH(pt::ptree::value_type& s, symbols.second) {
-						bool add_sym = false;
-						u::ref_ptr<Symbol> sym;
-						u::ref_ptr<Symbol> tmp;
+							switch (Symbol::Type::val(s.first.c_str())) {
+							case Symbol::Type::SORT:
+								if (!pass2) {
+									// First pass, just create the symbol
+									sym = new symbols::SortSymbol(s.second, &(_config->ostream(Verb::ERROR)));
+									add_sym = true;
+								} else {
+									// second pass, load the symbol definition
+									tmp = new symbols::SortSymbol(s.second, &(_config->ostream(Verb::ERROR)));
+									sym = resolveOrCreate(tmp);
 
-						switch (Symbol::Type::val(s.first.c_str())) {
-						case Symbol::Type::SORT:
-							if (!pass2) {
-								// First pass, just create the symbol
-								sym = new symbols::SortSymbol(s.second, &(_config->ostream(Verb::ERROR)));
-								add_sym = true;
-							} else {
-								// second pass, load the symbol definition
-								tmp = new symbols::SortSymbol(s.second, &(_config->ostream(Verb::ERROR)));
-								sym = resolveOrCreate(tmp);
+									if (!sym) {
+										// we weren't able to resolve the sort
+										_config->ostream(Verb::ERROR) << "ERROR: Encountered conflicting definitions of sort \"" << *(tmp->base()) << "\" while loading the symbol table from file \"" << path.native() << "\"." << std::endl;
+										good = false;
+									} else {
+										// resolved the sort, try loading the definition
+										if (!((symbols::SortSymbol*)sym.get())->loadDefinition(s.second, this, &(_config->ostream(Verb::ERROR)))) {
+											_config->ostream(Verb::ERROR) << "ERROR: Encountered conflicting definitions of sort \"" << *(tmp->base()) << "\" while loading the symbol table from file \"" << path.native() << "\"." << std::endl;
+											good = false;
+										}
+									}
+								}
+								break;
 
-								if (!sym) {
-									// we weren't able to resolve the sort
-									_config->ostream(Verb::ERROR) << "ERROR: Encountered conflicting definitions of sort \"" << *(tmp->base()) << "\" while loading the symbol table from file \"" << path.native() << "\"." << std::endl;
+							case Symbol::Type::CONSTANT:
+								if (!pass2) {
+									// first pass: ignore
+								} else {
+									// second pass, create the symbol
+									sym = new symbols::ConstantSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
+									add_sym = true;
+								}
+								break;
+		
+							case Symbol::Type::VARIABLE:
+								if (!pass2) {
+									// first pass: ignore
+								} else {
+									// second pass, create the symbol
+									sym = new symbols::VariableSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
+									add_sym = true;
+								}
+								break;
+
+							case Symbol::Type::OBJECT:
+								if (!pass2) {
+									// first pass: ignore
+								} else {
+									// second pass, create the symbol
+									sym = new symbols::ObjectSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
+									add_sym = true;
+								}
+								break;
+
+							case Symbol::Type::MACRO:
+								if (!pass2) {
+								} else {
+									sym = new symbols::MacroSymbol(s.second, &(_config->ostream(Verb::ERROR)));
+									add_sym = true;
+								}
+								break;
+
+							case Symbol::Type::QUERY:
+								if (!pass2) {
+								} else {
+									sym = new symbols::QuerySymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
+									add_sym = true;
+								}
+
+								break;
+
+							case Symbol::Type::ERR_INVALID_SYMBOL:
+								_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected symbol key \"" << s.first << "\" in symbol table file \"" << path.native() << "\". Expected one of \"sort\", \"constant\", \"variable\", \"object\", or \"macro\"." << std::endl;
+								good = false;
+							};
+
+							// finish up by adding the symbol if we need to.
+							if (add_sym) {
+								if (!sym->good()) {
+									_config->ostream(Verb::ERROR) << "ERROR: An error occurred while trying to load a symbol of type \"" << s.first << "\" in symbol table file \"" << path.native() << "\"." << std::endl;
 									good = false;
 								} else {
-									// resolved the sort, try loading the definition
-									if (!((symbols::SortSymbol*)sym.get())->loadDefinition(s.second, this, &(_config->ostream(Verb::ERROR)))) {
-										_config->ostream(Verb::ERROR) << "ERROR: Encountered conflicting definitions of sort \"" << *(tmp->base()) << "\" while loading the symbol table from file \"" << path.native() << "\"." << std::endl;
+									// try to create the symbol
+									tmp = resolveOrCreate(sym);
+									if (!tmp) {
+										_config->ostream(Verb::ERROR) << "ERROR: Detected a conflicting definition of symbol \"" << *(sym->name()) << "\" while loading symbol table from file \"" << path.native() << "\"." << std::endl;
 										good = false;
 									}
 								}
 							}
-							break;
-
-						case Symbol::Type::CONSTANT:
-							if (!pass2) {
-								// first pass: ignore
-							} else {
-								// second pass, create the symbol
-								sym = new symbols::ConstantSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
-								add_sym = true;
-							}
-							break;
-	
-						case Symbol::Type::VARIABLE:
-							if (!pass2) {
-								// first pass: ignore
-							} else {
-								// second pass, create the symbol
-								sym = new symbols::VariableSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
-								add_sym = true;
-							}
-							break;
-
-						case Symbol::Type::OBJECT:
-							if (!pass2) {
-								// first pass: ignore
-							} else {
-								// second pass, create the symbol
-								sym = new symbols::ObjectSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
-								add_sym = true;
-							}
-							break;
-
-						case Symbol::Type::MACRO:
-							if (!pass2) {
-							} else {
-								sym = new symbols::MacroSymbol(s.second, &(_config->ostream(Verb::ERROR)));
-								add_sym = true;
-							}
-							break;
-
-						case Symbol::Type::QUERY:
-							if (!pass2) {
-							} else {
-								sym = new symbols::QuerySymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
-								add_sym = true;
-							}
-
-							break;
-
-						case Symbol::Type::ERR_INVALID_SYMBOL:
-							_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected symbol key \"" << s.first << "\" in symbol table file \"" << path.native() << "\". Expected one of \"sort\", \"constant\", \"variable\", \"object\", or \"macro\"." << std::endl;
-							good = false;
-						};
-
-						// finish up by adding the symbol if we need to.
-						if (add_sym) {
-							if (!sym->good()) {
-								_config->ostream(Verb::ERROR) << "ERROR: An error occurred while trying to load a symbol of type \"" << s.first << "\" in symbol table file \"" << path.native() << "\"." << std::endl;
-								good = false;
-							} else {
-								// try to create the symbol
-								tmp = resolveOrCreate(sym);
-								if (!tmp) {
-									_config->ostream(Verb::ERROR) << "ERROR: Detected a conflicting definition of symbol \"" << *(sym->name()) << "\" while loading symbol table from file \"" << path.native() << "\"." << std::endl;
-									good = false;
-								}
-							}
 						}
+					} else if (boost::iequals(symbols.first, "metadata")) {
+						std::string name, value;
+						BOOST_FOREACH(pt::ptree::value_type& s, symbols.second) {
+							bool goodentry = true;
+							if (!boost::iequals(s.first, "value")) {
+								_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected key \"" << symbols.first << "\" while scanning the metadata information in symbol table file \"" << path.native() << "\". Expected \"value\"." << std::endl;
+								good = false;
+								continue;
+							} 
+							try {
+								name = s.second.get<std::string>("<xmlattr>.key");
+							} catch (boost::property_tree::ptree_error const& e) {
+								_config->ostream(Verb::ERROR) << "ERROR: Encountered a malformed metadata entry while scanning symbol table file \"" << path.native() << "\". The entry is missing its \"key\" attribute." << std::endl;
+								good = false;
+								goodentry = false;
+							}
+
+							try {
+								value = s.second.get<std::string>("<xmlattr>.value");
+							} catch (boost::property_tree::ptree_error const& e) {
+								if (goodentry)
+									_config->ostream(Verb::ERROR) << "ERROR: Encountered a malformed metadata entry while scanning symbol table file \"" << path.native() << "\". The entry is missing its \"value\" attribute." << std::endl;
+								else
+									_config->ostream(Verb::ERROR) << "ERROR: Metadata entry \"" << name << "\" is malformed in symbol table file \"" << path.native() << "\". The entry is missing its \"value\" attribute." << std::endl;
+		
+								good = false;
+								goodentry = false;
+							}
+						
+							if (goodentry && !setData(name, new ReferencedString(value))) {
+								_config->ostream(Verb::ERROR) << "ERROR: Encountered a redefinition of metadata entry \"" << name  << "\" in symbol table file \"" << path.native() << "\"." << std::endl;
+								good = false;
+							}
+
+						}
+
+					} else {
+						_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected top-level key \"" << symbols.first << "\" in symbol table file \"" << path.native() << "\". Expected \"symbols\" or \"metadata\"." << std::endl;
+						good = false;
 					}
 				}
 			}
@@ -344,6 +397,16 @@ bool SymbolTable::save(boost::filesystem::path const& path) const {
 		type = type << 1;
 	}
 
+	// Also include the metadata
+	pt::ptree& metadata = xml.put("metadata", "");
+	BOOST_FOREACH(DataMap::value_type const& data, _metadata) {
+		pt::ptree& node = metadata.add("value", "");
+		node.put("<xmlattr>.key", data.first);
+		node.put("<xmlattr>.value", *data.second);
+	}
+
+
+
 	// open the file
 	fs::ofstream out;
 	bool good = true;
@@ -376,9 +439,36 @@ bool SymbolTable::save(boost::filesystem::path const& path) const {
 	return good;
 }
 
+bool SymbolTable::loadMacros(Configuration const* config) {
+	bool good = true;
+	BOOST_FOREACH(Configuration::MacroDefinition const& macro, *config) {
+		if (*macro.first == "maxAdditive" || *macro.first == "maxAFValue") {
+			// Ensure it's an integer!
+			bool goodval = true;
+			try {
+				boost::lexical_cast<int>(*macro.second);
+			} catch (boost::bad_lexical_cast const& e) {
+				_config->ostream(Verb::ERROR) << "ERROR: Encountered a bad command-line definition of \"maxAdditive\". \"" + *macro.second + "\" is not a non-negative integer." << std::endl;
+				good = false;
+				goodval = false;
+			}
 
+			if (goodval && !setData(*macro.first, macro.second)) {
+				config->ostream(Verb::ERROR) << "ERROR: Detected redeclaration of \"" + *macro.first + "\" while scanning command line macro definitions." << std::endl;
+				good = false;
+			}
+		} else {
 
+			u::ref_ptr<MacroSymbol> m = new MacroSymbol(macro.first, macro.second);
+			if (!create(m)) {
+				good = false;
+				config->ostream(Verb::ERROR) << "ERROR: Detected redeclaration of symbol \"" + *macro.first + "/0\" while scanning command line macro definitions." << std::endl;
+			}
+		}
+	}
 
+	return good;
+}
 
 
 }}

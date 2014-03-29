@@ -34,9 +34,9 @@ Configuration::~Configuration()
 { /* Intentionally left blank */ }
 
 
-Option::Status Configuration::load(int argc, char const** argv) {
+int Configuration::load(int argc, char const** argv) {
 	Option::Status ret = Option::STAT_OK;
-	char const* val;
+	std::string val, val2;
 	int int_v;
 	bool good;
 
@@ -47,47 +47,48 @@ Option::Status Configuration::load(int argc, char const** argv) {
 	// parse arguments
 
 	for (int i = 1; i < argc; i++) {
-		val = NULL;
-
-		Option::type opt = parseOption(argv[i], val);
+		int opt = parseOption(argv[i], val, val2);
 
 		switch (opt) {
 		case Option::SYMTAB_INPUT:
-			if (fs::native(val)) {
+			if (fs::native(val2)) {
 				_symtab_in = new ReferencedPath(val);
 			} else {
 				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: \"" << val << "\" is not a valid file path." << std::endl;
+				std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
 			}
 			break;
 		case Option::SYMTAB_OUTPUT:
-			if (fs::native(val)) {
-				_symtab_out = new ReferencedPath(val);
+			if (fs::native(val2)) {
+				_symtab_out = new ReferencedPath(val2);
 			} else {
 				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: \"" << val << "\" is not a valid file path." << std::endl;
+				std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
 
 			}
 			break;
 
 		case Option::VERBOSITY:
-			good = babb::utils::fromString(val, int_v);
+			good = babb::utils::fromString(val2.c_str(), int_v);
 			if (!good || int_v < 0) {
 				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: unknown valud provided for command line option. Expected a non-negative integer in \"" << opt <<"." << std::endl;
+				std::cerr << "ERROR: Bad value provided for command line option. Expected a non-negative integer for argument \"" << val << "\"." << std::endl;
 			} else {
 				verbosity(int_v);	
 			}
 			break;
 		case Option::PARSE_TRACE:
-			if (!strcmp(val, "true")) {
+			if (val2 == "true") {
 				_parse_trace = true;
-			} else if (!strcmp(val, "false")) {
+			} else if (val2 == "false") {
 				_parse_trace = false;
 			} else {
 				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: unknown valud provided for command line option. Expected \"true\" or \"false\" in \"" << opt <<"." << std::endl;
+				std::cerr << "ERROR: Bad value provided for command line option. Expected \"true\" or \"false\" for argument \"" << val <<"." << std::endl;
 			}
+			break;
+		case Option::MACRO_DEF:
+			addMacro(new ReferencedString(val), new ReferencedString(val2));
 			break;
 
 		case Option::HELP:
@@ -124,10 +125,12 @@ std::ostream& Configuration::ostream(Verb::Level v) const {
 	else return std::cout;
 }
 
-Option::type Configuration::parseOption(char const* opt, char const*& val) {
+int Configuration::parseOption(char const* opt, std::string& val, std::string& val2) {
     char const* marker;
+	char const* token = opt;
 
-    val = NULL;
+    val = "";
+	val2 = "";
 
     /*!re2c
      	re2c:define:YYCTYPE = "char";
@@ -136,14 +139,42 @@ Option::type Configuration::parseOption(char const* opt, char const*& val) {
     	re2c:define:YYMARKER = marker;
     	re2c:indent:top = 1;
 	
-		"-s="|"--symtab-in="					{ val = opt; return Option::SYMTAB_INPUT; }
-		"--symtab-out="							{ val = opt; return Option::SYMTAB_OUTPUT; }
-		"--verb="								{ val = opt; return Option::VERBOSITY; }
-		"--parse-trace="						{ val = opt; return Option::PARSE_TRACE; }
-		"--parse-trace"							{ val = "true"; return Option::PARSE_TRACE; }
-		"-h"|"-?"|"--help"						{ val = NULL; return Option::HELP; }
-		"-v"|"--version"						{ val = NULL; return Option::VERSION; }
-		.										{ val = NULL; return Option::BAD; }
+		IDENTIFIER								= [a-zA-Z_][a-zA-Z0-9_]+;
+
+		"-s="|"--symtab-in="					{ 
+												  val.assign(token, (size_t)(opt - token - 2));
+												  val2 = opt; 
+												  return Option::SYMTAB_INPUT; }
+		"--symtab-out="							{ 
+												  val.assign(token, (size_t)(opt - token - 2));
+												  val2 = opt; 
+												  return Option::SYMTAB_OUTPUT; }
+		"--verb="								{ 
+												  val.assign(token, (size_t)(opt - token - 2));
+												  val2 = opt; 
+												  return Option::VERBOSITY; }
+		"--parse-trace="						{ 
+												  val.assign(token, (size_t)(opt - token - 2));
+												  val = opt; 
+												  return Option::PARSE_TRACE; }
+		"--parse-trace"							{ 
+												  val.assign(token, (size_t)(opt - token - 2));
+												  val = "true"; 
+												  return Option::PARSE_TRACE; }
+		"-h"|"-?"|"--help"						{ 
+												  val = token;
+												  return Option::HELP; }
+		"-v"|"--version"						{ 
+												  val = token;
+												  return Option::VERSION; }
+		IDENTIFIER "=" [^\x00]*					{ 
+												  char const* c = strchr(token, '=');
+												  val.assign(token, (size_t)(c - token));
+												  val2.assign(c+1,opt-c-1);
+												  return Option::MACRO_DEF; }
+		.										{ 
+												  val = token;
+												  return Option::BAD; }
 	*/
 
 }
@@ -157,8 +188,8 @@ std::ostream& Configuration::output(std::ostream& out) const {
 		<< "Version: " << *_version << std::endl << std::endl
 		<< "Symbol Table Input: \"" << (_symtab_in ? _symtab_in->native() : "<NONE>") << "\"" << std::endl
 		<< "Symbol Table Output: \"" << (_symtab_out ? _symtab_out->native() : "<NONE>") << "\"" << std::endl
-		<< "Verbosity: " << "\"" << _verb << "\"" << std::endl;
-
+		<< "Verbosity: " << "\"" << _verb << "\"" << std::endl
+		<< "Parser trace: " << "\"" << (parseTrace() ? "true" : "false") << "\"" << std::endl;
 	return out;
 }
 

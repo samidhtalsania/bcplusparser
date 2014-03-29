@@ -72,19 +72,5 @@ int main(int argc, char const** argv) {
 
 	} while (result.first != parser::BCParser::Status::END_INPUT);
 
-
-	conf->ostream(Verb::OP) << "Done parsing..." << std::endl;
-
-	// Set up a symbol table
-	u::ref_ptr<symbols::SymbolTable> symtab = new symbols::SymbolTable(conf);
-
-	if (!symtab->good()) {
-		conf->ostream(Verb::ERROR) << "ERROR: An error occurred loading the symbol table. Exiting." << std::endl;
-		return 2;
-	}
-
-	conf->ostream(Verb::OP) << "Saving symbol table..." << std::endl;
-	symtab = NULL;
-
 	return 0;
 }

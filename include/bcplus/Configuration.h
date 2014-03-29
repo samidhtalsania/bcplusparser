@@ -23,6 +23,7 @@ struct Option {
 		PARSE_TRACE,		///< Whether we should display lemon parser trace information.
 		HELP,				///< Show help dialog.
 		VERSION,			///< Show the application version
+		MACRO_DEF,			///< A macro definition
 		BAD					///< Unknown option.
 	};
 
@@ -66,6 +67,16 @@ public:
 
 	/// Default verbosity level
 	static const size_t DEFAULT_VERB_LEVEL;
+	
+	/***************************************************************************/
+	/* Public types */
+	/***************************************************************************/
+
+	typedef std::pair<babb::utils::ref_ptr<const ReferencedString>, 
+		babb::utils::ref_ptr<const ReferencedString> > MacroDefinition;
+	typedef ReferencedList<MacroDefinition>::type MacroList;
+	typedef MacroList::iterator iterator;
+	typedef MacroList::const_iterator const_iterator;
 
 private:
 	/***************************************************************************/
@@ -83,7 +94,8 @@ private:
 	babb::utils::ref_ptr<const ReferencedPath> _symtab_out;		///< Output file (if any) for the symbol table.
 	size_t _verb;												///< The user defined verbosity level.	
 	bool _parse_trace;											///< Whether we should display parser trace information.
-	
+
+	MacroList _macros;
 
 public:
 	/***************************************************************************/
@@ -101,18 +113,7 @@ public:
 	/***************************************************************************/
 	/* Public Methods */
 	/***************************************************************************/
-	/// Loads configuration parameters from the provided arguments list.
-	/// @param argc The number of arguments.
-	/// @param argv An array of these arguments.
-	/// @return The status of the load
-	Option::Status load(int argc, char const** argv);
-
-	/// Verifies the integrity of the configuration parameters.
-	/// @return True if the parameters appear to be correct. False otherwise.
-	bool good();
-
-	// -------------------------------------------------------------------------
-
+	
 	/// Get the application version
 	inline ReferencedString const* version() const				{ return _version; }
 
@@ -135,35 +136,62 @@ public:
 	inline bool parseTrace() const								{ return _parse_trace; }
 	inline void parseTrace(bool trace)							{ _parse_trace = trace; }
 
+	/// iterate over the list of command line macros
+	inline const_iterator begin() const							{ return _macros.begin(); }
+	inline iterator begin()										{ return _macros.begin(); }
+	inline const_iterator end() const							{ return _macros.end(); }
+	inline iterator end()										{ return _macros.end(); }
+
+	/// Add a macro definition
+	inline void addMacro(ReferencedString const* name, ReferencedString const* def)
+																{ _macros.push_back(MacroDefinition(name,def)); }
+	inline void addMacro(MacroDefinition const& m)				{ _macros.push_back(m); }
+
+
 	/// Get the output stream for the provided verbosity level
 	/// This will return a null-sink, std::cerr, or std::cout.
 	std::ostream& ostream(Verb::Level v) const;
 
 	// --------------------------------------------------------------------------
+	
+	/// Loads configuration parameters from the provided arguments list.
+	/// @param argc The number of arguments.
+	/// @param argv An array of these arguments.
+	/// @return The status of the load
+	virtual int load(int argc, char const** argv);
+	
+	/// Verifies the integrity of the configuration parameters.
+	/// @return True if the parameters appear to be correct. False otherwise.
+	virtual bool good();
+
+	// -------------------------------------------------------------------------
+
 	/// Outputs the current configuration to a stream.
 	/// @param out The output stream.
 	/// @return The output stream.
-	std::ostream& output(std::ostream& out) const;
+	virtual std::ostream& output(std::ostream& out) const;
 
 	/// Outputs the application version information.
 	/// @param out The output stream to write to.
 	/// @return out
-	std::ostream& outputVersion(std::ostream& out) const;
+	virtual std::ostream& outputVersion(std::ostream& out) const;
 
 	/// Outputs a help dialog to the provided output stream.
 	/// @param out The output stream to write the help dialog to.
 	/// @return out
-	std::ostream& outputHelp(std::ostream& out) const;
+	virtual std::ostream& outputHelp(std::ostream& out) const;
+	
 
-private:
+protected:
 	/***************************************************************************/
 	/* Private Methods */
 	/***************************************************************************/
 	/// Parses the string and determines the command line option it contains.
 	/// @param opt The option string to parse.
 	/// @param[out] val The value the option is set to, where applicable.
+	/// @param[out] val2 A second value where applicable.
 	/// @return The option contained within the string or BAD.
-	Option::type parseOption(char const* opt, char const*& val);
+	virtual int parseOption(char const* opt, std::string& val, std::string& val2);
 
 };
 

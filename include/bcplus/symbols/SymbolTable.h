@@ -53,6 +53,8 @@ public:
 	typedef boost::transform_iterator<get_second, SymbolMap::iterator> iterator;
 	typedef boost::transform_iterator<get_second, SymbolMap::const_iterator> const_iterator;
 
+	typedef std::map<std::string, babb::utils::ref_ptr<const ReferencedString> > DataMap;
+
 private:
 	/*******************************************************************************/
 	/* Private Members */
@@ -68,7 +70,7 @@ private:
 	bool _good;
 
 	/// A convenient place to store metadata
-	Referenced* _metadata;
+	DataMap _metadata;
 
 public:
 
@@ -98,10 +100,16 @@ public:
 	/// Determines if the symbol table was successfully loaded
 	inline bool good() const												{ return _good; }
 
-	/// Get/set the symboltable metadata
-	inline Referenced const* metadata() const								{ return _metadata; }
-	inline Referenced* metadata() 											{ return _metadata; }
-	inline void metadata(Referenced* data)									{ _metadata = data; }
+	/// Get the metadata for the given key, or NULL.
+	ReferencedString const* getData(std::string const& key) const;
+	
+	/// Set the metadata for the given key.
+	/// @param key The key for the data
+	/// @param data The new data for the key
+	/// @param override Whether to override existing data
+	/// @return True if successful, false if the data exists and we didn't override it.
+	bool setData(std::string const& key, ReferencedString const* data, bool override = false);
+	
 
 
 	// Inherited from Resolver
@@ -133,6 +141,11 @@ private:
 	/// @param path The file to save to.
 	/// @return True if successful, false otherwise.
 	bool save(boost::filesystem::path const& path) const;
+
+	/// Attempts to load the macro definitions present within the configuration
+	/// @param config The configuration to load the definitions from.
+	/// @return True if successful, false if something went wrong.
+	bool loadMacros(Configuration const* config);
 
 
 };
