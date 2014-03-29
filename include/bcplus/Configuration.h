@@ -166,32 +166,35 @@ public:
 
 	// -------------------------------------------------------------------------
 
-	/// Outputs the current configuration to a stream.
-	/// @param out The output stream.
-	/// @return The output stream.
-	virtual std::ostream& output(std::ostream& out) const;
-
 	/// Outputs the application version information.
 	/// @param out The output stream to write to.
 	/// @return out
-	virtual std::ostream& outputVersion(std::ostream& out) const;
+	std::ostream& outputVersion(std::ostream& out) const;
 
 	/// Outputs a help dialog to the provided output stream.
 	/// @param out The output stream to write the help dialog to.
 	/// @return out
-	virtual std::ostream& outputHelp(std::ostream& out) const;
+	std::ostream& outputHelp(std::ostream& out) const;
 	
 
 protected:
 	/***************************************************************************/
 	/* Private Methods */
 	/***************************************************************************/
-	/// Parses the string and determines the command line option it contains.
+	/// Parses the string option and performs the task specified by it
 	/// @param opt The option string to parse.
-	/// @param[out] val The value the option is set to, where applicable.
-	/// @param[out] val2 A second value where applicable.
-	/// @return The option contained within the string or BAD.
-	virtual int parseOption(char const* opt, std::string& val, std::string& val2);
+	/// @return A status code indicating whether or not it was a success.
+	virtual int parseOption(char const* opt);
+
+	/// Outputs the options for this configuration
+	/// FORMAT: (dash is a space)
+	/// -----<category>:
+	/// ----------<option>
+	/// ----------<option2>
+	/// ---------------<description>
+	/// @param out The output stream to write to
+	/// @return out.
+	virtual std::ostream& outputOptions(std::ostream& out) const;
 
 };
 

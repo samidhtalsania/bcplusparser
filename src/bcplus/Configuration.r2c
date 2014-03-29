@@ -35,10 +35,7 @@ Configuration::~Configuration()
 
 
 int Configuration::load(int argc, char const** argv) {
-	Option::Status ret = Option::STAT_OK;
-	std::string val, val2;
-	int int_v;
-	bool good;
+	int ret = Option::STAT_OK;
 
 	// Figure out who we are
 	fs::path bin = argv[0];
@@ -47,71 +44,16 @@ int Configuration::load(int argc, char const** argv) {
 	// parse arguments
 
 	for (int i = 1; i < argc; i++) {
-		int opt = parseOption(argv[i], val, val2);
-
-		switch (opt) {
-		case Option::SYMTAB_INPUT:
-			if (fs::native(val2)) {
-				_symtab_in = new ReferencedPath(val);
-			} else {
-				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
-			}
-			break;
-		case Option::SYMTAB_OUTPUT:
-			if (fs::native(val2)) {
-				_symtab_out = new ReferencedPath(val2);
-			} else {
-				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
-
-			}
-			break;
-
-		case Option::VERBOSITY:
-			good = babb::utils::fromString(val2.c_str(), int_v);
-			if (!good || int_v < 0) {
-				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: Bad value provided for command line option. Expected a non-negative integer for argument \"" << val << "\"." << std::endl;
-			} else {
-				verbosity(int_v);	
-			}
-			break;
-		case Option::PARSE_TRACE:
-			if (val2 == "true") {
-				_parse_trace = true;
-			} else if (val2 == "false") {
-				_parse_trace = false;
-			} else {
-				ret = Option::STAT_BAD_ARG;
-				std::cerr << "ERROR: Bad value provided for command line option. Expected \"true\" or \"false\" for argument \"" << val <<"." << std::endl;
-			}
-			break;
-		case Option::MACRO_DEF:
-			addMacro(new ReferencedString(val), new ReferencedString(val2));
-			break;
-
-		case Option::HELP:
-			return Option::STAT_HELP;
-
-		case Option::VERSION:
-			return Option::STAT_VERSION;
-
-		case Option::BAD:			
-		default:
-			ret = Option::STAT_BAD_ARG;
-			std::cerr << "ERROR: Unrecognized option: \"" << argv[i] << "\"." << std::endl;
-			break;
-		}
+		if ((ret = parseOption(argv[i])) == Option::STAT_HELP 
+			|| ret == Option::STAT_VERSION || ret == Option::STAT_BAD_ARG) return ret;
+		
 
 	}
 	return ret;
 }
 
 bool Configuration::good() {
-	bool good = true;
-	// TODO
-	return good;
+	return true;
 }
 
 std::ostream& Configuration::ostream(Verb::Level v) const {
@@ -125,12 +67,13 @@ std::ostream& Configuration::ostream(Verb::Level v) const {
 	else return std::cout;
 }
 
-int Configuration::parseOption(char const* opt, std::string& val, std::string& val2) {
+int Configuration::parseOption(char const* opt) {
+	int ret = Option::STAT_OK;
+	std::string val, val2;
     char const* marker;
 	char const* token = opt;
-
-    val = "";
-	val2 = "";
+	int option, int_v;
+	bool good;
 
     /*!re2c
      	re2c:define:YYCTYPE = "char";
@@ -144,53 +87,106 @@ int Configuration::parseOption(char const* opt, std::string& val, std::string& v
 		"-s="|"--symtab-in="					{ 
 												  val.assign(token, (size_t)(opt - token - 2));
 												  val2 = opt; 
-												  return Option::SYMTAB_INPUT; }
+												  option = Option::SYMTAB_INPUT; 
+												  goto re2c_finish; }
 		"--symtab-out="							{ 
 												  val.assign(token, (size_t)(opt - token - 2));
 												  val2 = opt; 
-												  return Option::SYMTAB_OUTPUT; }
+												  option = Option::SYMTAB_OUTPUT;
+												  goto re2c_finish; }
 		"--verb="								{ 
 												  val.assign(token, (size_t)(opt - token - 2));
 												  val2 = opt; 
-												  return Option::VERBOSITY; }
+												  option = Option::VERBOSITY;
+												  goto re2c_finish; }
 		"--parse-trace="						{ 
 												  val.assign(token, (size_t)(opt - token - 2));
 												  val = opt; 
-												  return Option::PARSE_TRACE; }
+												  option = Option::PARSE_TRACE;
+												  goto re2c_finish; }
 		"--parse-trace"							{ 
 												  val.assign(token, (size_t)(opt - token - 2));
 												  val = "true"; 
-												  return Option::PARSE_TRACE; }
+												  option = Option::PARSE_TRACE;
+												  goto re2c_finish; }
 		"-h"|"-?"|"--help"						{ 
 												  val = token;
-												  return Option::HELP; }
+												  option =  Option::HELP;
+												  goto re2c_finish; }
 		"-v"|"--version"						{ 
 												  val = token;
-												  return Option::VERSION; }
+												  option = Option::VERSION;
+												  goto re2c_finish; }
 		IDENTIFIER "=" [^\x00]*					{ 
 												  char const* c = strchr(token, '=');
 												  val.assign(token, (size_t)(c - token));
 												  val2.assign(c+1,opt-c-1);
-												  return Option::MACRO_DEF; }
+												  option = Option::MACRO_DEF;
+												  goto re2c_finish; }
 		.										{ 
 												  val = token;
-												  return Option::BAD; }
+												  option = Option::BAD;
+												  goto re2c_finish; }
 	*/
 
-}
+re2c_finish:
 
+	switch (option) {
+	case Option::SYMTAB_INPUT:
+		if (fs::native(val2)) {
+			_symtab_in = new ReferencedPath(val);
+		} else {
+			ret = Option::STAT_BAD_ARG;
+			std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
+		}
+		break;
+	case Option::SYMTAB_OUTPUT:
+		if (fs::native(val2)) {
+			_symtab_out = new ReferencedPath(val2);
+		} else {
+			ret = Option::STAT_BAD_ARG;
+			std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
 
+		}
+		break;
 
+	case Option::VERBOSITY:
+		good = babb::utils::fromString(val2.c_str(), int_v);
+		if (!good || int_v < 0) {
+			ret = Option::STAT_BAD_ARG;
+			std::cerr << "ERROR: Bad value provided for command line option. Expected a non-negative integer for argument \"" << val << "\"." << std::endl;
+		} else {
+			verbosity(int_v);	
+		}
+		break;
+	case Option::PARSE_TRACE:
+		if (val2 == "true") {
+			_parse_trace = true;
+		} else if (val2 == "false") {
+			_parse_trace = false;
+		} else {
+			ret = Option::STAT_BAD_ARG;
+			std::cerr << "ERROR: Bad value provided for command line option. Expected \"true\" or \"false\" for argument \"" << val <<"." << std::endl;
+		}
+		break;
+	case Option::MACRO_DEF:
+		addMacro(new ReferencedString(val), new ReferencedString(val2));
+		break;
 
-std::ostream& Configuration::output(std::ostream& out) const {
-	out 
-		<< "Executable name: " << *_bin_name << std::endl
-		<< "Version: " << *_version << std::endl << std::endl
-		<< "Symbol Table Input: \"" << (_symtab_in ? _symtab_in->native() : "<NONE>") << "\"" << std::endl
-		<< "Symbol Table Output: \"" << (_symtab_out ? _symtab_out->native() : "<NONE>") << "\"" << std::endl
-		<< "Verbosity: " << "\"" << _verb << "\"" << std::endl
-		<< "Parser trace: " << "\"" << (parseTrace() ? "true" : "false") << "\"" << std::endl;
-	return out;
+	case Option::HELP:
+		ret = Option::STAT_HELP;
+		break;
+	case Option::VERSION:
+		ret = Option::STAT_VERSION;
+		break;
+	case Option::BAD:			
+	default:
+		ret = Option::STAT_BAD_ARG;
+		std::cerr << "ERROR: Unrecognized option: \"" << token << "\"." << std::endl;
+		break;
+	}
+	return ret;
+
 }
 
 std::ostream& Configuration::outputVersion(std::ostream& out) const {
@@ -202,30 +198,45 @@ std::ostream& Configuration::outputHelp(std::ostream& out) const {
 	out << "---------------------------------------------------------------------------------------"<< std::endl
 		<< *binaryName() << " version " << *version() 												<< std::endl
 		<< "---------------------------------------------------------------------------------------"<< std::endl
-		<< "Usage: " << *binaryName() << " <OPTIONS> <INPUT_FILES>" 								<< std::endl
-		<< "          -s=<FILE>"																	<< std::endl
-		<< "          --symtab-in=<FILE>"															<< std::endl
-		<< "                   - An XML file to read the initial symbol table in from. [none]"		<< std::endl
-		<< "          --symtab-out=<FILE>"															<< std::endl
-		<< "                   - A file to write the final symbol table to. [none]"					<< std::endl
-		<< "          --verb=<LEVEL>"																<< std::endl
-		<< "                   - The level of output to show:"										<< std::endl
-		<< "                        " << Verb::ERROR 		<< "  - Error output only"				<< std::endl
-		<< "                        " << Verb::WARN 		<< "  - Warnings"						<< std::endl
-		<< "                        " << Verb::STD	 		<< "  - Standard messages [default]"	<< std::endl
-		<< "                     Only available when compiled in debug mode:"						<< std::endl
-		<< "                        " << Verb::OP 			<< "  - Operation level trace output" 	<< std::endl
-		<< "                        " << Verb::DETAIL	 	<< "  - Detailed debugging messages"	<< std::endl
-		<< "                        " << Verb::TRACE_PARSER	<< "+ - Parser debugging messages"		<< std::endl
-		<< "          --parse-trace"																<< std::endl
-		<< "                   - Enable lemon parser trace output."									<< std::endl
-		<< "          -v"																			<< std::endl
-		<< "          --version"																	<< std::endl
-		<< "                   - Displays the version dialog."										<< std::endl
-		<< "          -h"																			<< std::endl
-		<< "          --help"																		<< std::endl
-		<< "                   - Shows this dialog."												<< std::endl;
+		<< "Usage: " << *binaryName() << " [<OPTIONS>] [<CONSTANTS>] <INPUT_FILES>" 				<< std::endl
+		<< "---------------------------------------------------------------------------------------"<< std::endl
+		<< "OPTIONS:"																				<< std::endl;
+	outputOptions(out);
+	out 																							<< std::endl
+		<< "CONSTANTS:"																				<< std::endl
+		<< "     <identifier>=<value>"																<< std::endl
+		<< "          - Defines <identifier> to be a macro which expands to <value>"				<< std::endl;
 	return out;
 }
 
-};
+std::ostream& Configuration::outputOptions(std::ostream& out) const {
+	out << "     Parser Options:"																	<< std::endl
+		<< "          -s=<FILE>"																	<< std::endl
+		<< "          --symtab-in=<FILE>"															<< std::endl
+		<< "               - An XML file to read the initial symbol table in from. [none]"			<< std::endl
+		<< "          --symtab-out=<FILE>"															<< std::endl
+		<< "               - A file to write the final symbol table to. [none]"						<< std::endl
+		<< "          --verb=<LEVEL>"																<< std::endl
+		<< "               - The level of output to show:"											<< std::endl
+		<< "                    " << Verb::ERROR 		<< "  - Error output only"					<< std::endl
+		<< "                    " << Verb::WARN 		<< "  - Warnings"							<< std::endl
+		<< "                    " << Verb::STD	 		<< "  - Standard messages [default]"		<< std::endl
+		<< "                 Only available when compiled in debug mode:"							<< std::endl
+		<< "                    " << Verb::OP 			<< "  - Operation level trace output" 		<< std::endl
+		<< "                    " << Verb::DETAIL	 	<< "  - Detailed debugging messages"		<< std::endl
+		<< "                    " << Verb::TRACE_PARSER	<< "+ - Parser debugging messages"			<< std::endl
+		<< "          --parse-trace"																<< std::endl
+		<< "               - Enable lemon parser trace output."										<< std::endl
+																									<< std::endl
+		<< "     Other Options:"																	<< std::endl
+		<< "          -v"																			<< std::endl
+		<< "          --version"																	<< std::endl
+		<< "               - Displays the version dialog."											<< std::endl
+		<< "          -h"																			<< std::endl
+		<< "          --help"																		<< std::endl
+		<< "               - Shows this dialog."													<< std::endl;
+	return out;
+
+}
+
+}
