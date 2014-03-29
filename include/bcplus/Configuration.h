@@ -14,32 +14,13 @@
 
 namespace bcplus {
 
-/// Container for option enumeration information
-struct Option {
-	enum type {
-		SYMTAB_INPUT,		///< Input file to initialize symbol table from.
-		SYMTAB_OUTPUT,		///< Output file to save symbol table to.
-		VERBOSITY,			///< Specify the application verbosity level.
-		PARSE_TRACE,		///< Whether we should display lemon parser trace information.
-		HELP,				///< Show help dialog.
-		VERSION,			///< Show the application version
-		MACRO_DEF,			///< A macro definition
-		BAD					///< Unknown option.
-	};
 
-	enum Status {
-		STAT_OK,		///< Everything is a-ok.
-		STAT_BAD_ARG,	///< The user provided an option we don't recognize.
-		STAT_HELP,		///< The user needs help.
-		STAT_VERSION	///< The user wants the application version.
-	};
 
-};
 
 /// Container for verbosity levels
 struct Verb {
 
-	enum Level {
+	enum type {
 		ERROR = 0,					/// Error Messages
 		WARN = 1,					/// warning messages
 		STD = 2,					/// Standard Messages
@@ -71,6 +52,28 @@ public:
 	/***************************************************************************/
 	/* Public types */
 	/***************************************************************************/
+	struct Status {
+		enum type {
+			STAT_OK,		///< Everything is a-ok.
+			STAT_BAD_ARG,	///< The user provided an option we don't recognize.
+			STAT_HELP,		///< The user needs help.
+			STAT_VERSION	///< The user wants the application version.
+		};
+	};
+
+	/// Container for option enumeration information
+	struct Option {
+			enum type {
+				SYMTAB_INPUT,		///< Input file to initialize symbol table from.
+				SYMTAB_OUTPUT,		///< Output file to save symbol table to.
+				VERBOSITY,			///< Specify the application verbosity level.
+				PARSE_TRACE,		///< Whether we should display lemon parser trace information.
+				HELP,				///< Show help dialog.
+				VERSION,			///< Show the application version
+				MACRO_DEF,			///< A macro definition
+				BAD					///< Unknown option.
+		};
+	};
 
 	typedef std::pair<babb::utils::ref_ptr<const ReferencedString>, 
 		babb::utils::ref_ptr<const ReferencedString> > MacroDefinition;
@@ -150,7 +153,7 @@ public:
 
 	/// Get the output stream for the provided verbosity level
 	/// This will return a null-sink, std::cerr, or std::cout.
-	std::ostream& ostream(Verb::Level v) const;
+	std::ostream& ostream(Verb::type v) const;
 
 	// --------------------------------------------------------------------------
 	

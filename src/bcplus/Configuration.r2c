@@ -35,7 +35,7 @@ Configuration::~Configuration()
 
 
 int Configuration::load(int argc, char const** argv) {
-	int ret = Option::STAT_OK;
+	int ret = Status::STAT_OK;
 
 	// Figure out who we are
 	fs::path bin = argv[0];
@@ -44,8 +44,8 @@ int Configuration::load(int argc, char const** argv) {
 	// parse arguments
 
 	for (int i = 1; i < argc; i++) {
-		if ((ret = parseOption(argv[i])) == Option::STAT_HELP 
-			|| ret == Option::STAT_VERSION || ret == Option::STAT_BAD_ARG) return ret;
+		if ((ret = parseOption(argv[i])) == Status::STAT_HELP 
+			|| ret == Status::STAT_VERSION || ret == Status::STAT_BAD_ARG) return ret;
 		
 
 	}
@@ -56,7 +56,7 @@ bool Configuration::good() {
 	return true;
 }
 
-std::ostream& Configuration::ostream(Verb::Level v) const {
+std::ostream& Configuration::ostream(Verb::type v) const {
 	static ios::stream<ios::null_sink> NULLSTREAM( (ios::null_sink()) );
 
 	if (v > _verb) return NULLSTREAM;
@@ -68,7 +68,7 @@ std::ostream& Configuration::ostream(Verb::Level v) const {
 }
 
 int Configuration::parseOption(char const* opt) {
-	int ret = Option::STAT_OK;
+	int ret = Status::STAT_OK;
 	std::string val, val2;
     char const* marker;
 	char const* token = opt;
@@ -136,7 +136,7 @@ re2c_finish:
 		if (fs::native(val2)) {
 			_symtab_in = new ReferencedPath(val);
 		} else {
-			ret = Option::STAT_BAD_ARG;
+			ret = Status::STAT_BAD_ARG;
 			std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
 		}
 		break;
@@ -144,7 +144,7 @@ re2c_finish:
 		if (fs::native(val2)) {
 			_symtab_out = new ReferencedPath(val2);
 		} else {
-			ret = Option::STAT_BAD_ARG;
+			ret = Status::STAT_BAD_ARG;
 			std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
 
 		}
@@ -153,7 +153,7 @@ re2c_finish:
 	case Option::VERBOSITY:
 		good = babb::utils::fromString(val2.c_str(), int_v);
 		if (!good || int_v < 0) {
-			ret = Option::STAT_BAD_ARG;
+			ret = Status::STAT_BAD_ARG;
 			std::cerr << "ERROR: Bad value provided for command line option. Expected a non-negative integer for argument \"" << val << "\"." << std::endl;
 		} else {
 			verbosity(int_v);	
@@ -165,7 +165,7 @@ re2c_finish:
 		} else if (val2 == "false") {
 			_parse_trace = false;
 		} else {
-			ret = Option::STAT_BAD_ARG;
+			ret = Status::STAT_BAD_ARG;
 			std::cerr << "ERROR: Bad value provided for command line option. Expected \"true\" or \"false\" for argument \"" << val <<"." << std::endl;
 		}
 		break;
@@ -174,14 +174,14 @@ re2c_finish:
 		break;
 
 	case Option::HELP:
-		ret = Option::STAT_HELP;
+		ret = Status::STAT_HELP;
 		break;
 	case Option::VERSION:
-		ret = Option::STAT_VERSION;
+		ret = Status::STAT_VERSION;
 		break;
 	case Option::BAD:			
 	default:
-		ret = Option::STAT_BAD_ARG;
+		ret = Status::STAT_BAD_ARG;
 		std::cerr << "ERROR: Unrecognized option: \"" << token << "\"." << std::endl;
 		break;
 	}

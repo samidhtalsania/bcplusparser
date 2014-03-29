@@ -32,15 +32,15 @@ int main(int argc, char const** argv) {
 	u::ref_ptr<Configuration> conf = new Configuration(argv[0], VERSION);
 	
 	switch (conf->load(argc, argv)) {
-	case Option::STAT_OK:					
+	case Configuration::Status::STAT_OK:					
 		break;
-	case Option::STAT_BAD_ARG:
+	case Configuration::Status::STAT_BAD_ARG:
 		std::cerr << "ERROR: An error occurred parsing command line options. Exiting." << std::endl;
 		return 1;
-	case Option::STAT_HELP:
+	case Configuration::Status::STAT_HELP:
 		conf->outputHelp(std::cout);
 		return 0;
-	case Option::STAT_VERSION:
+	case Configuration::Status::STAT_VERSION:
 		conf->outputVersion(std::cout);
 		return 0;
 	}
