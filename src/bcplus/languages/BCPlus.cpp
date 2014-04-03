@@ -27,12 +27,14 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::CONST_ACTION:
 		case Feature::CONST_ADDITIVEFLUENT:
 		case Feature::CONST_ADDITIVEACTION:
+		case Feature::CONST_ATTRIBUTE:
 		case Feature::CONST_EXTERNALACTION:
 		case Feature::CONST_EXTERNALFLUENT:
 		case Feature::CONST_EXOGENOUSACTION:
 		case Feature::CONST_INERTIALFLUENT:
 		case Feature::CONST_RIGID:
 		case Feature::CONST_SIMPLEFLUENT:
+		case Feature::CONST_SDFLUENT:
 		case Feature::FORMULA_NESTED:
 		case Feature::FORMULA_CARDINALITY_BODY:
 		case Feature::FORMULA_CARDINALITY_HEAD:

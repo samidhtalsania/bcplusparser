@@ -1,0 +1,485 @@
+// Reprint of input file "lemon_parser.y".
+// Symbols:
+//   0 $                            120 ERR_UNTERMINATED_F2LP       
+//   1 INTEGER                      121 ERR_UNTERMINATED_BLK_COMMENT
+//   2 IDENTIFIER                   122 ERR_SYNTAX                  
+//   3 POUND_IDENTIFIER             123 ERR_PAREN_MISMATCH          
+//   4 POUND_INTEGER                124 ARG                         
+//   5 AT_IDENTIFIER                125 NOOP                        
+//   6 STRING_LITERAL               126 CONSTANT_ID                 
+//   7 ASP_GR                       127 VARIABLE_ID                 
+//   8 ASP_CP                       128 OBJECT_ID                   
+//   9 LUA_GR                       129 NUMBER_RANGE                
+//  10 LUA_CP                       130 HIDE                        
+//  11 F2LP_GR                      131 OBSERVED                    
+//  12 F2LP_CP                      132 error                       
+//  13 COMMENT                      133 start                       
+//  14 CONSTANTS                    134 statement_lst               
+//  15 INCLUDE                      135 statement                   
+//  16 MACROS                       136 stmt_macro_def              
+//  17 OBJECTS                      137 stmt_constant_def           
+//  18 QUERY                        138 stmt_object_def             
+//  19 SHOW                         139 stmt_variable_def           
+//  20 SORTS                        140 stmt_sort_def               
+//  21 VARIABLES                    141 stmt_code_blk               
+//  22 ABACTION                     142 stmt_law                    
+//  23 ACTION                       143 stmt_show                   
+//  24 ADDITIVEACTION               144 stmt_hide                   
+//  25 ADDITIVEFLUENT               145 stmt_noconcurrency          
+//  26 AFTER                        146 stmt_strong_noconcurrency   
+//  27 ALL                          147 stmt_maxafvalue             
+//  28 ALWAYS                       148 stmt_maxadditive            
+//  29 ASSUMING                     149 stmt_query                  
+//  30 ATTRIBUTE                    150 base_elem                   
+//  31 BY                           151 base_elem_no_const          
+//  32 CAUSED                       152 constant                    
+//  33 CAUSES                       153 object                      
+//  34 IMPOSSIBLE                   154 variable                    
+//  35 CONSTRAINT                   155 lua                         
+//  36 DECREMENTS                   156 undeclared                  
+//  37 DEFAULT                      157 term_lst                    
+//  38 EXTERNALACTION               158 term                        
+//  39 EXOGENOUS                    159 constant_one_const          
+//  40 EXOGENOUSACTION              160 term_no_const_lst           
+//  41 IF                           161 term_no_const               
+//  42 IFCONS                       162 base_elem_local             
+//  43 INCREMENTS                   163 base_elem_local_no_const    
+//  44 INERTIAL                     164 constant_local              
+//  45 INERTIALFLUENT               165 object_local                
+//  46 LABEL                        166 variable_local              
+//  47 MAY_CAUSE                    167 lua_local                   
+//  48 MAXADDITIVE                  168 undeclared_local            
+//  49 MAXAFVALUE                   169 term_local_lst              
+//  50 MAXSTEP                      170 term_local                  
+//  51 NEVER                        171 term_strong                 
+//  52 NOCONCURRENCY                172 term_strong_candidate       
+//  53 STRONG_NOCONCURRENCY         173 term_no_const_strong        
+//  54 NONEXECUTABLE                174 formula                     
+//  55 OF                           175 formula_base                
+//  56 POSSIBLY_CAUSED              176 comparison                  
+//  57 RIGID                        177 atomic_formula              
+//  58 SDFLUENT                     178 formula_quant               
+//  59 SIMPLEFLUENT                 179 formula_card                
+//  60 EXTERNALFLUENT               180 formula_no_const            
+//  61 UNLESS                       181 formula_no_const_base       
+//  62 WHERE                        182 comparison_no_const         
+//  63 FALSE                        183 atomic_formula_one_const    
+//  64 NONE                         184 formula_temporal            
+//  65 TRUE                         185 quant_lst                   
+//  66 AT                           186 quant_op                    
+//  67 BRACKET_L                    187 card_af                     
+//  68 BRACKET_R                    188 card_sort_bnd_lst           
+//  69 COLON_DASH                   189 sort                        
+//  70 CBRACKET_L                   190 head_formula                
+//  71 CBRACKET_R                   191 macro_def_lst               
+//  72 PAREN_L                      192 macro_bnd                   
+//  73 PAREN_R                      193 macro_args                  
+//  74 PERIOD                       194 macro_arg                   
+//  75 MACRO_STRING                 195 sort_lst                    
+//  76 TILDE                        196 sort_id_nr                  
+//  77 DBL_COLON                    197 sort_id                     
+//  78 ARROW_LEQ                    198 constant_bnd_lst            
+//  79 ARROW_REQ                    199 constant_bnd                
+//  80 ARROW_LDASH                  200 constant_dcl_lst            
+//  81 COLON                        201 constant_dcl_type           
+//  82 EQ                           202 object_bnd_lst              
+//  83 DBL_EQ                       203 object_bnd                  
+//  84 NEQ                          204 object_lst                  
+//  85 NOT_EQ                       205 object_spec                 
+//  86 LTHAN                        206 variable_bnd_lst            
+//  87 GTHAN                        207 variable_bnd                
+//  88 LTHAN_EQ                     208 variable_lst                
+//  89 GTHAN_EQ                     209 sort_bnd_lst                
+//  90 DBL_PERIOD                   210 sort_bnd                    
+//  91 BIG_CONJ                     211 sort_dcl_lst                
+//  92 BIG_DISJ                     212 show_lst                    
+//  93 POUND                        213 show_elem                   
+//  94 SEMICOLON                    214 query_lst                   
+//  95 EQUIV                        215 query_maxstep_decl          
+//  96 IMPL                         216 query_label_decl            
+//  97 ARROW_RDASH                  217 query_label_Decl            
+//  98 DBL_PLUS                     218 clause_if                   
+//  99 PIPE                         219 clause_after                
+// 100 DBL_GTHAN                    220 clause_ifcons               
+// 101 DBL_LTHAN                    221 clause_unless               
+// 102 AMP                          222 clause_where                
+// 103 COMMA                        223 law_basic                   
+// 104 DBL_AMP                      224 law_caused                  
+// 105 NOT                          225 law_pcaused                 
+// 106 DASH                         226 law_impl                    
+// 107 PLUS                         227 law_causes                  
+// 108 STAR                         228 law_increments              
+// 109 INT_DIV                      229 law_mcause                  
+// 110 MOD                          230 law_always                  
+// 111 ABS                          231 law_constraint              
+// 112 UMINUS                       232 law_impossible              
+// 113 CARROT                       233 law_never                   
+// 114 EOF                          234 law_default                 
+// 115 ERR_IO                       235 law_exogenous               
+// 116 ERR_UNKNOWN_SYMBOL           236 law_inertial                
+// 117 ERR_UNTERMINATED_STRING      237 law_nonexecutable           
+// 118 ERR_UNTERMINATED_ASP         238 law_rigid                   
+// 119 ERR_UNTERMINATED_LUA         239 law_observed                
+start ::= statement_lst EOF.
+statement_lst ::=.
+statement_lst ::= statement_lst error.
+statement_lst ::= statement_lst statement.
+statement ::= stmt_macro_def.
+statement ::= stmt_constant_def.
+statement ::= stmt_object_def.
+statement ::= stmt_variable_def.
+statement ::= stmt_sort_def.
+statement ::= stmt_code_blk.
+statement ::= stmt_law.
+statement ::= stmt_show.
+statement ::= stmt_hide.
+statement ::= stmt_noconcurrency.
+statement ::= stmt_strong_noconcurrency.
+statement ::= stmt_maxafvalue.
+statement ::= stmt_maxadditive.
+statement ::= stmt_query.
+base_elem ::= constant.
+base_elem ::= base_elem_no_const.
+base_elem_no_const ::= object.
+base_elem_no_const ::= variable.
+base_elem_no_const ::= lua.
+constant ::= CONSTANT_ID PAREN_L term_lst PAREN_R.
+constant ::= CONSTANT_ID.
+object ::= OBJECT_ID PAREN_L term_lst PAREN_R.
+object ::= OBJECT_ID.
+variable ::= VARIABLE_ID.
+lua ::= AT_IDENTIFIER PAREN_L term_lst PAREN_R.
+lua ::= AT_IDENTIFIER.
+term_lst ::= term.
+term_lst ::= term_lst COMMA term.
+constant_one_const ::= CONSTANT_ID PAREN_L term_no_const_lst PAREN_R.
+constant_one_const ::= CONSTANT_ID.
+term_no_const_lst ::= term_no_const.
+term_no_const_lst ::= term_no_const_lst COMMA term_no_const.
+base_elem_local ::= constant_local.
+base_elem_local ::= base_elem_local_no_const.
+base_elem_local_no_const ::= object_local.
+base_elem_local_no_const ::= variable.
+base_elem_local_no_const ::= variable_local.
+base_elem_local_no_const ::= lua_local.
+constant_local ::= CONSTANT_ID PAREN_L term_local_lst PAREN_R.
+constant_local ::= CONSTANT_ID.
+object_local ::= OBJECT_ID PAREN_L term_local_lst PAREN_R.
+object_local ::= OBJECT_ID.
+variable_local ::= POUND_IDENTIFIER.
+variable_local ::= POUND_INTEGER.
+lua_local ::= AT_IDENTIFIER PAREN_L term_local_lst PAREN_R.
+lua_local ::= AT_IDENTIFIER.
+term_local_lst ::= term_local.
+term_local_lst ::= term_local_lst COMMA term_local.
+term ::= base_elem.
+term ::= INTEGER.
+term ::= STRING_LITERAL.
+term ::= PAREN_L term PAREN_R.
+term ::= TRUE.
+term ::= FALSE.
+term ::= MAXSTEP.
+term ::= MAXADDITIVE.
+term ::= MAXAFVALUE.
+term ::= DASH term. [UMINUS]
+term ::= ABS term.
+term ::= term DASH term.
+term ::= term PLUS term.
+term ::= term STAR term.
+term ::= term INT_DIV term.
+term ::= term MOD term.
+term_strong ::= base_elem_no_const.
+term_strong ::= INTEGER.
+term_strong ::= STRING_LITERAL.
+term_strong ::= PAREN_L term_strong PAREN_R.
+term_strong ::= MAXSTEP.
+term_strong ::= MAXADDITIVE.
+term_strong ::= MAXAFVALUE.
+term_strong ::= DASH term_strong. [UMINUS]
+term_strong ::= ABS term.
+term_strong_candidate ::= DASH constant. [UMINUS]
+term_strong ::= term_strong_candidate DASH term.
+term_strong ::= term_strong_candidate PLUS term.
+term_strong ::= term_strong_candidate STAR term.
+term_strong ::= term_strong_candidate INT_DIV term.
+term_strong ::= term_strong_candidate MOD term.
+term_strong ::= constant DASH term.
+term_strong ::= constant PLUS term.
+term_strong ::= constant STAR term.
+term_strong ::= constant INT_DIV term.
+term_strong ::= constant MOD term.
+term_strong ::= term_strong DASH term.
+term_strong ::= term_strong PLUS term.
+term_strong ::= term_strong STAR term.
+term_strong ::= term_strong INT_DIV term.
+term_strong ::= term_strong MOD term.
+term_local ::= base_elem_local.
+term_local ::= INTEGER.
+term_local ::= STRING_LITERAL.
+term_local ::= PAREN_L term_local PAREN_R.
+term_local ::= TRUE.
+term_local ::= FALSE.
+term_local ::= MAXSTEP.
+term_local ::= MAXADDITIVE.
+term_local ::= MAXAFVALUE.
+term_local ::= DASH term_local. [UMINUS]
+term_local ::= ABS term_local.
+term_local ::= term_local DASH term_local.
+term_local ::= term_local PLUS term_local.
+term_local ::= term_local STAR term_local.
+term_local ::= term_local INT_DIV term_local.
+term_local ::= term_local MOD term_local.
+term_no_const_strong ::= base_elem_no_const.
+term_no_const_strong ::= INTEGER.
+term_no_const_strong ::= STRING_LITERAL.
+term_no_const_strong ::= PAREN_L term_no_const_strong PAREN_R.
+term_no_const_strong ::= MAXSTEP.
+term_no_const_strong ::= MAXADDITIVE.
+term_no_const_strong ::= MAXAFVALUE.
+term_no_const_strong ::= constant.
+term_no_const_strong ::= DASH term_no_const_strong. [UMINUS]
+term_no_const_strong ::= ABS term_no_const.
+term_no_const_strong ::= term_no_const_strong DASH term_no_const.
+term_no_const_strong ::= term_no_const_strong PLUS term_no_const.
+term_no_const_strong ::= term_no_const_strong STAR term_no_const.
+term_no_const_strong ::= term_no_const_strong INT_DIV term_no_const.
+term_no_const_strong ::= term_no_const_strong MOD term_no_const.
+term_no_const ::= base_elem_no_const.
+term_no_const ::= INTEGER.
+term_no_const ::= STRING_LITERAL.
+term_no_const ::= PAREN_L term_no_const PAREN_R.
+term_no_const ::= TRUE.
+term_no_const ::= FALSE.
+term_no_const ::= constant.
+term_no_const ::= DASH term_no_const. [UMINUS]
+term_no_const ::= ABS term_no_const.
+term_no_const ::= term_no_const DASH term_no_const.
+term_no_const ::= term_no_const PLUS term_no_const.
+term_no_const ::= term_no_const STAR term_no_const.
+term_no_const ::= term_no_const INT_DIV term_no_const.
+term_no_const ::= term_no_const MOD term_no_const.
+formula ::= formula_base.
+formula ::= PAREN_L formula PAREN_R.
+formula ::= NOT formula.
+formula ::= DASH formula.
+formula ::= formula AMP formula.
+formula ::= formula DBL_PLUS formula.
+formula ::= formula PIPE formula.
+formula ::= formula EQUIV formula.
+formula ::= formula IMPL formula.
+formula ::= formula ARROW_RDASH formula.
+formula_base ::= comparison.
+formula_base ::= atomic_formula.
+formula_base ::= formula_quant.
+formula_base ::= formula_card.
+formula_base ::= TRUE.
+formula_base ::= FALSE.
+comparison ::= term_strong EQ term.
+comparison ::= term_strong DBL_EQ term.
+comparison ::= term_strong NEQ term.
+comparison ::= term_strong LTHAN term.
+comparison ::= term_strong GTHAN term.
+comparison ::= term_strong LTHAN_EQ term.
+comparison ::= term_strong GTHAN_EQ term.
+comparison ::= term_strong_candidate EQ term.
+comparison ::= term_strong_candidate DBL_EQ term.
+comparison ::= term_strong_candidate NEQ term.
+comparison ::= term_strong_candidate LTHAN term.
+comparison ::= term_strong_candidate GTHAN term.
+comparison ::= term_strong_candidate LTHAN_EQ term.
+comparison ::= term_strong_candidate GTHAN_EQ term.
+comparison ::= constant DBL_EQ term.
+comparison ::= constant NEQ term.
+comparison ::= constant LTHAN term.
+comparison ::= constant GTHAN term.
+comparison ::= constant LTHAN_EQ term.
+comparison ::= constant GTHAN_EQ term.
+atomic_formula ::= constant.
+atomic_formula ::= TILDE constant.
+atomic_formula ::= constant EQ term.
+formula_no_const ::= formula_no_const_base.
+formula_no_const ::= PAREN_L formula_no_const PAREN_R.
+formula_no_const ::= NOT formula_no_const.
+formula_no_const ::= DASH formula_no_const.
+formula_no_const ::= formula_no_const AMP formula_no_const.
+formula_no_const ::= formula_no_const DBL_PLUS formula_no_const.
+formula_no_const ::= formula_no_const PIPE formula_no_const.
+formula_no_const ::= formula_no_const EQUIV formula_no_const.
+formula_no_const ::= formula_no_const IMPL formula_no_const.
+formula_no_const ::= formula_no_const ARROW_RDASH formula_no_const.
+formula_no_const_base ::= comparison_no_const.
+formula_no_const_base ::= TRUE.
+formula_no_const_base ::= FALSE.
+comparison_no_const ::= term_no_const_strong EQ term_no_const.
+comparison_no_const ::= term_no_const_strong DBL_EQ term_no_const.
+comparison_no_const ::= term_no_const_strong NEQ term_no_const.
+comparison_no_const ::= term_no_const_strong LTHAN term_no_const.
+comparison_no_const ::= term_no_const_strong GTHAN term_no_const.
+comparison_no_const ::= term_no_const_strong LTHAN_EQ term_no_const.
+comparison_no_const ::= term_no_const_strong GTHAN_EQ term_no_const.
+atomic_formula_one_const ::= constant_one_const.
+atomic_formula_one_const ::= TILDE constant_one_const.
+atomic_formula_one_const ::= constant_one_const EQ term_no_const.
+formula_temporal ::= formula_base.
+formula_temporal ::= PAREN_L formula_temporal PAREN_R.
+formula_temporal ::= NOT formula_temporal.
+formula_temporal ::= DASH formula_temporal.
+formula_temporal ::= formula_temporal AMP formula_temporal.
+formula_temporal ::= formula_temporal DBL_PLUS formula_temporal.
+formula_temporal ::= formula_temporal PIPE formula_temporal.
+formula_temporal ::= formula_temporal EQUIV formula_temporal.
+formula_temporal ::= formula_temporal IMPL formula_temporal.
+formula_temporal ::= formula_temporal ARROW_RDASH formula_temporal.
+formula_temporal ::= term_strong COLON formula_temporal.
+formula_quant ::= BRACKET_L quant_lst PIPE formula BRACKET_R.
+quant_lst ::= quant_op variable.
+quant_lst ::= quant_lst quant_op variable.
+quant_op ::= BIG_CONJ.
+quant_op ::= BIG_DISJ.
+formula_card ::= CBRACKET_L card_af card_sort_bnd_lst CBRACKET_R.
+formula_card ::= term_strong CBRACKET_L card_af card_sort_bnd_lst CBRACKET_R.
+formula_card ::= CBRACKET_L card_af card_sort_bnd_lst CBRACKET_R term_strong.
+formula_card ::= term_strong CBRACKET_L card_af card_sort_bnd_lst CBRACKET_R term_strong.
+card_af ::= constant_local.
+card_af ::= TILDE constant_local.
+card_af ::= constant_local EQ term_local.
+card_sort_bnd_lst ::=.
+card_sort_bnd_lst ::= card_sort_bnd_lst COLON sort PAREN_L variable_local PAREN_R.
+head_formula ::= comparison.
+head_formula ::= atomic_formula.
+head_formula ::= formula_card.
+head_formula ::= TRUE.
+head_formula ::= FALSE.
+head_formula ::= DASH constant.
+stmt_macro_def ::= COLON_DASH MACROS macro_def_lst PERIOD.
+macro_def_lst ::= macro_bnd.
+macro_def_lst ::= macro_def_lst SEMICOLON macro_bnd.
+macro_bnd ::= IDENTIFIER PAREN_L macro_args PAREN_R ARROW_RDASH MACRO_STRING.
+macro_bnd ::= IDENTIFIER ARROW_RDASH MACRO_STRING.
+macro_args ::= macro_arg.
+macro_args ::= macro_args COMMA macro_arg.
+macro_arg ::= POUND_INTEGER.
+macro_arg ::= POUND_IDENTIFIER.
+sort_lst ::= sort.
+sort_lst ::= sort_lst COMMA sort.
+sort ::= sort_id_nr STAR.
+sort ::= sort_id_nr CARROT.
+sort ::= sort_id_nr.
+sort_id_nr ::= sort_id.
+sort_id_nr ::= NUMBER_RANGE.
+sort_id ::= IDENTIFIER.
+stmt_constant_def ::= COLON_DASH CONSTANTS constant_bnd_lst PERIOD.
+constant_bnd_lst ::= constant_bnd.
+constant_bnd_lst ::= constant_bnd_lst SEMICOLON constant_bnd.
+constant_bnd ::= constant_dcl_lst DBL_COLON constant_dcl_type PAREN_L sort PAREN_R.
+constant_bnd ::= constant_dcl_lst DBL_COLON sort.
+constant_dcl_lst ::= IDENTIFIER.
+constant_dcl_lst ::= IDENTIFIER PAREN_L sort_lst PAREN_R.
+constant_dcl_lst ::= constant_dcl_lst COMMA IDENTIFIER.
+constant_dcl_lst ::= constant_dcl_lst COMMA IDENTIFIER PAREN_L sort_lst PAREN_R.
+constant_dcl_type ::= ABACTION.
+constant_dcl_type ::= ACTION.
+constant_dcl_type ::= ADDITIVEACTION.
+constant_dcl_type ::= ADDITIVEFLUENT.
+constant_dcl_type ::= EXTERNALACTION.
+constant_dcl_type ::= EXTERNALFLUENT.
+constant_dcl_type ::= EXOGENOUSACTION.
+constant_dcl_type ::= INERTIALFLUENT.
+constant_dcl_type ::= RIGID.
+constant_dcl_type ::= SIMPLEFLUENT.
+stmt_object_def ::= COLON_DASH OBJECTS object_bnd_lst PERIOD.
+object_bnd_lst ::= object_bnd.
+object_bnd_lst ::= object_bnd_lst SEMICOLON object_bnd.
+object_bnd ::= object_lst DBL_COLON sort_id.
+object_lst ::= object_spec.
+object_lst ::= object_lst COMMA object_spec.
+object_spec ::= IDENTIFIER.
+object_spec ::= IDENTIFIER PAREN_L sort_lst PAREN_R.
+object_spec ::= NUMBER_RANGE.
+stmt_variable_def ::= COLON_DASH VARIABLES variable_bnd_lst PERIOD.
+variable_bnd_lst ::= variable_bnd.
+variable_bnd_lst ::= variable_bnd_lst SEMICOLON variable_bnd.
+variable_bnd ::= variable_lst DBL_COLON sort_id.
+variable_lst ::= IDENTIFIER.
+variable_lst ::= variable_lst COMMA IDENTIFIER.
+stmt_sort_def ::= COLON_DASH SORTS sort_bnd_lst PERIOD.
+sort_bnd_lst ::= sort_bnd.
+sort_bnd_lst ::= sort_bnd_lst SEMICOLON sort_bnd.
+sort_bnd ::= sort_dcl_lst.
+sort_bnd ::= sort_bnd DBL_LTHAN sort_bnd.
+sort_bnd ::= sort_bnd DBL_GTHAN sort_bnd.
+sort_bnd ::= PAREN_L sort_bnd PAREN_R.
+sort_dcl_lst ::= IDENTIFIER.
+sort_dcl_lst ::= sort_dcl_lst COMMA IDENTIFIER.
+stmt_show ::= COLON_DASH SHOW show_lst PERIOD.
+stmt_show ::= COLON_DASH SHOW ALL PERIOD.
+stmt_hide ::= COLON_DASH HIDE show_lst PERIOD.
+stmt_hide ::= COLON_DASH HIDE ALL PERIOD.
+show_lst ::= show_elem.
+show_lst ::= show_lst COMMA show_elem.
+show_elem ::= atomic_formula_one_const.
+stmt_noconcurrency ::= NOCONCURRENCY.
+stmt_strong_noconcurrency ::= STRONG_NOCONCURRENCY.
+stmt_maxafvalue ::= COLON_DASH MAXAFVALUE EQ INTEGER PERIOD.
+stmt_maxadditive ::= COLON_DASH MAXADDITIVE EQ INTEGER PERIOD.
+stmt_query ::= COLON_DASH QUERY query_lst PERIOD.
+query_lst ::= formula_temporal.
+query_lst ::= query_maxstep_decl.
+query_lst ::= query_label_decl.
+query_lst ::= query_lst SEMICOLON formula_temporal.
+query_lst ::= query_lst SEMICOLON query_maxstep_decl.
+query_lst ::= query_lst SEMICOLON query_label_decl.
+query_maxstep_decl ::= MAXSTEP DBL_COLON INTEGER.
+query_maxstep_decl ::= MAXSTEP DBL_COLON NUMBER_RANGE.
+query_label_decl ::= LABEL DBL_COLON INTEGER.
+query_label_decl ::= LABEL DBL_COLON IDENTIFIER.
+clause_if ::= IF formula.
+clause_if ::=.
+clause_after ::= AFTER formula.
+clause_after ::=.
+clause_ifcons ::= IFCONS formula.
+clause_ifcons ::=.
+clause_unless ::= UNLESS atomic_formula.
+clause_unless ::=.
+clause_where ::= WHERE formula_no_const.
+clause_where ::=.
+stmt_law ::= law_basic.
+stmt_law ::= law_caused.
+stmt_law ::= law_pcaused.
+stmt_law ::= law_impl.
+stmt_law ::= law_causes.
+stmt_law ::= law_increments.
+stmt_law ::= law_mcause.
+stmt_law ::= law_always.
+stmt_law ::= law_constraint.
+stmt_law ::= law_impossible.
+stmt_law ::= law_never.
+stmt_law ::= law_default.
+stmt_law ::= law_exogenous.
+stmt_law ::= law_inertial.
+stmt_law ::= law_nonexecutable.
+stmt_law ::= law_rigid.
+stmt_law ::= law_observed.
+law_basic ::= head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD.
+law_caused ::= CAUSED head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD.
+law_pcaused ::= POSSIBLY_CAUSED head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD.
+law_impl ::= head_formula ARROW_LDASH formula clause_where PERIOD.
+law_causes ::= formula CAUSES head_formula clause_if clause_unless clause_where PERIOD.
+law_increments ::= formula INCREMENTS constant BY term clause_if clause_unless clause_where PERIOD.
+law_mcause ::= formula MAY_CAUSE head_formula clause_if clause_unless clause_where PERIOD.
+law_always ::= ALWAYS formula clause_after clause_unless clause_where PERIOD.
+law_constraint ::= CONSTRAINT formula clause_after clause_unless clause_where PERIOD.
+law_impossible ::= IMPOSSIBLE formula clause_after clause_unless clause_where PERIOD.
+law_never ::= NEVER formula clause_after clause_unless clause_where PERIOD.
+law_default ::= DEFAULT atomic_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD.
+law_exogenous ::= EXOGENOUS constant clause_if clause_ifcons clause_after clause_unless clause_where PERIOD.
+law_inertial ::= INERTIAL constant clause_if clause_ifcons clause_after clause_unless clause_where PERIOD.
+law_nonexecutable ::= NONEXECUTABLE formula clause_if clause_unless clause_where PERIOD.
+law_rigid ::= RIGID constant clause_where PERIOD.
+law_observed ::= OBSERVED atomic_formula AT term_no_const PERIOD.
+stmt_code_blk ::= ASP_GR.
+stmt_code_blk ::= ASP_CP.
+stmt_code_blk ::= F2LP_GR.
+stmt_code_blk ::= F2LP_CP.
+stmt_code_blk ::= LUA_GR.
+stmt_code_blk ::= LUA_CP.

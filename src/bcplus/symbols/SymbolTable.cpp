@@ -12,6 +12,7 @@
 #include "bcplus/Configuration.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/ConstantSymbol.h"
+#include "bcplus/symbols/AttributeSymbol.h"
 #include "bcplus/symbols/ObjectSymbol.h"
 #include "bcplus/symbols/VariableSymbol.h"
 #include "bcplus/symbols/SortSymbol.h"
@@ -33,6 +34,19 @@ SymbolTable::SymbolTable(Configuration const* config)
 	// See if we should load anything from a file
 	if (config->symtabInput()) _good = load(*(config->symtabInput()));
 	_good = _good && loadMacros(config);
+
+	// setup the boolean sort
+	SortSymbol* s = (SortSymbol*)resolveOrCreate(new SortSymbol(new ReferencedString("boolean")));
+	ObjectSymbol* o1 = (ObjectSymbol*)resolveOrCreate(new ObjectSymbol(new ReferencedString("true")));
+	ObjectSymbol* o2 = (ObjectSymbol*)resolveOrCreate(new ObjectSymbol(new ReferencedString("false")));
+	if (!s || !o1 || !o2) {
+		_good = false;
+		config->ostream(Verb::ERROR) << "ERROR: INTERNAL ERROR: An error occurred initializing the builting \"boolean\" sort in the symbol table." << std::endl;
+	} else {
+		s->add(o1);
+		s->add(o2);
+		_boolean = s;
+	}
 }
 
 
@@ -147,7 +161,12 @@ Symbol* SymbolTable::resolveOrCreate(Symbol* symbol) {
 }
 
 Symbol const* SymbolTable::_resolve(size_t typemask, std::string const& name, size_t arity, bool trace) const {
-	std::string s = Symbol::genName(name, arity);
+	std::string s;
+	if (strchr(name.c_str(), '/')) {
+		s = name;
+	} else {
+		s = Symbol::genName(name, arity);
+	}
 
 	if (trace) _config->ostream(Verb::TRACE_SYMTAB) << "TRACE: Resolving " << s << "... ";
 
@@ -215,7 +234,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 			read_xml(in, xml, pt::xml_parser::no_comments | pt::xml_parser::trim_whitespace);
 
 			// scan the file for sorts first then rescan for everything else
-			for (int pass2 = 0; pass2 < 2; pass2++) {
+			for (int pass = 0; pass < 3; pass++) {
 				BOOST_FOREACH(pt::ptree::value_type& symbols, xml) {
 					if (boost::iequals(symbols.first, "symbols")) {
 						BOOST_FOREACH(pt::ptree::value_type& s, symbols.second) {
@@ -225,7 +244,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 
 							switch (Symbol::Type::val(s.first.c_str())) {
 							case Symbol::Type::SORT:
-								if (!pass2) {
+								if (pass == 2) {
 									// First pass, just create the symbol
 									sym = new symbols::SortSymbol(s.second, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
@@ -249,9 +268,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 
 							case Symbol::Type::CONSTANT:
-								if (!pass2) {
-									// first pass: ignore
-								} else {
+								if (pass == 2) {
 									// second pass, create the symbol
 									sym = new symbols::ConstantSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
@@ -259,9 +276,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 		
 							case Symbol::Type::VARIABLE:
-								if (!pass2) {
-									// first pass: ignore
-								} else {
+								if (pass == 2) {
 									// second pass, create the symbol
 									sym = new symbols::VariableSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
@@ -269,9 +284,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 
 							case Symbol::Type::OBJECT:
-								if (!pass2) {
-									// first pass: ignore
-								} else {
+								if (pass == 2) {
 									// second pass, create the symbol
 									sym = new symbols::ObjectSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
@@ -279,16 +292,14 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 
 							case Symbol::Type::MACRO:
-								if (!pass2) {
-								} else {
+								if (pass == 2) {
 									sym = new symbols::MacroSymbol(s.second, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
 								}
 								break;
 
 							case Symbol::Type::QUERY:
-								if (!pass2) {
-								} else {
+								if (pass == 2) {
 									sym = new symbols::QuerySymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
 								}
@@ -296,8 +307,17 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 
 							case Symbol::Type::ERR_INVALID_SYMBOL:
-								_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected symbol key \"" << s.first << "\" in symbol table file \"" << path.native() << "\". Expected one of \"sort\", \"constant\", \"variable\", \"object\", or \"macro\"." << std::endl;
-								good = false;
+
+								// check if it's an attribute
+								if (boost::iequals(s.first, "attribute")) {
+									if (pass == 3) {
+										sym = new symbols::AttributeSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
+										add_sym = true; 		
+									}
+								} else {
+									_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected symbol key \"" << s.first << "\" in symbol table file \"" << path.native() << "\". Expected one of \"sort\", \"constant\", \"variable\", \"object\", or \"macro\"." << std::endl;
+									good = false;
+								}
 							};
 
 							// finish up by adding the symbol if we need to.

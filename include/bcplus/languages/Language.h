@@ -31,12 +31,14 @@ public:
 			CONST_ACTION,
 			CONST_ADDITIVEFLUENT,		///< additiveFluent constant type
 			CONST_ADDITIVEACTION,		///< additiveAction constant type
+			CONST_ATTRIBUTE,			///< attribute constant type
 			CONST_EXTERNALACTION,		///< externalAction constant type
 			CONST_EXTERNALFLUENT,		///< externalFluent constant type
 			CONST_EXOGENOUSACTION,		///< exogenousAction constant type
 			CONST_INERTIALFLUENT,		///< inertialFluent constant type
 			CONST_RIGID,				///< rigid constant type
 			CONST_SIMPLEFLUENT,			///< simpleFluent constant type
+			CONST_SDFLUENT,				///< sdFluent constant type
 
 
 			FORMULA_NESTED,				///< nested formulas

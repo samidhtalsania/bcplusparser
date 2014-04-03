@@ -20,6 +20,8 @@
 			#include "bcplus/elements/formulas.h"
 			#include "bcplus/symbols/Symbol.h"
 			#include "bcplus/symbols/MacroSymbol.h"
+			#include "bcplus/symbols/ConstantSymbol.h"
+			#include "bcplus/symbols/AttributeSymbol.h"
 
 			#define UNUSED void*
 
@@ -1183,7 +1185,7 @@ sort_lst(new_lst) ::= sort_lst(lst) COMMA sort(s).
 				parser->_parse_error("An error occurred creating sort \"" + name + "\".", &sym->beginLoc());														\
 				YYERROR;																																			\
 			} else {																																				\
-				sort->addSubsort(subsort);																															\
+				sort->addSubSort(subsort);																															\
 																																									\
 				/* Get the additional object and add it */																											\
 				ref_ptr<ObjectSymbol> obj = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(objectname)));					\
@@ -1273,6 +1275,8 @@ sort_id(s) ::= IDENTIFIER(id).
 %destructor constant_dcl_lst			{ DEALLOC($$);									}
 %type       constant_dcl_type			{ ConstantSymbol::Type::type					}			// constant type keywords ("simpleFluent", "inertialFluent",...)
 %destructor constant_dcl_type			{ /* Intentionally left blank */				}
+%type       attrib_spec					{ SortSymbol const*								}			// an attribute/sort specifier
+%destructor attrib_spec					{ /* Intentionally left blank */				}
 
 stmt_constant_def(stmt) ::= COLON_DASH(cd) CONSTANTS(kw) constant_bnd_lst(l) PERIOD(p).
 	{
@@ -1288,18 +1292,6 @@ stmt_constant_def(stmt) ::= COLON_DASH(cd) CONSTANTS(kw) constant_bnd_lst(l) PER
 		} else {
 			stmt = new ConstantDeclaration(l, cd->beginLoc(), p->endLoc());
 
-			// Go ahead and add them to the symbol table
-			BOOST_FOREACH(ConstantSymbol* c, *l) {
-				if (!parser->symtab()->create(c)) {
-					// Check if it's a duplicate
-					ConstantSymbol* c2 = (ConstantSymbol*)parser->symtab()->resolve(Symbol::Type::CONSTANT, *c->base(), c->arity());
-					if (!c2 || c2 != c) {
-						parser->_parse_error("Detected conflicting definition of symbol \"" + *c->name() + "\".", &cd->beginLoc());
-					} else {
-						parser->_parse_error("Detected a duplicate definition of symbol \"" + *c->name() + "\".", &cd->beginLoc());
-					}
-				}
-			}
 		}
 	}
 
@@ -1315,22 +1307,153 @@ constant_bnd_lst(new_lst) ::= constant_bnd_lst(lst) SEMICOLON constant_bnd(bnd).
 		new_lst->splice(new_lst->end(), *bnd);
 	}
 
+%include {
+	#define CONSTANT_DECL(c, loc)																							\
+		if (!parser->symtab()->create(c)) {																					\
+			/* Check if it's a duplicate */																					\
+			ConstantSymbol* c2 = (ConstantSymbol*)parser->symtab()->resolve(Symbol::Type::CONSTANT, *c->base(), c->arity());\
+			if (!c2 || c2 != c) {																							\
+				parser->_parse_error("Detected conflicting definition of symbol \"" + *c->name() + "\".", &loc);			\
+			} else {																										\
+				parser->_parse_error("Detected a duplicate definition of symbol \"" + *c->name() + "\".", &loc);			\
+			}																												\
+		}
+}
+
 constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON constant_dcl_type(type) PAREN_L sort(s) PAREN_R.
 	{
+		ref_ptr<const Referenced> names_ptr = names, s_ptr = s;
 		bnd = new ConstantDeclaration::ElementList();
+
+
 		BOOST_FOREACH(IdentifierDecl& decl, *names) {
-			bnd->push_back(new ConstantSymbol(type, decl.first->str(), s, decl.second));
+			// attempt to declare each symbol
+			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), s, decl.second);
+			bnd->push_back(c);
+			CONSTANT_DECL(c, decl.first->beginLoc());
 		}
-		delete names;
 	}
 constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON sort(s).
 	{
+		ref_ptr<const Referenced> names_ptr = names, s_ptr = s;
 		bnd = new ConstantDeclaration::ElementList();
 		BOOST_FOREACH(IdentifierDecl& decl, *names) {
-			bnd->push_back(new ConstantSymbol(ConstantSymbol::Type::RIGID, decl.first->str(), s, decl.second));
+			// attempt to declare each symbol
+			ref_ptr<ConstantSymbol> c = new ConstantSymbol(ConstantSymbol::Type::RIGID, decl.first->str(), s, decl.second);
+			bnd->push_back(c);
+			CONSTANT_DECL(c, decl.first->beginLoc());
 		}
-		delete names;
 	}
+constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON constant_dcl_type(type).
+	{
+		ref_ptr<const Referenced> names_ptr = names;
+		bnd = new ConstantDeclaration::ElementList();
+		BOOST_FOREACH(IdentifierDecl& decl, *names) {
+			// attempt to declare each symbol
+			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), parser->symtab()->boolsort(), decl.second);
+			bnd->push_back(c);
+			CONSTANT_DECL(c, decl.first->beginLoc());
+		}
+	}
+constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON attrib_spec(s) OF IDENTIFIER(id).
+	{
+		bnd = NULL;
+		ref_ptr<const Referenced> names_ptr = names, s_ptr = s, id_ptr = id;
+
+
+		// attempt to resolve the attribute parent symbol
+		ConstantSymbol const* c = (ConstantSymbol const*) parser->symtab()->resolve(Symbol::Type::CONSTANT, *id->str());
+
+		if (!c) {
+			parser->_parse_error("\"" + Symbol::genName(*id->str(), 0) + "\" is not a valid constant symbol.", &id->beginLoc());
+			YYERROR;
+		} else if (c->constType() != ConstantSymbol::Type::ABACTION && c->constType() != ConstantSymbol::Type::ACTION && c->constType() != ConstantSymbol::Type::EXOGENOUSACTION) {
+			parser->_parse_error("Unexpected constant type of attribute parent \"" + Symbol::genName(*id->str(), 0) + "\". Attribute parents must be an \"abAction\", \"action\", or \"exogenousAction\".", &id->beginLoc());
+			YYERROR;
+		} else {
+			bnd = new ConstantDeclaration::ElementList();
+			BOOST_FOREACH(IdentifierDecl& decl, *names) {
+				ref_ptr<ConstantSymbol> c= new AttributeSymbol(decl.first->str(), s, c, decl.second);
+				bnd->push_back(c);
+				CONSTANT_DECL(c, decl.first->beginLoc());
+			}
+		}
+	}
+constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON attrib_spec(s) OF IDENTIFIER(id) PAREN_L sort_lst(lst) PAREN_R.
+	{
+		bnd = NULL;
+		ref_ptr<const Referenced> names_ptr = names, s_ptr = s, id_ptr = id, lst_ptr = lst;
+
+		// attempt to resolve the attribute parent symbol
+		ConstantSymbol const* c = (ConstantSymbol const*) parser->symtab()->resolve(Symbol::Type::CONSTANT, *id->str(), lst->size());
+
+		if (!c) {
+			parser->_parse_error("\"" + Symbol::genName(*id->str(), lst->size()) + "\" is not a valid constant symbol.", &id->beginLoc());
+			YYERROR;
+		} else if (c->constType() != ConstantSymbol::Type::ABACTION && c->constType() != ConstantSymbol::Type::ACTION && c->constType() != ConstantSymbol::Type::EXOGENOUSACTION) {
+			parser->_parse_error("Unexpected constant type of attribute parent \"" + Symbol::genName(*id->str(), lst->size()) + "\". Attribute parents must be an \"abAction\", \"action\", or \"exogenousAction\".", &id->beginLoc());
+			YYERROR;
+		} else {
+			// ensure that the sorts match the declaration of the symbol
+			SortList::const_iterator it = lst->begin();
+			BOOST_FOREACH(SortSymbol const* sort, *c) {
+				if (*it != sort) {
+					// check to see if it's a subsort, which is also permissable
+					bool found = false;
+					for (SortSymbol::SortList::const_iterator it2 = sort->beginSubSorts(); it2 != sort->endSubSorts(); it2++) {
+						if (*it == *it2) {
+							found = true;
+							break;
+						}
+					}
+
+					if (!found) {
+						parser->_parse_error("Detected a sort mismatch in an attribute parent declaration. \"" + *(*it)->base() + "\" is not an explicit subsort of \"" + *sort->base() + "\".", &id->beginLoc());
+						YYERROR;
+					}
+				}
+				it++;
+			}
+
+			bnd = new ConstantDeclaration::ElementList();
+			BOOST_FOREACH(IdentifierDecl& decl, *names) {
+				// ensure that the sorts match the start of the sort list for each of the symbols
+				if (decl.second->size() < lst->size()) {
+					parser->_parse_error("Detected a malformed attribute declaration. An attribute must duplicate its parent's parameters.", &decl.first->beginLoc());
+					YYERROR;
+				} else {
+					bool good_sort = true;		
+					it = decl.second->begin();
+					BOOST_FOREACH(SortSymbol const* sort, *lst) {
+						if (*it != sort) {
+							// check to see if it's a subsort, which is also permissable
+							bool found = false;
+							for (SortSymbol::SortList::const_iterator it2 = sort->beginSubSorts(); it2 != sort->endSubSorts(); it2++) {
+								if (*it == *it2) {
+									found = true;
+									break;
+								}
+							}
+							if (!found) {
+								good_sort = false;
+								parser->_parse_error("Detected a sort mismatch in an attribute declaration. \"" + *(*it)->base() + "\" is not an explicit subsort of \"" + *sort->base() + "\".", &decl.first->beginLoc());
+								YYERROR;
+							}
+						}
+						it++;	
+					}
+
+					if (good_sort) {
+						ref_ptr<ConstantSymbol> sym = new AttributeSymbol(decl.first->str(), s, c, decl.second);
+						bnd->push_back(sym);
+						CONSTANT_DECL(sym, decl.first->beginLoc());
+
+					}
+				}
+			}
+		}
+	}
+
 
 constant_dcl_lst(names) ::= IDENTIFIER(id).
 	{
@@ -1352,6 +1475,7 @@ constant_dcl_lst(new_names) ::= constant_dcl_lst(names) COMMA IDENTIFIER(id) PAR
 		new_names = names;
 		new_names->push_back(IdentifierDecl(id, lst));
 	}
+
 
 constant_dcl_type(t) ::= ABACTION(tok).						
 	{ 
@@ -1444,6 +1568,41 @@ constant_dcl_type(t) ::= SIMPLEFLUENT(tok).
 		}
 	}
 
+constant_dcl_type(t) ::= SDFLUENT(tok).						
+	{ 
+		ref_ptr<const Token> tok_ptr = tok;
+		t = ConstantSymbol::Type::SDFLUENT;
+		if (!parser->lang()->support(Language::Feature::CONST_SDFLUENT)) {
+			parser->_feature_error(Language::Feature::CONST_SDFLUENT, &tok->beginLoc());
+			YYERROR;
+		}
+	}
+
+attrib_spec(attr) ::= ATTRIBUTE(kw).
+	{
+		attr = NULL;
+		ref_ptr<const Referenced> kw_ptr = kw;
+		if (!parser->lang()->support(Language::Feature::CONST_ATTRIBUTE)) {
+			parser->_feature_error(Language::Feature::CONST_ATTRIBUTE, &kw->beginLoc());
+			YYERROR;
+		} else {
+			// grab the boolean sort and provide it
+			attr = parser->symtab()->boolsort();
+		}
+	}
+
+attrib_spec(attr) ::= ATTRIBUTE(kw) PAREN_L sort(s) PAREN_R.
+	{
+		attr = NULL;
+		ref_ptr<const Referenced> kw_ptr = kw, s_ptr = s;
+		if (!parser->lang()->support(Language::Feature::CONST_ATTRIBUTE)) {
+			parser->_feature_error(Language::Feature::CONST_ATTRIBUTE, &kw->beginLoc());
+			YYERROR;
+		} else {
+			attr = s;
+		}
+	}
+
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/
@@ -1515,6 +1674,7 @@ object_lst(new_lst) ::= object_lst(lst) COMMA object_spec(obj).
 
 object_spec(obj) ::= IDENTIFIER(id).
 	{
+		ref_ptr<const Token> id_ptr = id;
 		obj = NULL;
 		ref_ptr<const ObjectSymbol> o = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));
 		if (!o) {
@@ -1529,6 +1689,7 @@ object_spec(obj) ::= IDENTIFIER(id) PAREN_L sort_lst(lst) PAREN_R.
 	{
 		obj = NULL;
 		ref_ptr<ObjectSymbol::SortList> lst_ptr = lst;
+		ref_ptr<const Token> id_ptr = id;
 		ref_ptr<const ObjectSymbol> o = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str(), lst));
 		if (!o) {
 			parser->_parse_error("Detected a conflicting definition of \"" + Symbol::genName(*id->str(),lst->size()) + "\".", &id->beginLoc());
@@ -1692,7 +1853,7 @@ sort_bnd(bnd) ::= sort_bnd(lhs) DBL_LTHAN sort_bnd(rhs).
 	{
 		BOOST_FOREACH(SortSymbol* sym, *lhs) {
 			BOOST_FOREACH(SortSymbol* sym2, *rhs) {
-				sym2->addSubsort(sym);
+				sym2->addSubSort(sym);
 			}
 		}
 		bnd = lhs;
@@ -1704,7 +1865,7 @@ sort_bnd(bnd) ::= sort_bnd(lhs) DBL_GTHAN sort_bnd(rhs).
 	{
 		BOOST_FOREACH(SortSymbol* sym, *lhs) {
 			BOOST_FOREACH(SortSymbol* sym2, *rhs) {
-				sym->addSubsort(sym2);
+				sym->addSubSort(sym2);
 			}
 		}
 		bnd = lhs;

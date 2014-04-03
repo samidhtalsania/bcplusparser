@@ -72,6 +72,8 @@ private:
 	/// A convenient place to store metadata
 	DataMap _metadata;
 
+	/// A pointer to the boolean sort
+	babb::utils::ref_ptr<SortSymbol const> _boolean;
 public:
 
 	/*******************************************************************************/
@@ -110,6 +112,8 @@ public:
 	/// @return True if successful, false if the data exists and we didn't override it.
 	bool setData(std::string const& key, ReferencedString const* data, bool override = false);
 	
+	/// Get the builtin boolean sort
+	SortSymbol const* boolsort() const							{ return _boolean; }
 
 
 	// Inherited from Resolver

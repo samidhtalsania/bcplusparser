@@ -25,7 +25,7 @@ endif
 if MAINTAINER_MODE 
 if HAVE_RE2C
 .re2c.cpp:
-	$(RE2C) -c $< > $@
+	$(RE2C) -bc $< > $@
 .r2c.cpp:
 	$(RE2C) $< > $@
 else 

@@ -25,12 +25,14 @@ char const* Language::Feature::descr(type feature) {
 		case CONST_ACTION:						return "\"action\" constants";
 		case CONST_ADDITIVEFLUENT:				return "\"additiveFluent\" constants";
 		case CONST_ADDITIVEACTION:				return "\"additiveAction\" constants";
+		case CONST_ATTRIBUTE:					return "\"attribute\" constants";
 		case CONST_EXTERNALACTION:				return "\"externalAction\" constants";
 		case CONST_EXTERNALFLUENT:				return "\"externalFluent\" constants";
 		case CONST_EXOGENOUSACTION:				return "\"exogenousAction\" constants";
 		case CONST_INERTIALFLUENT:				return "\"inertialFluent\" constants";
 		case CONST_RIGID:						return "\"rigid\" constants";
 		case CONST_SIMPLEFLUENT:				return "\"simpleFluent\" constants";
+		case CONST_SDFLUENT:					return "\"sdFluent\" constants";
 
 
 		case FORMULA_NESTED:             		return "arbitrary nested formulas";

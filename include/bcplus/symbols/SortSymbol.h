@@ -50,6 +50,7 @@ private:
 	/// Information about what this sort is composed of
 	DomainType::type _dt;
 
+
 public:
 	/*************************************************************************************/
 	/* Constructors / Destructor */
@@ -104,12 +105,12 @@ public:
 	/// Adds a sort symbol as a superset to this one.
 	/// @param super The sort to add as a superset.
 	/// @return True if successful, false if the sort was already a supersort of this one
-	bool addSupersort(SortSymbol* super);
+	bool addSuperSort(SortSymbol* super);
 
 	/// Adds a sort symbol as a subset to this one.
 	/// @param sub The sort to add as a subset.
 	/// @return True if successful, false if the sort was already a subsort of this one
-	bool addSubsort(SortSymbol* sub);
+	bool addSubSort(SortSymbol* sub);
 
 	/// Completely loads the sort including initializing subsorts and member objects
 	/// NOTE: This may fail if member objects refer to a sort not yet instantiated.
@@ -119,6 +120,7 @@ public:
 	/// @return True if successful, false otherwise.
 	bool loadDefinition(boost::property_tree::ptree const& node, Resolver* resolver, std::ostream* err = NULL);
 	
+
 	// inherited
 	virtual bool operator==(Symbol const& other) const;
 	virtual void save(boost::property_tree::ptree& node) const;

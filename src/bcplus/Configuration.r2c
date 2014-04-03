@@ -92,7 +92,7 @@ int Configuration::parseOption(char const* opt) {
     	re2c:define:YYMARKER = marker;
     	re2c:indent:top = 1;
 	
-		IDENTIFIER								= [a-zA-Z_][a-zA-Z0-9_]+;
+		IDENTIFIER								= [a-zA-Z_][a-zA-Z0-9_]*;
 
 		"-s="|"--symtab-in="					{ 
 												  val.assign(token, (size_t)(opt - token - 2));

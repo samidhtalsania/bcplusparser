@@ -18,7 +18,7 @@ ConstantSymbol::ConstantSymbol(Type::type type, ReferencedString const* base, So
 }
 
 ConstantSymbol::ConstantSymbol(boost::property_tree::ptree const& node, Resolver const* resolver, std::ostream* err)
-	: BaseSymbol(Symbol::Type::OBJECT, node, resolver, err) {
+	: BaseSymbol(Symbol::Type::CONSTANT, node, resolver, err) {
 
 	try {
 		std::string sort_name = node.get<std::string>("<xmlattr>.sort");

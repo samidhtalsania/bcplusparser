@@ -15,7 +15,8 @@ ___libbcplusparser_a_LDFLAGS = $(BOOST_FILESYSTEM_LDFLAGS) $(BOOST_SYSTEM_LDFLAG
 BUILT_SOURCES = \
 	bcplus/Configuration.cpp \
 	bcplus/symbols/Symbol.cpp \
-	bcplus/parser/detail/Scanner.cpp \
+	bcplus/parser/detail/Scanner.1.cpp \
+	bcplus/parser/detail/Scanner.2.cpp \
 	bcplus/parser/detail/lemon_parser.cpp \
 	bcplus/parser/detail/lemon_macro.cpp
 
@@ -56,6 +57,7 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/languages/Language.cpp \
 	bcplus/languages/BCPlus.cpp \
 	bcplus/symbols/ConstantSymbol.cpp \
+	bcplus/symbols/AttributeSymbol.cpp \
 	bcplus/symbols/ObjectSymbol.cpp \
 	bcplus/symbols/SortSymbol.cpp \
 	bcplus/symbols/Symbol.cpp \
@@ -72,7 +74,8 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/parser/detail/lemon_parser.cpp \
 	bcplus/parser/detail/MacroParser.cpp \
 	bcplus/parser/detail/lemon_macro.cpp \
-	bcplus/parser/detail/Scanner.cpp \
+	bcplus/parser/detail/Scanner.1.cpp \
+	bcplus/parser/detail/Scanner.2.cpp \
 	bcplus/parser/detail/ScannerSource.cpp \
 	bcplus/parser/detail/ScannerTokenSource.cpp \
 	bcplus/parser/detail/ScannerRawSource.cpp \

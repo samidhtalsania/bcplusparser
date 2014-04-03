@@ -137,6 +137,10 @@ private:
 	/// Tokenizes the input from the provided raw source
 	/// @param source The source input to tokenize
 	Token* tokenize(ScannerRawSource* source);
+	
+	/// Internal tokenize helper for tokenizing something that isn't a keyword.
+	/// @param source The source input to tokenize
+	Token* tokenize_notkw(ScannerRawSource* source);
 
 };
 

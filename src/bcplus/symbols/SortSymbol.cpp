@@ -28,7 +28,7 @@ SortSymbol::SortSymbol(ReferencedString const* base, ObjectList* objects, SortLi
 	else { 
 		_subsorts = subsorts;
 		BOOST_FOREACH(SortSymbol* sort, *_subsorts) {
-			sort->addSupersort(this);
+			sort->addSuperSort(this);
 		}
 	}
 
@@ -74,9 +74,9 @@ bool SortSymbol::add(ObjectSymbol const* obj) {
 	} else return false;
 }
 
-bool SortSymbol::addSupersort(SortSymbol* super) {
+bool SortSymbol::addSuperSort(SortSymbol* super) {
 	if (_supersorts->insert(super).second) {
-		super->addSubsort(this);
+		super->addSubSort(this);
 		// update the supersort's objects
 		BOOST_FOREACH(ObjectSymbol const* obj, *_objects) {
 			super->add(obj);
@@ -85,9 +85,9 @@ bool SortSymbol::addSupersort(SortSymbol* super) {
 	} else return false;
 }
 
-bool SortSymbol::addSubsort(SortSymbol* sub) {
+bool SortSymbol::addSubSort(SortSymbol* sub) {
 	if (_subsorts->insert(sub).second) {
-		sub->addSupersort(this);
+		sub->addSuperSort(this);
 		return true;
 	} else return false;
 }
@@ -109,8 +109,8 @@ bool SortSymbol::loadDefinition(boost::property_tree::ptree const& node, Resolve
 					u::ref_ptr<SortSymbol> subsort_resolved = (SortSymbol*)resolver->resolveOrCreate(subsort);
 					if (!subsort_resolved) {
 						good(false);
-						if (err) *err << "ERROR: An error occurred while scanning the definition of sort \"" << *base() << "\".  Subsort \"" << *(subsort->base()) << "\" is not a declared sort." << std::endl;
-					} else addSubsort(subsort_resolved);
+						if (err) *err << "ERROR: An error occurred while scanning the definition of sort \"" << *base() << "\".  SubSort \"" << *(subsort->base()) << "\" is not a declared sort." << std::endl;
+					} else addSubSort(subsort_resolved);
 				} else {
 					good(false);
 					if (err) *err << "ERROR: An error occurred while scanning the definition of sort \"" << *base() << "\". Expected a 'name' attribute which was not provided in a subset declaration." << std::endl;
