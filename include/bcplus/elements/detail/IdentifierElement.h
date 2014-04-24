@@ -101,7 +101,7 @@ public:
     /// @param begin The beginning location of this element
     /// @param end The ending location of this element
     /// @param parens Whether the element is surrounded by parentheses
-    IdentifierElement(SymbolType const* symbol, ArgumentList const* args, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+    IdentifierElement(SymbolType const* symbol, ArgumentList const* args = NULL, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
     /// Destructor stub
     virtual ~IdentifierElement();

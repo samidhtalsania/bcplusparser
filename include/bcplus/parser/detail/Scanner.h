@@ -138,9 +138,13 @@ private:
 	/// @param source The source input to tokenize
 	Token* tokenize(ScannerRawSource* source);
 	
-	/// Internal tokenize helper for tokenizing something that isn't a keyword.
+	/// Internal tokenize helper for tokenizing something that isn't a comment.
 	/// @param source The source input to tokenize
-	Token* tokenize_notkw(ScannerRawSource* source);
+	Token* tokenize_2(ScannerRawSource* source);
+	
+	/// Internal tokenize helper for tokenizing something that isn't a comment or keyword.
+	/// @param source The source input to tokenize
+	Token* tokenize_3(ScannerRawSource* source);
 
 };
 

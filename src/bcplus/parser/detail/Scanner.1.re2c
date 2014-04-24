@@ -131,112 +131,117 @@ Token* Scanner::readToken() {
 	return token.release();
 }
 
+#define BLK_INIT(s) \
+	blk.str(s); \
+	use_blk = true; \
+	source->token() = source->cursor() + 1;
+
+#define BLK_LINE \
+	source->newline(); \
+    blk.write(source->token(), (size_t)(source->cursor() - source->token())); \
+	source->token() = source->cursor() + 1;		
+
+#define BLK_FINISH(sz) \
+	blk.write(source->token(), (size_t)(source->cursor() - source->token() - sz));
 
 Token* Scanner::tokenize(ScannerRawSource* source) {
 	if (source->eof()) return new Token(T_EOF, new ReferencedString("<EOF>"), source->loc(), source->loc());
 	else if (!source->good()) return new Token(T_ERR_IO, new ReferencedString("<IO ERROR>"), source->loc(), source->loc());
 
 
+	std::stringstream blk;
 	int ret;
 	Location begin;
+	bool use_blk = false;
+	size_t preskip = 0;
+	size_t postskip = 0;
+
+	int parens = 0;
+
 	char const* marker;
 
 re2c_start:
 	marker = source->token() = source->cursor();
 	begin = source->loc();
 
-	if (_cond == yycNORMAL) {
-			/*!re2c
-				
-				re2c:define:YYCTYPE						= char;
-				re2c:define:YYMARKER					= source->marker();
-				re2c:define:YYCURSOR					= source->cursor();
-				re2c:define:YYLIMIT						= source->limit();
-				re2c:define:YYGETCONDITION				= _cond;
-				re2c:define:YYGETCONDITION:naked		= 1;
-				re2c:define:YYFILL						= source->fill;
-				re2c:define:YYCTXMARKER					= marker;
+	YYCONDTYPE cond = yycNORMAL;	
 
-				WS								 		= [ \t\v\f];
-				NL								 		= [\n];
-				EOF										= [\X0000];
+	/*!re2c
+		
+		re2c:define:YYCTYPE						= char;
+		re2c:define:YYMARKER					= source->marker();
+		re2c:define:YYCURSOR					= source->cursor();
+		re2c:define:YYLIMIT						= source->limit();
+		re2c:define:YYGETCONDITION				= cond;
+		re2c:define:YYGETCONDITION:naked		= 1;
+		re2c:define:YYFILL						= source->fill;
+		re2c:define:YYCTXMARKER					= marker;
 
-				<NORMAL> NL								{ source->newline();		 			goto re2c_start; 					}
-				<NORMAL> WS								{ 										goto re2c_start; 					}
-				<NORMAL> EOF							{ ret = T_EOF; 							goto re2c_finish; 					}
-				<NORMAL> "include"						{ ret = T_INCLUDE;						goto re2c_finish;					}
-				<NORMAL> "macros"						{ ret = T_MACROS; _in_macro = true;		goto re2c_finish;					}
-				<NORMAL> "objects"						{ ret = T_OBJECTS;						goto re2c_finish;					}
-				<NORMAL> "query"						{ ret = T_QUERY;						goto re2c_finish;					}
-				<NORMAL> "show"							{ ret = T_SHOW;							goto re2c_finish;					}
-				<NORMAL> "sorts"						{ ret = T_SORTS;						goto re2c_finish;					}
-				<NORMAL> "variables"					{ ret = T_VARIABLES;					goto re2c_finish;					}
-				<NORMAL> "abAction"						{ ret = T_ABACTION;						goto re2c_finish;					}
-				<NORMAL> "action"						{ ret = T_ACTION;						goto re2c_finish;					}
-				<NORMAL> "additiveAction"				{ ret = T_ADDITIVEACTION;				goto re2c_finish;					}
-				<NORMAL> "additiveFluent"				{ ret = T_ADDITIVEFLUENT;				goto re2c_finish;					}
-				<NORMAL> "after"						{ ret = T_AFTER;						goto re2c_finish;					}
-				<NORMAL> "always"						{ ret = T_ALWAYS;						goto re2c_finish;					}
-				<NORMAL> "assuming"						{ ret = T_ASSUMING;						goto re2c_finish;					}
-				<NORMAL> "attribute"					{ ret = T_ATTRIBUTE;					goto re2c_finish;					}
-				<NORMAL> "all"							{ ret = T_ALL;							goto re2c_finish;					}
-				<NORMAL> "by"							{ ret = T_BY;							goto re2c_finish;					}
-				<NORMAL> "caused"						{ ret = T_CAUSED;						goto re2c_finish;					}
-				<NORMAL> "causes"						{ ret = T_CAUSES;						goto re2c_finish;					}
-				<NORMAL> "constants"					{ ret = T_CONSTANTS;					goto re2c_finish;					}
-				<NORMAL> "constraint"					{ ret = T_CONSTRAINT;					goto re2c_finish;					}
-				<NORMAL> "decrements"					{ ret = T_DECREMENTS;					goto re2c_finish;					}
-				<NORMAL> "default"						{ ret = T_DEFAULT;						goto re2c_finish;					}
-				<NORMAL> "externalAction"				{ ret = T_EXTERNALACTION;				goto re2c_finish;					}
-				<NORMAL> "externalFluent"				{ ret = T_EXTERNALFLUENT;				goto re2c_finish;					}
-				<NORMAL> "exogenous"					{ ret = T_EXOGENOUS;					goto re2c_finish;					}
-				<NORMAL> "exogenousAction"				{ ret = T_EXOGENOUSACTION;				goto re2c_finish;					}
-				<NORMAL> "if"							{ ret = T_IF;							goto re2c_finish;					}
-				<NORMAL> "ifcons"						{ ret = T_IFCONS;						goto re2c_finish;					}
-				<NORMAL> "impossible"					{ ret = T_IMPOSSIBLE;					goto re2c_finish;					}
-				<NORMAL> "increments"					{ ret = T_INCREMENTS;					goto re2c_finish;					}
-				<NORMAL> "inertial"						{ ret = T_INERTIAL;						goto re2c_finish;					}
-				<NORMAL> "inertialFluent"				{ ret = T_INERTIALFLUENT;				goto re2c_finish;					}
-				<NORMAL> "label"						{ ret = T_LABEL;						goto re2c_finish;					}
-				<NORMAL> "may" WS+ "cause"				{ ret = T_MAY_CAUSE;					goto re2c_finish;					}
-				<NORMAL> "maxAdditive"					{ ret = T_MAXADDITIVE;					goto re2c_finish;					}
-				<NORMAL> "maxAFValue"					{ ret = T_MAXAFVALUE;					goto re2c_finish;					}
-				<NORMAL> "maxstep"						{ ret = T_MAXSTEP;						goto re2c_finish;					}
-				<NORMAL> "never"						{ ret = T_NEVER;						goto re2c_finish;					}
-				<NORMAL> "noconcurrency"				{ ret = T_NOCONCURRENCY;				goto re2c_finish;					}
-				<NORMAL> "nonexecutable"				{ ret = T_NONEXECUTABLE;				goto re2c_finish;					}
-				<NORMAL> "of"							{ ret = T_OF;							goto re2c_finish;					}
-				<NORMAL> "possibly" WS+ "caused"		{ ret = T_POSSIBLY_CAUSED;				goto re2c_finish;					}
-				<NORMAL> "rigid"						{ ret = T_RIGID;						goto re2c_finish;					}
-				<NORMAL> "sdFluent"						{ ret = T_SDFLUENT;						goto re2c_finish;					}
-				<NORMAL> "simpleFluent"					{ ret = T_SIMPLEFLUENT;					goto re2c_finish;					}
-				<NORMAL> "strong" WS+ "noconcurrency"	{ ret = T_STRONG_NOCONCURRENCY;			goto re2c_finish;					}
-				<NORMAL> "strong_noconcurrency"			{ ret = T_STRONG_NOCONCURRENCY;			goto re2c_finish;					}
-				<NORMAL> "nonexecutable"				{ ret = T_NONEXECUTABLE;				goto re2c_finish;					}
-				<NORMAL> "of"							{ ret = T_OF;							goto re2c_finish;					}
-				<NORMAL> "unless"						{ ret = T_UNLESS;						goto re2c_finish;					}
-				<NORMAL> "where"						{ ret = T_WHERE;						goto re2c_finish;					}
-				<NORMAL> "abs"							{ ret = T_ABS;							goto re2c_finish;					}
-				<NORMAL> "eq"							{ ret = T_EQ;							goto re2c_finish;					}
-				<NORMAL> "false"						{ ret = T_FALSE;						goto re2c_finish;					}
-				<NORMAL> "mod"							{ ret = T_MOD;							goto re2c_finish;					}
-				<NORMAL> "neq"							{ ret = T_NEQ;							goto re2c_finish;					}
-				<NORMAL> "none"							{ ret = T_NONE;							goto re2c_finish;					}
-				<NORMAL> "not"							{ ret = T_NOT;							goto re2c_finish;					}
-				<NORMAL> "true"							{ ret = T_TRUE;							goto re2c_finish;					}
+		ALPH 									= [a-zA-Z_];
+		AN 										= [a-zA-Z0-9_];
+		NUM										= [0-9];
+		WS								 		= [ \t\v\f];
+		NL								 		= [\n];
+		EOF										= [\X0000];
 
-				<*> .									{ goto re2c_notkw; }
+		INTEGER									= NUM+;
+		IDENTIFIER								= ALPH AN*;
+		
+		re2c:labelprefix = yyy;
+		
+		<NORMAL> "%"							{ cond = yycCOMMENT; 							goto yyc_COMMENT;	 				}
+		<NORMAL> [/][*]							{ 
+												  cond = yycBLK_COMMENT; 
+												  BLK_INIT("% ");
+												  goto yyc_BLK_COMMENT; 				
+												}
+		<COMMENT> NL							{ 
+												  source->cursor()--; 
+												  cond = yycNORMAL; 
+												  ret = T_COMMENT;			
+												  goto re2c_finish;
+												}
+		<COMMENT> [^\n]+						{ 												goto yyc_COMMENT;					}
+		<COMMENT> EOF							{ 
+												  source->cursor()--; 
+												  cond = yycNORMAL; 
+												  ret = T_COMMENT;			
+												  goto re2c_finish;					
+												}
 
-			*/
-	}
-re2c_notkw:
+		<BLK_COMMENT> NL						{ 
+												  BLK_LINE;
+												  blk << "% "; 
+												  goto yyc_BLK_COMMENT;				
+												}
+		<BLK_COMMENT> [*][/]					{ 
+												  BLK_FINISH(2);
+												  cond = yycNORMAL; 
+												  ret = T_COMMENT; 
+												  goto re2c_finish;					
+												}
+		<BLK_COMMENT> EOF						{ 
+												  BLK_FINISH(1);
+												  ret = T_ERR_UNTERMINATED_BLK_COMMENT;			
+												  cond = yycNORMAL;
+												  source->cursor()--;
+												  goto re2c_finish;					
+												}
+		<BLK_COMMENT> .							{												goto yyc_BLK_COMMENT;				}
+
+		<*> .									{ goto re2c_notcmt; }
+	*/
+re2c_notcmt:
 	source->cursor() = source->token();
-	return tokenize_notkw(source);
+	return tokenize_2(source);
 
 re2c_finish:
 	u::ref_ptr<ReferencedString> str = new ReferencedString();
 	if (ret != T_EOF) {
-		str->assign(source->token(), (size_t)(source->cursor() - source->token()));
+		if (use_blk)
+			str->assign(blk.str());
+		else
+			str->assign(source->token() + preskip, (size_t)(source->cursor() - source->token() - preskip - postskip));
 	} else {
 		str->assign("<EOF>");
 	}

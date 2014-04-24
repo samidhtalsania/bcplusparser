@@ -10,6 +10,8 @@
 			#include "bcplus/parser/BCParser.h"
 			#include "bcplus/parser/Token.h"
 			#include "bcplus/parser/detail/lemon_parser.h"
+			#include "bcplus/parser/detail/Number.h"
+			#include "bcplus/parser/detail/NumberRange.h"
 			#include "bcplus/statements/Statement.h"
 			#include "bcplus/statements/declarations.h"
 			#include "bcplus/statements/QueryStatement.h"
@@ -32,6 +34,7 @@
 			using namespace bcplus::elements;
 			using namespace bcplus::languages;
 			using namespace bcplus::symbols;
+			using namespace bcplus::parser::detail;
 			
 
 			/// A list of terms
@@ -162,8 +165,18 @@
 %left     DASH PLUS.       // -, +
 %left     STAR INT_DIV MOD.	// *, //, mod
 %left     ABS.             // abs
-%left     UMINUS.          // Pseudo-token, unary minus
 %right    CARROT.		   // ^
+
+%left     UMINUS.          // Pseudo-token, unary minus
+
+
+%nonassoc PREC_4.
+%nonassoc PREC_3.
+%nonassoc PREC_2.
+%nonassoc PREC_1.
+%nonassoc PREC_0.
+
+
 
 // errors
 %nonassoc EOF.
@@ -284,6 +297,8 @@ statement(stmt) ::= stmt_query(q).					{ stmt = q; }
 %destructor constant						{ DEALLOC($$);								}
 %type		object							{ Object*									}			// pre-declared object
 %destructor object							{ DEALLOC($$);								}
+%type		object_nullary					{ Object*									}			// pre-declared nullary object
+%destructor object_nullary					{ DEALLOC($$);								}
 %type	    variable						{ Variable*									}			// pre-declared variable
 %destructor variable						{ DEALLOC($$);								}
 %type	    lua								{ LuaTerm*									}			// external lua call
@@ -363,7 +378,9 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 constant(c) ::= CONSTANT_ID(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).			{ BASE_ELEM_DEF(c, id, pl, args, pr, Symbol::Type::CONSTANT, Constant, ConstantSymbol);	}
 constant(c) ::= CONSTANT_ID(id).												{ BASE_ELEM_DEF(c, id, NULL, NULL, NULL, Symbol::Type::CONSTANT, Constant, ConstantSymbol); }
 object(o)   ::= OBJECT_ID(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).			{ BASE_ELEM_DEF(o, id, pl, args, pr, Symbol::Type::OBJECT, Object, ObjectSymbol);	}
-object(o)   ::= OBJECT_ID(id).													{ BASE_ELEM_DEF(o, id, NULL, NULL, NULL, Symbol::Type::OBJECT, Object, ObjectSymbol); }
+object(new_o)	::= object_nullary(o).											{ new_o = o; }
+object_nullary(o)   ::= OBJECT_ID(id).											{ BASE_ELEM_DEF(o, id, NULL, NULL, NULL, Symbol::Type::OBJECT, Object, ObjectSymbol); }
+
 variable(o) ::= VARIABLE_ID(id).												
 	{ 
 		o = NULL;
@@ -409,62 +426,6 @@ term_no_const_lst(new_lst) ::= term_no_const_lst(lst) COMMA term_no_const(t).
 			lst->push_back(t);
 		}
 
-/********************************************************************************************************************************/
-/*************************************************************************************************/
-/* base elements for with local variables */
-/*************************************************************************************************/
-/********************************************************************************************************************************/
-
-%type       base_elem_local				{ Term*										}			// constant, object, variable, or local variable.
-%destructor base_elem_local				{ DEALLOC($$);								}
-%type       base_elem_local_no_const	{ Term*										}			// object or variable or local variable.
-%destructor base_elem_local_no_const	{ DEALLOC($$);								}
-%type		constant_local				{ Constant*									}			// pre-declared constant with local variables
-%destructor constant_local				{ DEALLOC($$);								}
-%type		object_local				{ Object*									}			// pre-declared object with local variables
-%destructor object_local				{ DEALLOC($$);								}
-%type		variable_local				{ LocalVariable*							}			// pre-declared object with local variables
-%destructor variable_local				{ DEALLOC($$);								}
-%type		lua_local					{ LuaTerm*									}			// external lua call
-%destructor lua_local					{ DEALLOC($$);								}
-%type       undeclared_local			{ UNUSED									}			// undeclared element (to generate an error)
-%destructor undeclared_local			{ /* Intentionally left blank */			}			
-%type		term_local_lst				{ TermList*									}			// list of terms
-%destructor term_local_lst				{ DEALLOC($$);								}
-%type		term_local					{ Term*										}			// A (possibly compound) term
-%destructor term_local					{ DEALLOC($$);								}
-
-base_elem_local(elem) ::= constant_local(c).			{ elem = c; }
-base_elem_local(elem) ::= base_elem_local_no_const(c).	{ elem = c; }
-base_elem_local_no_const(elem) ::= object_local(o).		{ elem = o;	}
-base_elem_local_no_const(elem) ::= variable(v).			{ elem = v; }
-base_elem_local_no_const(elem) ::= variable_local(v).	{ elem = v; }
-base_elem_local_no_const(elem) ::= lua_local(l).		{ elem = l; }
-//base_elem_local_no_const(elem) ::= undeclared_local.	{ /* This should never be called*/ elem = NULL; }
-
-
-constant_local(c) ::= CONSTANT_ID(id) PAREN_L(pl) term_local_lst(args) PAREN_R(pr).	{ BASE_ELEM_DEF(c, id, pl, args, pr, Symbol::Type::CONSTANT, Constant, ConstantSymbol);	}
-constant_local(c) ::= CONSTANT_ID(id).												{ BASE_ELEM_DEF(c, id, NULL, NULL, NULL, Symbol::Type::CONSTANT, Constant, ConstantSymbol); }
-object_local(o)   ::= OBJECT_ID(id) PAREN_L(pl) term_local_lst(args) PAREN_R(pr).	{ BASE_ELEM_DEF(o, id, pl, args, pr, Symbol::Type::OBJECT, Object, ObjectSymbol);	}
-object_local(o)   ::= OBJECT_ID(id).												{ BASE_ELEM_DEF(o, id, NULL, NULL, NULL, Symbol::Type::OBJECT, Object, ObjectSymbol); }
-variable_local(v) ::= POUND_IDENTIFIER(id).											{ v = new LocalVariable(id->str(), id->beginLoc(), id->endLoc()); delete id; }
-variable_local(v) ::= POUND_INTEGER(i).												{ v = new LocalVariable(i->str(), i->beginLoc(), i->endLoc()); delete i; }
-lua_local(l) ::= AT_IDENTIFIER(id) PAREN_L(pl) term_local_lst(args) PAREN_R(pr).	{ BASE_LUA_ELEM(l, id, pl, args, pr); }
-lua_local(l) ::= AT_IDENTIFIER(id).													{ BASE_LUA_ELEM(l, id, NULL, NULL, NULL); }
-//undeclared_local(u) ::= IDENTIFIER(id) PAREN_L term_local_lst(args) PAREN_R.		{ UNDECLARED(u, id, args); }
-//undeclared_local(u) ::= IDENTIFIER(id).												{ UNDECLARED(u, id, NULL); }
-
-term_local_lst(lst) ::= term_local(t).
-		{
-			lst = new TermList();
-			lst->push_back(t);
-		}
-
-term_local_lst(new_lst) ::= term_local_lst(lst) COMMA term_local(t).
-		{
-			new_lst = lst;
-			lst->push_back(t);
-		}
 
 
 /********************************************************************************************************************************/
@@ -480,7 +441,6 @@ term_local_lst(new_lst) ::= term_local_lst(lst) COMMA term_local(t).
 %type		term_no_const_strong				{ Term*										}			// A stronger definition of term for the LHS of operators in a formula
 																										// in order to disambiguate the grammar.
 %destructor term_no_const_strong				{ DEALLOC($$);								}
-
 
 %include {
 	#define BASIC_TERM(term, id)																							\
@@ -603,30 +563,6 @@ term_strong(t) ::= term_strong(l) STAR(o) term(r).				{ BINARY_ARITH(t, l, o, r,
 term_strong(t) ::= term_strong(l) INT_DIV(o) term(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::DIVIDE); }
 term_strong(t) ::= term_strong(l) MOD(o) term(r).				{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MOD); }
 
-// terms with local variables
-
-term_local(t) ::= base_elem_local(e).							{ t = e; }
-term_local(t) ::= INTEGER(i).									{ BASIC_TERM(t, i);	}
-term_local(t) ::= STRING_LITERAL(s).							{ BASIC_TERM(t, s); }
-term_local(t) ::= PAREN_L(pl) term_local(sub) PAREN_R(pr).		{ TERM_PARENS(t, pl, sub, pr); }
-term_local(t) ::= TRUE(e).										{ BASIC_TERM(t, e); }
-term_local(t) ::= FALSE(e).										{ BASIC_TERM(t, e); }
-term_local(t) ::= MAXSTEP(e).									{ NULLARY_TERM(t, e, Language::Feature::MAXSTEP, NullaryTerm::Operator::MAXSTEP); }
-term_local(t) ::= MAXADDITIVE(e).								{ NULLARY_TERM(t, e, Language::Feature::MAXADDITIVE, NullaryTerm::Operator::MAXADDITIVE); }
-term_local(t) ::= MAXAFVALUE(e).								{ NULLARY_TERM(t, e, Language::Feature::MAXAFVALUE, NullaryTerm::Operator::MAXAFVALUE); }
-
-// unary term_locals
-
-term_local(t_new) ::= DASH(d) term_local(t). [UMINUS]			{ UNARY_ARITH(t_new, d, t, UnaryTerm::Operator::NEGATIVE); }
-term_local(t_new) ::= ABS(a) term_local(t).						{ UNARY_ARITH(t_new, a, t, UnaryTerm::Operator::ABS); }
-
-// binary term_locals
-
-term_local(t) ::= term_local(l) DASH(o) term_local(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MINUS); }
-term_local(t) ::= term_local(l) PLUS(o) term_local(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::PLUS); }
-term_local(t) ::= term_local(l) STAR(o) term_local(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::TIMES); }
-term_local(t) ::= term_local(l) INT_DIV(o) term_local(r).		{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::DIVIDE); }
-term_local(t) ::= term_local(l) MOD(o) term_local(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MOD); }
 
 /*************************************************************************************************/
 /* terms without constants */
@@ -643,9 +579,9 @@ term_no_const_strong(t) ::= MAXADDITIVE(e).											{ NULLARY_TERM(t, e, Langu
 term_no_const_strong(t) ::= MAXAFVALUE(e).											{ NULLARY_TERM(t, e, Language::Feature::MAXAFVALUE, NullaryTerm::Operator::MAXAFVALUE); }
 term_no_const_strong(t) ::= constant(c).
 	{
-		// error handline for constants so they don't default to undeclared identifiers
+		// error handling for constants so they don't default to undeclared identifiers
 		t = NULL;
-		ref_ptr<Referenced> c_ptr = c;
+		ref_ptr<const Referenced> c_ptr = c;
 		parser->_parse_error("Encountered unexpected constant symbol.", &c->beginLoc());
 		YYERROR;
 	}
@@ -675,7 +611,7 @@ term_no_const(t) ::= constant(c).
 	{
 		// error handline for constants so they don't default to undeclared identifiers
 		t = NULL;
-		ref_ptr<Referenced> c_ptr = c;
+		ref_ptr<const Referenced> c_ptr = c;
 		parser->_parse_error("Encountered unexpected constant symbol.", &c->beginLoc());
 		YYERROR;
 	}
@@ -692,6 +628,65 @@ term_no_const(t) ::= term_no_const(l) PLUS(o) term_no_const(r).	{ BINARY_ARITH(t
 term_no_const(t) ::= term_no_const(l) STAR(o) term_no_const(r).	{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::TIMES); }
 term_no_const(t) ::= term_no_const(l) INT_DIV(o) term_no_const(r).{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::DIVIDE); }
 term_no_const(t) ::= term_no_const(l) MOD(o) term_no_const(r).	{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MOD); }
+
+/*************************************************************************************************/
+/* Numeric Ranges */
+/*************************************************************************************************/
+%type		num_range						{ NumberRange*								}		// A range between two numbers
+%destructor num_range						{ DEALLOC($$);								}
+%type		term_numeric					{ Number*									}		// A term which contains only integers
+%destructor term_numeric					{ DEALLOC($$);								}
+
+
+num_range(nr) ::= term_numeric(l) DBL_PERIOD(s) term_numeric(r). {
+	ref_ptr<const Referenced> l_ptr = l, r_ptr = r, s_ptr = s;
+
+	nr = new NumberRange(l->val(), r->val(), l->beginLoc(), r->endLoc());
+
+}
+
+
+term_numeric(t) ::= INTEGER(i). {
+	ref_ptr<const Referenced> i_ptr = i;
+
+	t = 0;
+	try {
+		t = new Number(boost::lexical_cast<int>(*i->str()), i->beginLoc());
+
+	} catch (boost::bad_lexical_cast const& e) {
+		parser->_parse_error("INTERNAL ERROR: Failed to parse integer \"" + *i->str() + "\".", &i->beginLoc());
+		YYERROR;
+	}
+}
+
+term_numeric(t) ::= PAREN_L(pl) term_numeric(sub) PAREN_R(pr). { 
+	ref_ptr<const Referenced> pl_ptr = pl, pr_ptr = pr;
+	t = sub;  
+	t->beginLoc(pl->beginLoc());
+	t->endLoc(pr->endLoc());
+}
+
+%include {
+	#define NUM_UOP(t_new, t, val)																				\
+		ref_ptr<const Referenced> t_ptr = t;																			\
+		t_new = new Number(val, t->beginLoc(), t->endLoc());
+
+	
+	#define NUM_BOP(t_new, l, r, val)																			\
+		ref_ptr<const Referenced> l_ptr = l, r_ptr = r;																\
+		t_new = new Number(val, l->beginLoc(), r->endLoc());
+
+}
+
+
+term_numeric(t_new) ::= DASH term_numeric(t). [UMINUS]					{ NUM_UOP(t_new, t, -1 * t->val()); }
+term_numeric(t_new) ::= ABS  term_numeric(t).							{ NUM_UOP(t_new, t, t->val() < 0 ? - t->val() : t->val()); }
+
+term_numeric(t) ::= term_numeric(l) DASH term_numeric(r).				{ NUM_BOP(t, l, r, l->val() - r->val()); }
+term_numeric(t) ::= term_numeric(l) PLUS term_numeric(r).				{ NUM_BOP(t, l, r, l->val() + r->val()); }
+term_numeric(t) ::= term_numeric(l) STAR term_numeric(r).				{ NUM_BOP(t, l, r, l->val() * r->val()); }
+term_numeric(t) ::= term_numeric(l) INT_DIV term_numeric(r).			{ NUM_BOP(t, l, r, l->val() / r->val()); }
+term_numeric(t) ::= term_numeric(l) MOD term_numeric(r).				{ NUM_BOP(t, l, r, l->val() % r->val()); }
 
 
 /********************************************************************************************************************************/
@@ -943,24 +938,18 @@ quant_op(op) ::= BIG_DISJ.												{ op = QuantifierFormula::Operator::DISJ; 
 /*************************************************************************************************/
 /* Cardinality constraints */
 /*************************************************************************************************/
-%type       card_af							{ AtomicFormula*							}		// cardinality formula atomic formula.
-%destructor card_af							{ DEALLOC($$);								}		// cardinality formula sort bindings
-%type       card_sort_bnd_lst				{ CardinalityFormula::BindingList*			}
-%destructor card_sort_bnd_lst				{ DEALLOC($$);								}
-
+%type		card_var_lst					{ CardinalityFormula::VariableList*			}		// optional list of local variables for cardinality formula followed by |.
+%destructor card_var_lst					{ DEALLOC($$);								}
+%type		card_var_lst_inner				{ CardinalityFormula::VariableList*			}		// list of local variables for cardinality formula.
+%destructor card_var_lst_inner				{ DEALLOC($$);								}
 
 
 %include {
-	#define CARD_FORMULA(card, min, lbrack, af, binds, rbrack, max)																	\
+	#define CARD_FORMULA(card, min, lbrack, vars, af, rbrack, max)																	\
 		card = NULL;																												\
-		ref_ptr<const Term> min_ptr = min;																							\
-		ref_ptr<const Token> lbrack_ptr = lbrack;																					\
-		ref_ptr<AtomicFormula> af_ptr = af;																							\
-		ref_ptr<CardinalityFormula::BindingList> binds_ptr = binds;																	\
-		ref_ptr<const Token> rbrack_ptr = rbrack;																					\
-		ref_ptr<const Term> max_ptr = max;																							\
-																																	\
-		/* TODO: Check bindings */																									\
+		ref_ptr<const Referenced> vars_ptr = vars, af_ptr = af;																	\
+		ref_ptr<const Term> min_ptr = min, max_ptr = max;																		\
+		ref_ptr<const Token> lbrack_ptr = lbrack, rbrack_ptr = rbrack;															\
 																																	\
 		bool good = true;																										\
 		if (min && min_ptr->domainType() != DomainType::INTEGRAL && min_ptr->domainType() != DomainType::UNKNOWN) {				\
@@ -974,10 +963,10 @@ quant_op(op) ::= BIG_DISJ.												{ op = QuantifierFormula::Operator::DISJ; 
 			good = false;																										\
 			YYERROR;																											\
 		}																														\
-																																	\
+																																\
 		if (good) {																												\
 			/* hopefully good to go. */																							\
-			card = new CardinalityFormula(af, binds, min, max, 																	\
+			card = new CardinalityFormula(vars, af, min, max, 																	\
 				(min ? min_ptr->beginLoc() : lbrack_ptr->beginLoc()), 															\
 				(max ? max_ptr->endLoc() : rbrack_ptr->endLoc()));																\
 		}																														\
@@ -987,25 +976,34 @@ quant_op(op) ::= BIG_DISJ.												{ op = QuantifierFormula::Operator::DISJ; 
 }
 
 
-formula_card(card) ::= CBRACKET_L(bl) card_af(af) card_sort_bnd_lst(binds) CBRACKET_R(br).										{ CARD_FORMULA(card, NULL, bl, af, binds, br, NULL); }
-formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_af(af) card_sort_bnd_lst(binds) CBRACKET_R(br).						{ CARD_FORMULA(card, min, bl, af, binds, br, NULL);  }
-formula_card(card) ::= CBRACKET_L(bl) card_af(af) card_sort_bnd_lst(binds) CBRACKET_R(br) term_strong(max).						{ CARD_FORMULA(card, NULL, bl, af, binds, br, max); }
-formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_af(af) card_sort_bnd_lst(binds) CBRACKET_R(br) term_strong(max).	{ CARD_FORMULA(card, min, bl, af, binds, br, max); }
+//formula_card(new_card) ::= formula_smpl_card(card). { new_card = card; }
+formula_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br).				[PREC_1]	{ CARD_FORMULA(card, NULL, bl, vars, f, br, NULL);  }
+formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br).				[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, NULL);  }
+formula_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br) term(max).		[PREC_1]	{ CARD_FORMULA(card, NULL, bl, vars, f, br, max); }
+formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br) term(max).		[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, max); }
 
 
-//opt_term_strong(ot) ::= term_strong(t).							{ ot = t; }
-//opt_term_strong(ot) ::= .										{ ot = NULL; }
-
-card_af(af) ::= constant_local(c).								{ ATOMIC_FORMULA(af, c, "true"); } 
-card_af(af) ::= TILDE constant_local(c).						{ ATOMIC_FORMULA(af, c, "false"); }
-card_af(af) ::= constant_local(c) EQ term_local(v).				{ af = new AtomicFormula(c, v, c->beginLoc(), v->endLoc()); }
-
-
-card_sort_bnd_lst(lst) ::= .									{ lst = new CardinalityFormula::BindingList();	}
-card_sort_bnd_lst(new_lst) ::= card_sort_bnd_lst(lst) COLON sort(s) PAREN_L variable_local(v) PAREN_R.
+card_var_lst(new_vars) ::= card_var_lst_inner(vars) PIPE.
 	{
-		new_lst = lst;
-		new_lst->push_back(CardinalityFormula::Binding(s, v));
+		new_vars = vars;
+	}
+card_var_lst(new_vars) ::= PIPE.
+	{
+		new_vars = new CardinalityFormula::VariableList();
+	}
+
+card_var_lst_inner(new_vars) ::= variable(v).
+	{
+		ref_ptr<const Referenced> v_ptr = v;
+		new_vars = new CardinalityFormula::VariableList();
+		new_vars->push_back(v->symbol());
+	}
+
+card_var_lst_inner(new_vars) ::= card_var_lst_inner(vars) COMMA variable(v).
+	{
+		ref_ptr<const Referenced> v_ptr = v;
+		new_vars = vars;
+		new_vars->push_back(v->symbol());
 	}
 
 /********************************************************************************************************************************/
@@ -1016,11 +1014,12 @@ card_sort_bnd_lst(new_lst) ::= card_sort_bnd_lst(lst) COLON sort(s) PAREN_L vari
 
 %type       head_formula 					{ Formula* 									}			// A formula in the head of a law.
 %destructor head_formula					{ DEALLOC($$);								}
-
+%type		formula_smpl_card				{ CardinalityFormula*						}			// cardinality formula in the head of a law
+%destructor formula_smpl_card				{ DEALLOC($$);								}
 
 head_formula(f) ::= comparison(c).													{ f = c; }
 head_formula(f) ::= atomic_formula(l).												{ f = l; }
-head_formula(f) ::= formula_card(c).
+head_formula(f) ::= formula_smpl_card(c).
 	{ 
 		f = c;
 		if (!parser->lang()->support(Language::Feature::FORMULA_CARDINALITY_HEAD)) {
@@ -1044,7 +1043,10 @@ head_formula(f) ::= DASH(d) constant(c).
 		}
 	}
 
-
+formula_smpl_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br).			[PREC_0]		{ CARD_FORMULA(card, NULL, bl, vars, f, br, NULL);  }
+formula_smpl_card(card) ::= term_strong(min) 	CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br).			[PREC_0]		{ CARD_FORMULA(card, min, bl, vars, f,  br, NULL);  }
+formula_smpl_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br) term(max).	[PREC_0]		{ CARD_FORMULA(card, NULL, bl, vars, f, br, max); }
+formula_smpl_card(card) ::= term_strong(min) 	CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br) term(max).	[PREC_0]		{ CARD_FORMULA(card, min, bl, vars, f,  br, max); }
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/
@@ -1154,6 +1156,8 @@ macro_arg(arg) ::= POUND_IDENTIFIER(pid).
 %destructor sort						{ /* Intentionally left blank */		}
 %type		sort_id_nr					{ SortSymbol*							}					// A single sort or number range
 %destructor sort_id_nr					{ /* Intentionally left blank */		}
+%type		sort_nr						{ SortSymbol*							}					// A dynamic number range sort
+%destructor sort_nr						{ /* Intentionally left blank */		}
 %type       sort_id						{ SortSymbol*							}					// A single sort that's not a dynamic number range
 %destructor sort_id						{ /* Intentionally left blank */		}
 
@@ -1197,24 +1201,45 @@ sort_lst(new_lst) ::= sort_lst(lst) COMMA sort(s).
 				}																																					\
 			}																																						\
 		}
+		
+	#define DYNAMIC_SORT_PLUS(new_s, s, op, o)																														\
+		new_s = NULL;																																				\
+		ref_ptr<const Referenced> s_ptr = s, op_ptr = op, o_ptr = o;																								\
+																																									\
+																																									\
+		if (!parser->lang()->support(Language::Feature::SORT_PLUS)) {																								\
+			parser->_feature_error(Language::Feature::SORT_PLUS, &op->beginLoc());																					\
+			YYERROR;																																				\
+		} else {																																					\
+			std::string name = *s->base() + "__" + *o->symbol()->base() + "_" + boost::lexical_cast<std::string>(o->arity()) + "__";								\
+			new_s = (SortSymbol*)parser->symtab()->resolveOrCreate(new SortSymbol(new ReferencedString(name)));														\
+			if (!new_s) {																																			\
+				parser->_parse_error("An error occurred creating sort \"" + name + "\".", &op->beginLoc());															\
+				YYERROR;																																			\
+			} else {																																				\
+				new_s->addSubSort(s);																																\
+				new_s->add(o->symbol());																															\
+			}																																						\
+		}																																						
 }
+sort(new_s) ::= sort_id_nr(s).					{ new_s = s; }
+sort(new_s) ::= sort_id_nr(s) STAR(sym).		{ DYNAMIC_SORT_SYM(new_s, s, sym, Language::Feature::STAR_SORT, *s->base() + "__plus_none_0", "none"); }
+sort(new_s) ::= sort_id_nr(s) CARROT(sym).		{ DYNAMIC_SORT_SYM(new_s, s, sym, Language::Feature::CARROT_SORT, *s->base() + "__plus_unknown_0__", "unknown"); }
+sort(new_s) ::= sort_nr(s) PLUS(op) object_nullary(o).
+												{ DYNAMIC_SORT_PLUS(new_s, s, op, o); }
+sort(new_s) ::= sort_id(s) PLUS(op) object_nullary(o).
+												{ DYNAMIC_SORT_PLUS(new_s, s, op, o); }
+sort(new_s) ::= sort_id(s) PLUS(op) INTEGER(i). { ref_ptr<const Referenced> i_ptr = i; DYNAMIC_SORT_SYM(new_s, s, op, Language::Feature::SORT_PLUS, *s->base() + "__plus_" + *i->str(), (*((std::string const*)i->str()))); }
 
-sort(new_s) ::= sort_id_nr(s) STAR(sym).	{ DYNAMIC_SORT_SYM(new_s, s, sym, Language::Feature::STAR_SORT, *s->base() + "_star", "none"); }
-sort(new_s) ::= sort_id_nr(s) CARROT(sym).	{ DYNAMIC_SORT_SYM(new_s, s, sym, Language::Feature::CARROT_SORT, *s->base() + "_carrot", "unknown"); }
-sort(new_s) ::= sort_id_nr(s).				{ new_s = s; }
-sort_id_nr(new_s) ::= sort_id(s).			{ new_s = s; }
 
-sort_id_nr(s) ::= NUMBER_RANGE(nr).
+sort_id_nr(new_s) ::= sort_id(s).				{ new_s = s; }
+sort_id_nr(new_s) ::= sort_nr(nr).				{ new_s = nr; }
+
+sort_nr(s) ::= num_range(nr).
 	{
-		s = NULL;
-		// dynamic sort declaration using a numerical range
-		// parse the string for min and max
-		int min, max;
-		if (sscanf(nr->str()->c_str(), "%d..%d", &min, &max) != 2) {
-			parser->_parse_error("INTERNAL ERROR: failed parsing mumber range \"" + *nr->str() + "\".", &nr->beginLoc());
-			YYERROR;
-		}
+		ref_ptr<const Referenced> nr_ptr = nr;
 
+		s = NULL;
 
 		if (!parser->lang()->support(Language::Feature::NUMRANGE_SORT)) {
 			parser->_feature_error(Language::Feature::NUMRANGE_SORT, &nr->beginLoc());
@@ -1222,12 +1247,12 @@ sort_id_nr(s) ::= NUMBER_RANGE(nr).
 		}
 
 		// X..Y becomes __sort_X_Y__
-		std::string name = "__sort_" + boost::lexical_cast<std::string>(min) + "__" + boost::lexical_cast<std::string>(max) + "__";
+		std::string name = "__sort_" + boost::lexical_cast<std::string>(nr->min()) + "__" + boost::lexical_cast<std::string>(nr->max()) + "__";
 
 		ref_ptr<SortSymbol::ObjectList> objs = new SortSymbol::ObjectList();
 
 		// Generate the objects that it will have
-		for (int i = min; i <= max; i++) {
+		for (int i = nr->min(); i <= nr->max(); i++) {
 			std::string obj_name = boost::lexical_cast<std::string>(i);
 			ObjectSymbol const* sym = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(obj_name)));
 
@@ -1699,21 +1724,13 @@ object_spec(obj) ::= IDENTIFIER(id) PAREN_L sort_lst(lst) PAREN_R.
 			obj->push_back(o);
 		}
 	}
-object_spec(obj) ::= NUMBER_RANGE(nr). 
+object_spec(obj) ::= num_range(nr). 
 	{
 		obj = new ObjectDeclaration::Element::ObjectList();
-		ref_ptr<const Token> nr_ptr = nr;
-
-		// dynamic sort declaration using a numerical range
-		// parse the string for min and max
-		int min, max;
-		if (sscanf(nr->str()->c_str(), "%d..%d", &min, &max) != 2) {
-			parser->_parse_error("INTERNAL ERROR: failed parsing mumber range \"" + *nr->str() + "\".", &nr->beginLoc());
-			YYERROR;
-		}
+		ref_ptr<const Referenced> nr_ptr = nr;
 
 		// iterate over the range and add it to the list
-		for (int i = min; i <= max; i++) {
+		for (int i = nr->min(); i <= nr->max(); i++) {
 			std::string name = boost::lexical_cast<std::string>(i);
 			ref_ptr<const ObjectSymbol> o = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(name)));
 			if (!o) {
@@ -2025,32 +2042,25 @@ stmt_strong_noconcurrency(stmt) ::= STRONG_NOCONCURRENCY(kw).				{ NC_STATEMENT(
 /********************************************************************************************************************************/
 
 %include {
-	#define VALUE_DECL(stmt, cd, kw, val, p, feature, class)										\
+	#define VALUE_DECL(stmt, cd, kw, val_obj, p, feature, class)									\
 		stmt = NULL;																				\
-		ref_ptr<const Token> cd_ptr = cd, kw_ptr = kw, val_ptr = val, p_ptr = p;					\
+		ref_ptr<const Referenced> cd_ptr = cd, kw_ptr = kw, val_ptr = val_obj, p_ptr = p;			\
 																									\
 		if (!parser->lang()->support(feature)) {													\
 			parser->_feature_error(feature, &kw->beginLoc());										\
 			YYERROR;																				\
 		} else { 																					\
-			int value;																				\
-			/* Ensure val is a positive integer */													\
-			if (sscanf(p->str()->c_str(), "%d", &value) != 1) {										\
-				parser->_parse_error("INTERNAL ERROR: Could not extract an integer from \"" 		\
-					+ *val->str() + "\".", &val->beginLoc());										\
-				YYERROR;																			\
+			int value = val_obj->val();																\
+			if (value < 0) {																		\
+				parser->_parse_error("ERROR: Expected a positive integer.", &val_obj->beginLoc());	\
 			} else {																				\
-				if (value < 0) {																	\
-					parser->_parse_error("ERROR: Expected a positive integer.", &val->beginLoc());	\
-				} else {																			\
-					stmt = new class(value, cd->beginLoc(), p->endLoc());							\
-				}																					\
+				stmt = new class(value, cd->beginLoc(), p->endLoc());								\
 			}																						\
 		}
 }
 
-stmt_maxafvalue(stmt) ::= COLON_DASH(cd) MAXAFVALUE(kw) EQ INTEGER(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXAFVALUE, MaxAFValueStatement); }
-stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ INTEGER(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXADDITIVE, MaxAdditiveStatement); }
+stmt_maxafvalue(stmt) ::= COLON_DASH(cd) MAXAFVALUE(kw) EQ term_numeric(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXAFVALUE, MaxAFValueStatement); }
+stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ term_numeric(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXADDITIVE, MaxAdditiveStatement); }
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/
@@ -2061,7 +2071,7 @@ stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ INTEGER(i) PERIOD(p
 %include {
 	struct QueryData {
 		QueryStatement::FormulaList* l;
-		Token const* maxstep;
+		NumberRange const* maxstep;
 		Token const* label;
 	};
 
@@ -2069,7 +2079,7 @@ stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ INTEGER(i) PERIOD(p
 
 %type       query_lst				{ QueryData													}
 %destructor query_lst				{ DEALLOC($$.l); DEALLOC($$.maxstep); DEALLOC($$.label);	}
-%type       query_maxstep_decl		{ Token const*												}
+%type       query_maxstep_decl		{ NumberRange const*										}
 %destructor query_maxstep_decl		{ DEALLOC($$);												}
 %type       query_label_decl		{ Token const*												}
 %destructor query_label_Decl		{ DEALLOC($$);												}					
@@ -2080,39 +2090,17 @@ stmt_query(stmt) ::= COLON_DASH(cd) QUERY(kw) query_lst(data) PERIOD(p).
 		ref_ptr<const Referenced> cd_ptr = cd, kw_ptr = kw, data_l_ptr = data.l, p_ptr = p;
 		ref_ptr<const Referenced> data_maxstep_ptr = data.maxstep, data_label_ptr = data.label;
 
+		int min = -1, max = -1;
+		if (data.maxstep) {
+			min = data.maxstep->min();
+			max = data.maxstep->max();
+		}
+
 		if (!parser->lang()->support(Language::Feature::DECL_QUERY)) {
 			parser->_feature_error(Language::Feature::DECL_QUERY, &kw->beginLoc());
 			YYERROR;
 		} else {
 			bool good = true;
-
-			// decode the maxstep if it exists
-			int min = -1, max = -1;
-			if (data.maxstep) {
-				if (data.maxstep->type() == T_INTEGER) {
-					if (sscanf(data.maxstep->str()->c_str(), "%d", &max) != 1) {
-						parser->_parse_error("INTERNAL ERROR: Could not extract integer from \"" + *data.maxstep->str() + "\".", &data.maxstep->beginLoc());
-						YYERROR;
-						good = false;
-					} else if (max < 0) {
-						parser->_parse_error("Query maximum step definitions cannot be negative.", &data.maxstep->beginLoc());
-						YYERROR;
-						good = false;
-					} else min = max;
-				} else if (data.maxstep->type() == T_NUMBER_RANGE) {
-					if (sscanf(data.maxstep->str()->c_str(), "%d..%d", &min, &max) != 2) {
-						parser->_parse_error("INTERNAL ERROR: Could not extract number range from \"" + *data.maxstep->str() + "\".", &data.maxstep->beginLoc());
-						YYERROR;
-						good = false;
-					} else if (min < 0 || max < 0) {
-						parser->_parse_error("Query maximum step definitions cannot be negative.", &data.maxstep->beginLoc());
-						YYERROR;
-						good = false;
-					}
-				}
-
-			}
-
 
 			// resolve the query label
 			ref_ptr<QuerySymbol> sym = new QuerySymbol(data.label->str(), min, max);
@@ -2194,10 +2182,44 @@ query_lst(new_lst) ::= query_lst(lst) SEMICOLON query_label_decl(elem).
 		} else {																							\
 			decl = val;																						\
 		}
+
 }
 
-query_maxstep_decl(decl) ::= MAXSTEP(kw) DBL_COLON INTEGER(i).			{ QUERY_DECL(decl, kw, i, Language::Feature::QUERY_MAXSTEP); }
-query_maxstep_decl(decl) ::= MAXSTEP(kw) DBL_COLON NUMBER_RANGE(i).		{ QUERY_DECL(decl, kw, i, Language::Feature::QUERY_MAXSTEP); }
+query_maxstep_decl(decl) ::= MAXSTEP(kw) DBL_COLON INTEGER(i).			{ 
+	decl = NULL;
+	ref_ptr<const Referenced> kw_ptr = kw, i_ptr = i;
+
+
+	if (!parser->lang()->support(Language::Feature::QUERY_MAXSTEP)) {
+		parser->_feature_error(Language::Feature::QUERY_MAXSTEP, &kw->beginLoc());
+		YYERROR;
+	} else {
+
+		int max = -1;
+		try {
+			max = boost::lexical_cast<int>(*i->str());
+			decl = new NumberRange(-1, max, i->beginLoc(), i->endLoc());
+		} catch (boost::bad_lexical_cast const& e) {
+			parser->_parse_error("INTERNAL ERROR: An error occurred extracting an integer from \"" + *i->str() + "\".", &i->beginLoc());
+			YYERROR;
+		}
+	}
+}
+
+query_maxstep_decl(decl) ::= MAXSTEP(kw) DBL_COLON num_range(nr). {
+	decl = NULL;
+	ref_ptr<const Referenced> kw_ptr = kw, nr_ptr = nr;
+
+	if (!parser->lang()->support(Language::Feature::QUERY_MAXSTEP)) {
+		parser->_feature_error(Language::Feature::QUERY_MAXSTEP, &kw->beginLoc());
+		YYERROR;
+	} else {
+		decl = nr;
+		nr_ptr.release();
+	}
+}
+
+
 query_label_decl(decl) ::= LABEL(kw) DBL_COLON INTEGER(i).				{ QUERY_DECL(decl, kw, i, Language::Feature::QUERY_LABEL); }
 query_label_decl(decl) ::= LABEL(kw) DBL_COLON IDENTIFIER(i).			{ QUERY_DECL(decl, kw, i, Language::Feature::QUERY_LABEL); }
 
@@ -2404,7 +2426,6 @@ law_basic(law) 			::= head_formula(head) clause_if(ifbody) clause_ifcons(ifcons)
 																																														unless, where, p, Language::Feature::LAW_BASIC_S, 
 																																															Language::Feature::LAW_BASIC_D, BasicLaw); }
 
-
 law_caused(law)			::= CAUSED(kw) head_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).			{ LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, 
 																																														unless, where, p, Language::Feature::LAW_CAUSED_S, 
 																																															Language::Feature::LAW_CAUSED_D, CausedLaw); }
@@ -2416,16 +2437,15 @@ law_pcaused(law) 		::= POSSIBLY_CAUSED(kw) head_formula(head) clause_if(ifbody) 
 law_impl(law)			::= head_formula(head) ARROW_LDASH(kw) formula(body) clause_where(where) PERIOD(p).																			{ LAW_IMPL_FORM(law, head, kw, body, where, p, 
 																																														Language::Feature::LAW_IMPL, ImplicationLaw); }
 
-
-law_causes(law)			::= formula(body) CAUSES(kw) head_formula(head) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).										{ LAW_DYNAMIC_FORM(law, body, kw, head, ifbody, unless, where, p,
+law_causes(law)			::= atomic_formula(body) CAUSES(kw) head_formula(head) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).								{ LAW_DYNAMIC_FORM(law, body, kw, head, ifbody, unless, where, p,
 																																														Language::Feature::LAW_CAUSES, CausesLaw); }
 
 
-law_increments(law)		::= formula(body) INCREMENTS(kw) constant(head) BY term(v) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).							{ LAW_INCREMENTAL_FORM(law, body, kw, head, v, ifbody, unless, where, p,
+law_increments(law)		::= atomic_formula(body) INCREMENTS(kw) constant(head) BY term(v) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).					{ LAW_INCREMENTAL_FORM(law, body, kw, head, v, ifbody, unless, where, p,
 																																														Language::Feature::LAW_INCREMENTS, IncrementsLaw); }
 
 
-law_mcause(law)			::= formula(body) MAY_CAUSE(kw) head_formula(head) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).									{ LAW_DYNAMIC_FORM(law, body, kw, head, ifbody, unless, where, p,
+law_mcause(law)			::= atomic_formula(body) MAY_CAUSE(kw) head_formula(head) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).							{ LAW_DYNAMIC_FORM(law, body, kw, head, ifbody, unless, where, p,
 																																														Language::Feature::LAW_MCAUSE, MayCauseLaw); }
 
 

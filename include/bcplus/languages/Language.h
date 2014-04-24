@@ -55,6 +55,7 @@ public:
 			NUMRANGE_SORT,				///< Whether number ranges are allowed as dynamic sort declarations
 			STAR_SORT,					///< Whether dynamically declared star sorts "sortname*" are allowed
 			CARROT_SORT,				///< Whether dynamically declared carrot sorts "sortname^" are allowed		
+			SORT_PLUS,					///< Whether dynamically declared additive sorts "sortname+object" are allowed		
 			MAXSTEP,					///< Allow use of the maxstep keyword
 			MAXADDITIVE,				///< Allow use of the maxAdditive keyword
 			MAXAFVALUE,					///< Allow use of the maxAFValue keyword

@@ -48,6 +48,7 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::VARIABLE:
 		case Feature::STAR_SORT:
 		case Feature::CARROT_SORT:
+		case Feature::SORT_PLUS:
 		case Feature::MAXSTEP:
 		case Feature::MAXADDITIVE:
 		case Feature::QUERY_BIND_STEP:

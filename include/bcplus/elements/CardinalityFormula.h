@@ -10,6 +10,7 @@
 #include "bcplus/DomainType.h"
 
 #include "bcplus/symbols/SortSymbol.h"
+#include "bcplus/symbols/VariableSymbol.h"
 #include "bcplus/elements/formulas.h"
 #include "bcplus/elements/terms.h"
 
@@ -17,7 +18,7 @@ namespace bcplus {
 namespace elements {
 
 /**
- * @brief A nested quantifier formula of the form '[@1 V1 @2 V2 @3 V3 ...| F]' Where @i are big operators (/\ or \/), each Vi is a variable, and F is a formula.
+ * @brief A cardinality formula 'min{v1,v2,...| F}max'
  */
 class CardinalityFormula : public Formula
 {
@@ -27,11 +28,10 @@ public:
     /* Public Types */
     /****************************************************************************/
 
-	typedef std::pair<babb::utils::ref_ptr<const symbols::SortSymbol>, babb::utils::ref_ptr<LocalVariable> > Binding;
-	typedef ReferencedList<Binding>::type BindingList;
+	typedef ReferencedList<babb::utils::ref_ptr<const symbols::VariableSymbol> >::type VariableList;
 
-	typedef BindingList::iterator iterator;
-	typedef BindingList::const_iterator const_iterator;
+	typedef VariableList::iterator iterator;
+	typedef VariableList::const_iterator const_iterator;
 
 
 private:
@@ -44,11 +44,11 @@ private:
 	babb::utils::ref_ptr<Term> _max;
 
     /// The sort bindings for local variables
-	babb::utils::ref_ptr<BindingList> _binds;
+	babb::utils::ref_ptr<VariableList> _vars;
 	
 
-	/// The atomic formula we're testing
-	babb::utils::ref_ptr<AtomicFormula> _af;
+	/// The formula we're testing
+	babb::utils::ref_ptr<Formula> _formula;
 
 
 public:
@@ -56,14 +56,14 @@ public:
     /* Constructor / Destructor */
     /****************************************************************************/
     /// Full constructor
-	/// @param af The atomic formula being operated on.
-	/// @param binds The sort-local variable bindings (or NULL to create a new list)
+	/// @param vars the local variables
+	/// @param formula The formula being operated on.
 	/// @param min The minimum limit (or NULL).
 	/// @param max The maximum limit (or NULL).
     /// @param begin The beginning location of this element
     /// @param end The ending location of this element
     /// @param parens Whether the element is surrounded by parentheses
-    CardinalityFormula(AtomicFormula* af, BindingList* binds = NULL, Term* min = NULL, Term* max = NULL, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+    CardinalityFormula(VariableList* vars, Formula* formula, Term* min = NULL, Term* max = NULL, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
     /// Destructor stub
     virtual ~CardinalityFormula();
@@ -73,14 +73,14 @@ public:
     /****************************************************************************/
 
 	/// Iterate over the local bindings
-	inline iterator begin()					{ return _binds->begin(); }
-	inline const_iterator begin() const		{ return _binds->begin(); }
-	inline iterator end()					{ return _binds->end(); }
-	inline const_iterator end() const		{ return _binds->end(); }
+	inline iterator begin()					{ return _vars->begin(); }
+	inline const_iterator begin() const		{ return _vars->begin(); }
+	inline iterator end()					{ return _vars->end(); }
+	inline const_iterator end() const		{ return _vars->end(); }
 
 	/// Get the atomic formula.
-	inline AtomicFormula* af()				{ return _af; }
-	inline AtomicFormula const* af() const	{ return _af; }
+	inline Formula* formula()				{ return _formula; }
+	inline Formula const* formula() const	{ return _formula; }
 
 	// Get the minimum limit (or NULL)
 	inline Term* min()						{ return _min; }

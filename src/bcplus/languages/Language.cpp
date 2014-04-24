@@ -17,7 +17,7 @@ char const* Language::Feature::descr(type feature) {
 		case DECL_HIDE_ALL:                		return "hide all statements";
 		case DECL_MAXAFVALUE:            		return "maxAFtype declarations";
 		case DECL_MAXADDITIVE:           		return "maxAdditive declarations";
-			case DECL_QUERY:                  		return "queries";
+		case DECL_QUERY:                  		return "queries";
 
 
 
@@ -49,6 +49,7 @@ char const* Language::Feature::descr(type feature) {
 		case NUMRANGE_SORT:						return "dynamic numerical range sorts";
 		case STAR_SORT:							return "dynamically declared starred sorts";
 		case CARROT_SORT:						return "dynamically declared carrotted sorts";
+		case SORT_PLUS:							return "dynamically declared additive sorts";
 		case QUERY_BIND_STEP:					return "step-bound formulas within queries";
 
 		case CLAUSE_IF:                  		return "\"if\" clauses";

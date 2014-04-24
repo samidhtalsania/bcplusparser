@@ -39,7 +39,9 @@ DomainType::type IdentifierElement_bare<BaseType, type, SymbolType>::domainType(
 
 template <typename BaseType, int type, typename SymbolType, typename ArgType>
 IdentifierElement<BaseType, type, SymbolType, ArgType>::IdentifierElement(SymbolType const* symbol, ArgumentList const* args, Location const& begin, Location const& end, bool parens) 
-	: IdentifierElement_bare<BaseType, type, SymbolType>(symbol, begin, end, parens), _args(args) {
+	: IdentifierElement_bare<BaseType, type, SymbolType>(symbol, begin, end, parens) {
+	if (args) _args = args;
+	else _args = new ArgumentList();
 	/* Intentionally left blank */
 }
 

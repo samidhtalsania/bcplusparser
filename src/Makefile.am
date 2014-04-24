@@ -76,9 +76,12 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/parser/detail/lemon_macro.cpp \
 	bcplus/parser/detail/Scanner.1.cpp \
 	bcplus/parser/detail/Scanner.2.cpp \
+	bcplus/parser/detail/Scanner.3.cpp \
 	bcplus/parser/detail/ScannerSource.cpp \
 	bcplus/parser/detail/ScannerTokenSource.cpp \
 	bcplus/parser/detail/ScannerRawSource.cpp \
 	bcplus/parser/detail/ScannerBufferSource.cpp \
-	bcplus/parser/detail/ScannerFileSource.cpp 
+	bcplus/parser/detail/ScannerFileSource.cpp \
+	bcplus/parser/detail/Number.cpp \
+	bcplus/parser/detail/NumberRange.cpp
 
