@@ -29,16 +29,16 @@ public:
 
 
 private:
+
 	/***********************************************************/
 	/* Private Types */
 	/***********************************************************/
 	/// Condition type for the scanner
+	/// NOTE: Order matters.
 	enum YYCONDTYPE {
 		yycNORMAL,						///< Standard condition 
-		yycSGL_STRING,					///< Inside a single quoted string
 		yycDBL_STRING,					///< Inside a doubel quoted string
-		yycCOMMENT,						///< Inside a line comment
-		yycBLK_COMMENT,					///< Inside a block comment
+		yycSGL_STRING,					///< Inside a single quoted string
 		yycASP_GR,						///< Gringo style ASP block
 		yycASP_CP,						///< CCalc style ASP block
 		yycLUA_GR,						///< Gringo style LUA block
@@ -46,7 +46,9 @@ private:
 		yycF2LP_GR,						///< Gringo style F2LP block
 		yycF2LP_CP,						///< CCalc style F2LP block
 		yycARG,							///< Inside an unparsed argument
-		yycMACRO						///< Macro definition string (anything following "->" and preceding ".").
+		yycMACRO,						///< Macro definition string (anything following "->" and preceding ".").
+		yycBLK_COMMENT,					///< Inside a block comment
+		yycCOMMENT						///< Inside a line comment
 	};
 
 	/***********************************************************/

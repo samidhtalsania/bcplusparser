@@ -30,11 +30,9 @@ Token* Scanner::tokenize_2(ScannerRawSource* source) {
 
 	int ret;
 	Location begin;
-	char const* marker;
 
-re2c_start:
-	marker = source->token() = source->cursor();
 	begin = source->loc();
+	source->token() = source->cursor();
 
 	if (_cond == yycNORMAL) {
 			/*!re2c
@@ -46,15 +44,13 @@ re2c_start:
 				re2c:define:YYGETCONDITION				= _cond;
 				re2c:define:YYGETCONDITION:naked		= 1;
 				re2c:define:YYFILL						= source->fill;
-				re2c:define:YYCTXMARKER					= marker;
+		
+				re2c:labelprefix = yy2_;
 
 				WS								 		= [ \t\v\f];
 				NL								 		= [\n];
 				EOF										= [\X0000];
 
-				<NORMAL> NL								{ source->newline();		 			goto re2c_start; 					}
-				<NORMAL> WS								{ 										goto re2c_start; 					}
-				<NORMAL> EOF							{ ret = T_EOF; 							goto re2c_finish; 					}
 				<NORMAL> "include"						{ ret = T_INCLUDE;						goto re2c_finish;					}
 				<NORMAL> "macros"						{ ret = T_MACROS; _in_macro = true;		goto re2c_finish;					}
 				<NORMAL> "objects"						{ ret = T_OBJECTS;						goto re2c_finish;					}
@@ -115,6 +111,8 @@ re2c_start:
 				<NORMAL> "none"							{ ret = T_NONE;							goto re2c_finish;					}
 				<NORMAL> "not"							{ ret = T_NOT;							goto re2c_finish;					}
 				<NORMAL> "true"							{ ret = T_TRUE;							goto re2c_finish;					}
+
+
 
 				<*> .									{ goto re2c_notkw; }
 

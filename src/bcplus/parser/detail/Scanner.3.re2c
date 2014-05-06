@@ -52,10 +52,12 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 	int parens = 0;
 	bool dbl_quote = false;
 	bool sgl_quote = false;
+	bool ln_cmt = false;
+	bool blk_cmt = false;
+	static bool repeat = false;
 
-	char const* marker;
+	char const* marker = NULL;
 
-re2c_start:
 	marker = source->token() = source->cursor();
 	begin = source->loc();
 
@@ -80,12 +82,8 @@ re2c_start:
 		INTEGER									= NUM+;
 		IDENTIFIER								= ALPH AN*;
 		
-		re2c:labelprefix = yyy;
+		re2c:labelprefix = yy3_;
 		
-		<NORMAL> NL								{ source->newline();		 			goto re2c_start; 					}
-		<NORMAL> WS								{ 										goto re2c_start; 					}
-		<NORMAL> EOF							{ ret = T_EOF; 							goto re2c_finish; 					}
-
 
 		<NORMAL> ":-"							{ ret = T_COLON_DASH;					goto re2c_finish;					}
 		<NORMAL> "::"							{ ret = T_DBL_COLON;					goto re2c_finish;					}
@@ -136,16 +134,11 @@ re2c_start:
 		<NORMAL> ")"							{ ret = T_PAREN_R;						goto re2c_finish;					}
 
 
+
 		<NORMAL> ["]							{ _cond = yycDBL_STRING;	preskip = 1;		goto yyc_DBL_STRING;				}
 		<NORMAL> [']							{ _cond = yycSGL_STRING; 	preskip = 1;		goto yyc_SGL_STRING;				}
 	
 
-		<NORMAL> "%"							{ _cond = yycCOMMENT; 							goto yyc_COMMENT;	 				}
-		<NORMAL> [/][*]							{ 
-												  _cond = yycBLK_COMMENT; 
-												  BLK_INIT("% ");
-												  goto yyc_BLK_COMMENT; 				
-												}
 		<NORMAL>":-" WS* "begin_asp" WS* [.]
 												{
 												  _cond = yycASP_CP;
@@ -246,48 +239,29 @@ re2c_start:
 												  goto re2c_finish;					
 												}
 
-		<COMMENT> NL							{ 
-												  source->cursor()--; 
-												  _cond = yycNORMAL; 
-												  ret = T_COMMENT;			
-												  goto re2c_finish;
-												}
-		<COMMENT> [^\n]+						{ 												goto yyc_COMMENT;					}
-		<COMMENT> EOF							{ 
-												  source->cursor()--; 
-												  _cond = yycNORMAL; 
-												  ret = T_COMMENT;			
-												  goto re2c_finish;					
-												}
-
-		<BLK_COMMENT> NL						{ 
-												  BLK_LINE;
-												  blk << "% "; 
-												  goto yyc_BLK_COMMENT;				
-												}
-		<BLK_COMMENT> [*][/]					{ 
-												  BLK_FINISH(2);
-												  _cond = yycNORMAL; 
-												  ret = T_COMMENT; 
-												  goto re2c_finish;					
-												}
-		<BLK_COMMENT> EOF						{ 
-												  BLK_FINISH(1);
-												  ret = T_ERR_UNTERMINATED_BLK_COMMENT;			
-												  _cond = yycNORMAL;
-												  source->cursor()--;
-												  goto re2c_finish;					
-												}
-		<BLK_COMMENT> .							{												goto yyc_BLK_COMMENT;				}
-		
 		<ASP_GR> NL								{ 
 									 			  BLK_LINE;
+												  ln_cmt = false;
 												  goto yyc_ASP_GR;				
 												}
+		<ASP_GR> [']							{
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
+												  goto yyc_ASP_GR;
+												}
+		<ASP_GR> ["]							{
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;
+												  goto yyc_ASP_GR;
+												}
+		<ASP_GR> [%]							{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) ln_cmt = true;
+												  goto yyc_ASP_GR;
+												}
 		<ASP_GR> "#end_asp" WS* [.]				{ 
-										 		  _cond = yycNORMAL; 
-										 		  ret = T_ASP_GR; 
-										 		  goto re2c_finish;					
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) {
+										 		    _cond = yycNORMAL; 
+										 		    ret = T_ASP_GR; 
+										 		    goto re2c_finish;					
+												  } else goto yyc_ASP_GR;
 												}
 		<ASP_GR> EOF							{ 
 												  BLK_FINISH(1);
@@ -299,18 +273,37 @@ re2c_start:
 		<ASP_GR> .								{												goto yyc_ASP_GR;					}
 
 		<ASP_CP> NL								{ BLK_LINE;										goto yyc_ASP_CP;					}
+		<ASP_CP> [']							{
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
+												  goto yyc_ASP_CP;
+												}
+		<ASP_CP> ["]							{
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;
+												  goto yyc_ASP_CP;
+												}
+		<ASP_CP> [%]							{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) ln_cmt = true;
+												  goto yyc_ASP_CP;
+												}
+		
 		<ASP_CP> ":-" WS* "end_asp" WS* [.]
 												{ 
-												  _cond = yycNORMAL; 
-												  ret = T_ASP_CP; 
-												  goto re2c_finish;					
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) {
+												 	 _cond = yycNORMAL; 
+												 	 ret = T_ASP_CP; 
+												 	 goto re2c_finish;					
+												  } else goto yyc_ASP_CP;
 												}
 		<ASP_CP> ":-" WS* "end" WS+ "asp" WS* [.]
 												{ 
-												  _cond = yycNORMAL; 
-												  ret = T_ASP_CP; 
-												  goto re2c_finish;					
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) {
+												 	 _cond = yycNORMAL; 
+												 	 ret = T_ASP_CP; 
+												 	 goto re2c_finish;					
+												  } else goto yyc_ASP_CP;
 												}
+
+
 		<ASP_CP> EOF							{ 
 												  BLK_FINISH(1);
 												  ret = T_ERR_UNTERMINATED_ASP;			
@@ -323,12 +316,39 @@ re2c_start:
 
 		<LUA_GR> NL								{ 
 												  BLK_LINE;
+												  ln_cmt = false;
 												  goto yyc_LUA_GR;				
 												}
+		<LUA_GR> [']							{
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
+												  goto yyc_LUA_GR;
+												}
+		<LUA_GR> ["]							{
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;
+												  goto yyc_LUA_GR;
+												}
+		<LUA_GR> "--"							{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) {
+													  ln_cmt = true;
+												  }
+												  goto yyc_LUA_GR;
+												}
+		<LUA_GR> "--{"							{
+												  if (!ln_cmt && !sgl_quote && !dbl_quote) {
+													  blk_cmt = true;
+												  }
+												  goto yyc_LUA_GR;
+												}
+		<LUA_GR> "}"							{
+												  blk_cmt = false;
+												  goto yyc_LUA_GR;
+												}
 		<LUA_GR> "#end_lua" WS* [.]				{ 
-												  _cond = yycNORMAL; 
-												  ret = T_LUA_GR; 
-												  goto re2c_finish;					
+												  if (!blk_cmt && !ln_cmt && !sgl_quote && !dbl_quote) {
+													  _cond = yycNORMAL; 
+													  ret = T_LUA_GR; 
+													  goto re2c_finish;					
+												  } else goto yyc_LUA_GR;
 												}
 		<LUA_GR> EOF							{ 
 												  BLK_FINISH(1);
@@ -339,18 +359,50 @@ re2c_start:
 												}
 		<LUA_GR> .								{												goto yyc_LUA_GR;					}
 
-		<LUA_CP> NL								{ BLK_LINE;										goto yyc_LUA_CP;					}
+		<LUA_CP> NL								{ 
+												  BLK_LINE;
+												  ln_cmt = false;
+												  goto yyc_LUA_CP;					
+												}
+		<LUA_CP> [']							{
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
+												  goto yyc_LUA_CP;
+												}
+		<LUA_CP> ["]							{
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;
+												  goto yyc_LUA_CP;
+												}
+		<LUA_CP> "--"							{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) {
+													  ln_cmt = true;
+												  }
+												  goto yyc_LUA_CP;
+												}
+		<LUA_CP> "--{"							{
+												  if (!ln_cmt && !sgl_quote && !dbl_quote) {
+													  blk_cmt = true;
+												  }
+												  goto yyc_LUA_CP;
+												}
+		<LUA_CP> "}"							{
+												  blk_cmt = false;
+												  goto yyc_LUA_CP;
+												}
 		<LUA_CP> ":-" WS* "end_lua" WS* [.]
 												{ 
-												  _cond = yycNORMAL; 
-												  ret = T_LUA_CP; 
-												  goto re2c_finish;					
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) {
+												    _cond = yycNORMAL; 
+												    ret = T_LUA_CP; 
+												    goto re2c_finish;					
+												  } else goto yyc_LUA_CP;
 												}
 		<LUA_CP> ":-" WS* "end" WS+ "lua" WS* [.]
 												{ 
-												  _cond = yycNORMAL; 
-												  ret = T_LUA_CP; 
-												  goto re2c_finish;					
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) {
+													  _cond = yycNORMAL; 
+													  ret = T_LUA_CP; 
+													  goto re2c_finish;					
+												  } else goto yyc_LUA_CP;
 												}
 		<LUA_CP> EOF							{ 
 												  BLK_FINISH(1);
@@ -364,12 +416,36 @@ re2c_start:
 
 		<F2LP_GR> NL							{ 
 												  BLK_LINE;
+												  ln_cmt = false;
 												  goto yyc_F2LP_GR;				
 												}
-		<F2LP_GR> "#end_f2lp" WS* [.]			{ 
-												  _cond = yycNORMAL; 
-												  ret = T_F2LP_GR; 
-												  goto re2c_finish;					
+		<F2LP_GR> [']							{
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
+												  goto yyc_F2LP_GR;
+												}
+		<F2LP_GR> ["]							{
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;
+												  goto yyc_F2LP_GR;
+												}
+		<F2LP_GR> [%]							{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) ln_cmt = true;
+												  goto yyc_F2LP_GR;
+												}  
+		<F2LP_GR> [/][*]						{
+												  if (!ln_cmt && !sgl_quote && !dbl_quote) blk_cmt = true;
+												  goto yyc_F2LP_GR;
+												}
+		<F2LP_GR> [*][/]						{
+												  blk_cmt = false;
+												  goto yyc_F2LP_GR;
+												} 
+
+		<F2LP_GR> "#end_f2lp" WS* [.]			{
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) { 
+													  _cond = yycNORMAL; 
+													  ret = T_F2LP_GR; 	
+													  goto re2c_finish;				
+												  } else goto yyc_F2LP_GR;	
 												}
 		<F2LP_GR> EOF							{ 
 												  BLK_FINISH(1);
@@ -380,18 +456,38 @@ re2c_start:
 												}
 		<F2LP_GR> .								{												goto yyc_F2LP_GR;					}
 
-		<F2LP_CP> NL							{ BLK_LINE;										goto yyc_F2LP_CP;					}
+		<F2LP_CP> NL							{ 
+												  BLK_LINE;
+												  ln_cmt = false; 	
+												  goto yyc_F2LP_CP;	
+												}
+		<F2LP_CP> [']							{
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
+												  goto yyc_F2LP_CP;
+												}
+		<F2LP_CP> ["]							{
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;
+												  goto yyc_F2LP_CP;
+												}
+		<F2LP_CP> [%]							{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) ln_cmt = true;
+												  goto yyc_F2LP_CP;
+												}  
 		<F2LP_CP> ":-" WS* "end_f2lp" WS* [.]
 												{ 
-												  _cond = yycNORMAL; 
-												  ret = T_F2LP_CP; 
-												  goto re2c_finish;					
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) {
+													  _cond = yycNORMAL; 
+													  ret = T_F2LP_CP; 
+													  goto re2c_finish;					
+												  } else goto yyc_F2LP_CP;
 												}
 		<F2LP_CP> ":-" WS* "end" WS+ "f2lp" WS* [.]
-												{ 
-												  _cond = yycNORMAL; 
-												  ret = T_F2LP_CP; 
-												  goto re2c_finish;					
+												{
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) { 
+													  _cond = yycNORMAL; 
+													  ret = T_F2LP_CP; 
+													  goto re2c_finish;					
+												  } else goto yyc_F2LP_CP;
 												}
 		<F2LP_CP> EOF							{ 
 												  BLK_FINISH(1);
@@ -402,69 +498,75 @@ re2c_start:
 												}
 		<F2LP_CP> .								{												goto yyc_F2LP_CP;					}
 	
-		<ARG> "("/[),]							{ 
-												  if (sgl_quote || dbl_quote) goto yyc_ARG;
-												  if (!parens++) {
-												  	ret = T_PAREN_L;						
-													goto re2c_finish;
-												  } else goto yyc_ARG;
+		<ARG> NL								{
+												  source->newline();
+												  ln_cmt = false;
+												  goto yyc_ARG;
 												}
-		<ARG> ")"/[),]							{
-												  if (sgl_quote || dbl_quote) goto yyc_ARG;
-												  if (--parens <= 0) {
-												    ret = T_PAREN_R;
-													_cond = yycNORMAL;
-													goto re2c_finish;
-												  }
+		<ARG> [%]								{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) ln_cmt = true;		
+												  goto yyc_ARG;
 												}
+		<ARG> [/][*]							{
+												  if (!ln_cmt && !sgl_quote && !dbl_quote) blk_cmt = true;
+												  goto yyc_ARG;
+												}
+		<ARG> [*][/]							{
+												  blk_cmt = false;
+												  goto yyc_ARG;
+												} 
+
 		<ARG> "("								{ 
-												  if (sgl_quote || dbl_quote) goto yyc_ARG;
+												  if (sgl_quote || dbl_quote || ln_cmt || blk_cmt) goto yyc_ARG;
 												  if (!parens++) {
 												  	ret = T_PAREN_L;						
 													goto re2c_finish;
-												  } else goto yyc_ARG;
+												  } 
+
+												  goto yyc_ARG;
 												}
 		<ARG> ")"								{
-												  if (sgl_quote || dbl_quote) goto yyc_ARG;
-												  if (--parens <= 0) {
+												  if (sgl_quote || dbl_quote || ln_cmt || blk_cmt) goto yyc_ARG;
+												  if (repeat) {
+													// 2nd end paren
+													repeat = false;
 												    ret = T_PAREN_R;
 													_cond = yycNORMAL;
 													goto re2c_finish;
-												  } else goto yyc_ARG;
-												}
+				
+												  } else if (--parens <= 0) {
+													// first end paren
+													repeat = true;
+													source->cursor()--;
+													ret = T_ARG;
+													goto re2c_finish;
+												  }
 
-		<ARG> ["]/[),]							{
-												  if (!sgl_quote) { 
-													dbl_quote = !dbl_quote;
-													if (!dbl_quote) {
-														ret = T_ARG;
-												    	goto re2c_finish;
-													} else goto yyc_ARG;
-												  } else goto yyc_ARG;
+												  goto yyc_ARG;
 												}
-		<ARG> [']/[),]							{
-												  if (!dbl_quote) { 
-													sgl_quote = !sgl_quote;
-													if (!sgl_quote) {
-														ret = T_ARG;
-												    	goto re2c_finish;
-													} else goto yyc_ARG;
-												  } else goto yyc_ARG;
-												}
-		<ARG> ["]								{ if (!sgl_quote) dbl_quote = !dbl_quote;		goto yyc_ARG;						}
-		<ARG> [']								{ if (!dbl_quote) sgl_quote = !sgl_quote;		goto yyc_ARG;						}
-		<ARG> [,]								{ 
-												  if (!dbl_quote && !sgl_quote && !parens) {
+		<ARG> ","								{
+												  if (sgl_quote || dbl_quote || ln_cmt || blk_cmt) goto yyc_ARG;
+												  if (repeat) {
+													// 2nd comma
+													repeat = false;
 													ret = T_COMMA;
 													goto re2c_finish;
-												  } else goto yyc_ARG;
-												}
-		<ARG> ./[),]							{ 
-												  if (!parens && !sgl_quote && !dbl_quote) {
+												  } else {
+													// first comma
+													repeat = true;
+													source->cursor()--;
 													ret = T_ARG;
-												    goto re2c_finish;
-												  } else goto yyc_ARG;
-												}	
+													goto re2c_finish;
+												  }								  
+												}
+		<ARG> ["]								{ 
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;		
+												  goto yyc_ARG;						
+												}
+		<ARG> [']								{ 
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;		
+												  goto yyc_ARG;						
+												}
 		<ARG> EOF								{
 													// Figure out why we're still here...
 													if (parens > 0 ) {
@@ -479,36 +581,39 @@ re2c_start:
 													}
 													goto re2c_finish;
 												}
-		<ARG> .									{												goto yyc_ARG;						}
+		<ARG> .									{ 												goto yyc_ARG;						}
 
-		<MACRO> ["]/[.;]						{
-												  if (!sgl_quote) { 
-													dbl_quote = !dbl_quote;
-													if (!dbl_quote) {
-														_cond = yycNORMAL;
-														ret = T_MACRO_STRING;
-												    	goto re2c_finish;
-													} else goto yyc_MACRO;
-												  } else goto yyc_MACRO;
+		<MACRO> NL								{
+												  source->newline();
+												  ln_cmt = false;
+												  goto yyc_MACRO;
 												}
-		<MACRO> [']/[.;]						{
-												  if (!dbl_quote) { 
-													sgl_quote = !sgl_quote;
-													if (!sgl_quote) {
-														_cond = yycNORMAL;
-														ret = T_MACRO_STRING;
-												    	goto re2c_finish;
-													} else goto yyc_MACRO;
-												  } else goto yyc_MACRO;
+		<MACRO> [%]								{ 
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) ln_cmt = true;
+												  goto yyc_MACRO;
 												}
-		<MACRO> ["]								{ if (!sgl_quote) { dbl_quote = !dbl_quote; }	goto yyc_MACRO;						}
-		<MACRO> [']								{ if (!dbl_quote) { sgl_quote = !sgl_quote; }	goto yyc_MACRO;						}
-		<MACRO> ./[.;]							{
-												  if (!sgl_quote && !dbl_quote) {
-													_cond = yycNORMAL;
-													ret = T_MACRO_STRING;
-												    goto re2c_finish;
-										 	 	  } else goto yyc_MACRO;
+		<MACRO> [/][*]							{
+												  if (!ln_cmt && !sgl_quote && !dbl_quote) blk_cmt = true;
+												  goto yyc_MACRO;
+												}
+		<MACRO> [*][/]							{
+												  if (!ln_cmt && !sgl_quote && !dbl_quote) blk_cmt = false;
+												  goto yyc_MACRO;
+												}
+		<MACRO> ["]								{ 
+												  if (!ln_cmt && !blk_cmt && !sgl_quote)  dbl_quote = !dbl_quote; 	
+												  goto yyc_MACRO;						
+												}
+		<MACRO> [']								{ 
+												  if (!ln_cmt && !blk_cmt && !dbl_quote)  sgl_quote = !sgl_quote;	
+												  goto yyc_MACRO;						
+												}
+		<MACRO> [.;]							{
+												  if (sgl_quote || dbl_quote || blk_cmt || ln_cmt) goto yyc_MACRO;
+												  _cond = yycNORMAL;
+												  source->cursor()--;
+												  ret = T_MACRO_STRING;
+												  goto re2c_finish;
 												}
 		<MACRO> EOF								{
 													if (sgl_quote || dbl_quote) {
@@ -519,9 +624,10 @@ re2c_start:
 														ret = T_ERR_SYNTAX;
 													} goto re2c_finish;
 												}
-		<MACRO> .								{ 												goto yyc_MACRO;						}
+		<MACRO> .								{ if (_cond == yycARG) std::cout << "crap." <<std::endl;  												goto yyc_MACRO;						}
 
 
+		<BLK_COMMENT,COMMENT> .					{ ret = T_ERR_UNKNOWN_SYMBOL;					goto re2c_finish;					}
 		<*> .									{ ret = T_ERR_UNKNOWN_SYMBOL;					goto re2c_finish;					}
 
 	*/

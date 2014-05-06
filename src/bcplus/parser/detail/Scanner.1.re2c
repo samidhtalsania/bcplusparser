@@ -156,55 +156,53 @@ Token* Scanner::tokenize(ScannerRawSource* source) {
 	size_t preskip = 0;
 	size_t postskip = 0;
 
-	int parens = 0;
-
-	char const* marker;
-
 re2c_start:
-	marker = source->token() = source->cursor();
+	source->token() = source->cursor();
 	begin = source->loc();
 
-	YYCONDTYPE cond = yycNORMAL;	
-
+	if (_cond == yycNORMAL) {
 	/*!re2c
 		
 		re2c:define:YYCTYPE						= char;
 		re2c:define:YYMARKER					= source->marker();
 		re2c:define:YYCURSOR					= source->cursor();
 		re2c:define:YYLIMIT						= source->limit();
-		re2c:define:YYGETCONDITION				= cond;
+		re2c:define:YYGETCONDITION				= _cond;
 		re2c:define:YYGETCONDITION:naked		= 1;
 		re2c:define:YYFILL						= source->fill;
-		re2c:define:YYCTXMARKER					= marker;
 
-		ALPH 									= [a-zA-Z_];
-		AN 										= [a-zA-Z0-9_];
-		NUM										= [0-9];
 		WS								 		= [ \t\v\f];
 		NL								 		= [\n];
 		EOF										= [\X0000];
 
-		INTEGER									= NUM+;
-		IDENTIFIER								= ALPH AN*;
+		re2c:labelprefix = yy1_;
 		
-		re2c:labelprefix = yyy;
+		<NORMAL> NL								{ source->newline();		 			goto re2c_start; 					}
+		<NORMAL> WS								{ 										goto re2c_start; 					}
+		<NORMAL> EOF							{ ret = T_EOF; 							goto re2c_finish; 					}
 		
-		<NORMAL> "%"							{ cond = yycCOMMENT; 							goto yyc_COMMENT;	 				}
+		<NORMAL> "%"							{ _cond = yycCOMMENT; 							goto yyc_COMMENT;	 				}
 		<NORMAL> [/][*]							{ 
-												  cond = yycBLK_COMMENT; 
+												  _cond = yycBLK_COMMENT; 
 												  BLK_INIT("% ");
 												  goto yyc_BLK_COMMENT; 				
 												}
+
+
+		<DBL_STRING, SG_STRING, ASP_GR, ASP_CP, LUA_GR, LUA_CP, F2LP_GR, F2LP_CP, ARG, MACO> . {
+												  goto re2c_notcmt;
+												}
+
 		<COMMENT> NL							{ 
 												  source->cursor()--; 
-												  cond = yycNORMAL; 
+												  _cond = yycNORMAL; 
 												  ret = T_COMMENT;			
 												  goto re2c_finish;
 												}
 		<COMMENT> [^\n]+						{ 												goto yyc_COMMENT;					}
 		<COMMENT> EOF							{ 
 												  source->cursor()--; 
-												  cond = yycNORMAL; 
+												  _cond = yycNORMAL; 
 												  ret = T_COMMENT;			
 												  goto re2c_finish;					
 												}
@@ -216,14 +214,14 @@ re2c_start:
 												}
 		<BLK_COMMENT> [*][/]					{ 
 												  BLK_FINISH(2);
-												  cond = yycNORMAL; 
+												  _cond = yycNORMAL; 
 												  ret = T_COMMENT; 
 												  goto re2c_finish;					
 												}
 		<BLK_COMMENT> EOF						{ 
 												  BLK_FINISH(1);
 												  ret = T_ERR_UNTERMINATED_BLK_COMMENT;			
-												  cond = yycNORMAL;
+												  _cond = yycNORMAL;
 												  source->cursor()--;
 												  goto re2c_finish;					
 												}
@@ -231,6 +229,7 @@ re2c_start:
 
 		<*> .									{ goto re2c_notcmt; }
 	*/
+	}
 re2c_notcmt:
 	source->cursor() = source->token();
 	return tokenize_2(source);
