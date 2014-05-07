@@ -48,7 +48,7 @@ int Configuration::load(int argc, char const** argv) {
 
 		switch (ret) {
 		case Status::STAT_BAD_ARG:
-			std::cerr << "ERROR: Unrecognized option: \"" << argv[i] << "\".";
+			std::cerr << "ERROR: Unrecognized option: \"" << argv[i] << "\"." << std::endl;
 			/* no break */
 		case Status::STAT_HELP:
 		case Status::STAT_VERSION:
