@@ -13,18 +13,18 @@ namespace bcplus {
 namespace symbols {
 
 char const* ConstantSymbol::Type::cstr(type val) {
-	case: ABACTION:					return "abAction";
-	case: ACTION:					return "action";
-	case: ADDITIVEFLUENT:			return "additiveFluent";
-	case: ADDITIVEACTION:			return "additiveAction";
-	case: ATTRIBUTE:				return "attribute";
-	case: EXTERNALACTION:			return "externalAction";
-	case: EXTERNALFLUENT:			return "externalFluent";
-	case: EXOGENOUSACTION:			return "exogenousAction";
-	case: INERTIALFLUENT:			return "inertialFluent";
-	case: RIGID:					return "rigid";
-	case: SDFLUENT:					return "sdFluent";
-	case: SIMPLEFLUENT:				return "simpleFluent";
+	case ABACTION:					return "abAction";
+	case ACTION:					return "action";
+	case ADDITIVEFLUENT:			return "additiveFluent";
+	case ADDITIVEACTION:			return "additiveAction";
+	case ATTRIBUTE:					return "attribute";
+	case EXTERNALACTION:			return "externalAction";
+	case EXTERNALFLUENT:			return "externalFluent";
+	case EXOGENOUSACTION:			return "exogenousAction";
+	case INERTIALFLUENT:			return "inertialFluent";
+	case RIGID:						return "rigid";
+	case SDFLUENT:					return "sdFluent";
+	case SIMPLEFLUENT:				return "simpleFluent";
 
 }
 
