@@ -12,6 +12,24 @@
 namespace bcplus {
 namespace symbols {
 
+char const* ConstantSymbol::Type::cstr(type val) {
+	case: ABACTION:					return "abAction";
+	case: ACTION:					return "action";
+	case: ADDITIVEFLUENT:			return "additiveFluent";
+	case: ADDITIVEACTION:			return "additiveAction";
+	case: ATTRIBUTE:				return "attribute";
+	case: EXTERNALACTION:			return "externalAction";
+	case: EXTERNALFLUENT:			return "externalFluent";
+	case: EXOGENOUSACTION:			return "exogenousAction";
+	case: INERTIALFLUENT:			return "inertialFluent";
+	case: RIGID:					return "rigid";
+	case: SDFLUENT:					return "sdFluent";
+	case: SIMPLEFLUENT:				return "simpleFluent";
+
+}
+
+
+
 ConstantSymbol::ConstantSymbol(Type::type type, ReferencedString const* base, SortSymbol const* sort, SortList const* args) 
 	: BaseSymbol(Symbol::Type::CONSTANT, base, args) , _sort(sort), _type(type) {
 	// intentionally left blank

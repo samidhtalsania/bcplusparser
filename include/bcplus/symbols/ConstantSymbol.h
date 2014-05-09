@@ -38,6 +38,10 @@ public:
 			SDFLUENT,
 			SIMPLEFLUENT
 		};
+
+		/// Convert to cstring
+		char const* cstr(type val);
+
 	};
 
 private:
@@ -72,6 +76,9 @@ public:
 
 	/// Get the type that this constant is
 	Type::type constType() const						{ return _type; }
+
+	/// Get the string for the type taht this constant is
+	char const* constTypeString() const					{ return Type::cstr(_type); }
 
 	// inherited
 	virtual bool operator==(Symbol const& other) const;
