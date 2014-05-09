@@ -40,7 +40,7 @@ public:
 		};
 
 		/// Convert to cstring
-		char const* cstr(type val);
+		static char const* cstr(type val);
 
 	};
 
