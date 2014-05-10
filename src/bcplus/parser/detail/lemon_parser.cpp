@@ -395,7 +395,7 @@
 			parser->_feature_error(feature, &kw->beginLoc());												\
 			YYERROR;																						\
 		} else {																							\
-			decl = val;																						\
+			decl = val_ptr.release();																		\
 		}
 
 #line 2246 "bcplus/parser/detail/lemon_parser.y"

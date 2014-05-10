@@ -24,15 +24,15 @@ namespace parser {
 namespace detail {
 
 
-#define BLK_INIT(s) \
-	blk.str(s); \
+#define BLK_INIT \
+	blk.str(""); \
 	use_blk = true; \
-	source->token() = source->cursor() + 1;
+	source->token() = source->cursor();
 
 #define BLK_LINE \
 	source->newline(); \
     blk.write(source->token(), (size_t)(source->cursor() - source->token())); \
-	source->token() = source->cursor() + 1;		
+	source->token() = source->cursor();		
 
 #define BLK_FINISH(sz) \
 	blk.write(source->token(), (size_t)(source->cursor() - source->token() - sz));
@@ -142,52 +142,52 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 		<NORMAL>":-" WS* "begin_asp" WS* [.]
 												{
 												  _cond = yycASP_CP;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_ASP_CP;
 												}
 		<NORMAL>":-" WS* "begin" WS+ "asp" WS* [.]
 												{
 												  _cond = yycASP_CP;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_ASP_CP;
 												}
 		<NORMAL> "#begin_asp" WS* [.]?			{
 												  _cond = yycASP_GR;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_ASP_GR;
 												}
 		<NORMAL>":-" WS* "begin_lua" WS* [.]
 												{
 												  _cond = yycLUA_CP;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_LUA_CP;
 												}
 		<NORMAL>":-" WS* "begin" WS+ "lua" WS* [.]
 												{
 												  _cond = yycLUA_CP;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_LUA_CP;
 												}
 		<NORMAL> "#begin_lua" WS* [.]?			{
 												  _cond = yycLUA_GR;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_LUA_GR;
 												}
 		<NORMAL>":-" WS* "begin_f2lp" WS* [.]
 												{
 												  _cond = yycF2LP_CP;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_F2LP_CP;
 												}
 		<NORMAL>":-" WS* "begin" WS+ "f2lp" WS* [.]
 												{
 												  _cond = yycF2LP_CP;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_F2LP_CP;
 												}
 		<NORMAL> "#begin_f2lp" WS* [.]?			{
 												  _cond = yycF2LP_GR;
-												  BLK_INIT("");
+												  BLK_INIT;
 												  goto yyc_F2LP_GR;
 												}
 		<NORMAL> IDENTIFIER/ WS* "("			{ 
@@ -272,7 +272,11 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												}
 		<ASP_GR> .								{												goto yyc_ASP_GR;					}
 
-		<ASP_CP> NL								{ BLK_LINE;										goto yyc_ASP_CP;					}
+		<ASP_CP> NL								{ 
+												  BLK_LINE;
+												  ln_cmt = false;
+												  goto yyc_ASP_CP;					
+												}
 		<ASP_CP> [']							{
 												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
 												  goto yyc_ASP_CP;

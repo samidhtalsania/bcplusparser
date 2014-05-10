@@ -2180,7 +2180,7 @@ query_lst(new_lst) ::= query_lst(lst) SEMICOLON query_label_decl(elem).
 			parser->_feature_error(feature, &kw->beginLoc());												\
 			YYERROR;																						\
 		} else {																							\
-			decl = val;																						\
+			decl = val_ptr.release();																		\
 		}
 
 }

@@ -56,6 +56,7 @@ Token* Scanner::tokenize_2(ScannerRawSource* source) {
 				<NORMAL> "objects"						{ ret = T_OBJECTS;						goto re2c_finish;					}
 				<NORMAL> "query"						{ ret = T_QUERY;						goto re2c_finish;					}
 				<NORMAL> "show"							{ ret = T_SHOW;							goto re2c_finish;					}
+				<NORMAL> "hide"							{ ret = T_HIDE;							goto re2c_finish;					}
 				<NORMAL> "sorts"						{ ret = T_SORTS;						goto re2c_finish;					}
 				<NORMAL> "variables"					{ ret = T_VARIABLES;					goto re2c_finish;					}
 				<NORMAL> "abAction"						{ ret = T_ABACTION;						goto re2c_finish;					}

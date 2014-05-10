@@ -131,15 +131,15 @@ Token* Scanner::readToken() {
 	return token.release();
 }
 
-#define BLK_INIT(s) \
-	blk.str(s); \
+#define BLK_INIT \
+	blk.str(""); \
 	use_blk = true; \
-	source->token() = source->cursor() + 1;
+	source->token() = source->cursor();
 
 #define BLK_LINE \
 	source->newline(); \
     blk.write(source->token(), (size_t)(source->cursor() - source->token())); \
-	source->token() = source->cursor() + 1;		
+	source->token() = source->cursor();		
 
 #define BLK_FINISH(sz) \
 	blk.write(source->token(), (size_t)(source->cursor() - source->token() - sz));
@@ -184,7 +184,8 @@ re2c_start:
 		<NORMAL> "%"							{ _cond = yycCOMMENT; 							goto yyc_COMMENT;	 				}
 		<NORMAL> [/][*]							{ 
 												  _cond = yycBLK_COMMENT; 
-												  BLK_INIT("% ");
+												  BLK_INIT;
+												  blk << "% "; 
 												  goto yyc_BLK_COMMENT; 				
 												}
 
