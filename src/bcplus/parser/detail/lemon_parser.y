@@ -380,6 +380,7 @@ constant(c) ::= CONSTANT_ID(id).												{ BASE_ELEM_DEF(c, id, NULL, NULL, N
 object(o)   ::= OBJECT_ID(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).			{ BASE_ELEM_DEF(o, id, pl, args, pr, Symbol::Type::OBJECT, Object, ObjectSymbol);	}
 object(new_o)	::= object_nullary(o).											{ new_o = o; }
 object_nullary(o)   ::= OBJECT_ID(id).											{ BASE_ELEM_DEF(o, id, NULL, NULL, NULL, Symbol::Type::OBJECT, Object, ObjectSymbol); }
+object ::= undeclared.															{ /* never called */ }
 
 variable(o) ::= VARIABLE_ID(id).												
 	{ 
@@ -395,8 +396,8 @@ variable(o) ::= VARIABLE_ID(id).
 	}
 lua(l) ::= AT_IDENTIFIER(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).			{ BASE_LUA_ELEM(l, id, pl, args, pr); }
 lua(l) ::= AT_IDENTIFIER(id).													{ BASE_LUA_ELEM(l, id, NULL, NULL, NULL); }
-//undeclared(u) ::= IDENTIFIER(id) PAREN_L term_lst(args) PAREN_R.				{ UNDECLARED(u, id, args); }
-//undeclared(u) ::= IDENTIFIER(id).												{ UNDECLARED(u, id, NULL); }
+undeclared(u) ::= IDENTIFIER(id) PAREN_L term_lst(args) PAREN_R.				{ UNDECLARED(u, id, args); }
+undeclared(u) ::= IDENTIFIER(id).												{ UNDECLARED(u, id, NULL); }
 
 term_lst(lst) ::= term(t).
 		{
