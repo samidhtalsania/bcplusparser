@@ -982,15 +982,15 @@ formula_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKE
 formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br).				[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, NULL);  }
 formula_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br) term(max).		[PREC_1]	{ CARD_FORMULA(card, NULL, bl, vars, f, br, max); }
 formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br) term(max).		[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, max); }
+formula_card(card) ::= 					CBRACKET_L(bl) formula(f) CBRACKET_R(br).									[PREC_1]	{ CARD_FORMULA(card, NULL, bl, NULL, f, br, NULL);  }
+formula_card(card) ::= term_strong(min) CBRACKET_L(bl) formula(f) CBRACKET_R(br).									[PREC_1]	{ CARD_FORMULA(card, min, bl, NULL, f,  br, NULL);  }
+formula_card(card) ::= 					CBRACKET_L(bl) formula(f) CBRACKET_R(br) term(max).							[PREC_1]	{ CARD_FORMULA(card, NULL, bl, NULL, f, br, max); }
+formula_card(card) ::= term_strong(min) CBRACKET_L(bl) formula(f) CBRACKET_R(br) term(max).							[PREC_1]	{ CARD_FORMULA(card, min, bl, NULL, f,  br, max); }
 
 
 card_var_lst(new_vars) ::= card_var_lst_inner(vars) PIPE.
 	{
 		new_vars = vars;
-	}
-card_var_lst(new_vars) ::= PIPE.
-	{
-		new_vars = new CardinalityFormula::VariableList();
 	}
 
 card_var_lst_inner(new_vars) ::= variable(v).

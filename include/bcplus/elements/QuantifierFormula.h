@@ -75,10 +75,10 @@ public:
     /****************************************************************************/
 
 	/// The operators for the formula
-	inline iterator begin()					{ return _quants->begin(); }
-	inline const_iterator begin() const		{ return _quants->begin(); }
-	inline iterator end()					{ return _quants->end(); }
-	inline const_iterator end() const		{ return _quants->end(); }
+	inline iterator begin()							{ return _quants->begin(); }
+	inline const_iterator begin() const				{ return _quants->begin(); }
+	inline iterator end()							{ return _quants->end(); }
+	inline const_iterator end() const				{ return _quants->end(); }
 
 	/// The subformula
 	inline Formula* subformula()					{ return _sub; }

@@ -15,6 +15,7 @@ namespace elements {
 
 CardinalityFormula::CardinalityFormula(VariableList* vars, Formula* formula, Term* min, Term* max, Location const& begin, Location const& end, bool parens)
 	: Formula(Formula::Type::CARDINALITY, begin, end, parens), _min(min), _max(max), _vars(vars), _formula(formula) {
+	if (vars) _vars = new VariableList();
 	/* Intentionally left blank */
 }
 

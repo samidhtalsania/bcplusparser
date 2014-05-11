@@ -24,7 +24,6 @@ struct TermType {
 		VARIABLE,
 		CONSTANT,
 		LUA,
-		LOCAL_VARIABLE,
 		NULLARY
 	};
 };
@@ -186,13 +185,6 @@ typedef detail::IdentifierElement_bare<
 	Term, 
 	detail::TermType::VARIABLE, 
 	symbols::VariableSymbol> Variable;
-
-/**
- * @brief A local variable
- */
-typedef detail::AnonymousElement_bare<
-	Term,
-	detail::TermType::LOCAL_VARIABLE> LocalVariable;
 
 /** 
  * @brief A bare constant 'c'
