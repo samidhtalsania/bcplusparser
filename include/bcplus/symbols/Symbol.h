@@ -125,13 +125,13 @@ public:
 	inline bool match(std::string const&n) const	{ return n == *name(); }
 	
 	/// Get/set the metadata
-	inline Referenced* metatdata() const				{ return const_cast<Referenced*>(_metadata.get()); }
+	inline Referenced* metadata() const				{ return const_cast<Referenced*>(_metadata.get()); }
 	template <typename T>
-	inline T* metatdata() const							{ return const_cast<T*>(_metadata.get()); }
+	inline T* metadata() const							{ return const_cast<T*>(_metadata.get()); }
 	
-	inline Referenced* metatdata() 						{ return _metadata; }
+	inline Referenced* metadata() 						{ return _metadata; }
 	template <typename T>
-	inline T* metatdata() 								{ return (T*)_metadata; }
+	inline T* metadata() 								{ return (T*)_metadata; }
 	inline void metadata(Referenced* data)				{ _metadata = data; }
 	
 
