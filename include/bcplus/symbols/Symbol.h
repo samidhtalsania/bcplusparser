@@ -129,6 +129,9 @@ public:
 	template <typename T>
 	inline T* metatdata() const							{ return const_cast<T*>(_metadata.get()); }
 	
+	inline Referenced* metatdata() 						{ return _metadata; }
+	template <typename T>
+	inline T* metatdata() 								{ return (T*)_metadata; }
 	inline void metadata(Referenced* data)				{ _metadata = data; }
 	
 
