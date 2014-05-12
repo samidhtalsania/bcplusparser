@@ -27,8 +27,8 @@ namespace pt = boost::property_tree;
 namespace bcplus {
 namespace symbols{
 
-SymbolTable::SymbolTable(Configuration const* config)
-	: _config(config) {
+SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer const* metaInit)
+	: _config(config), _metaInit(metaInit) {
 	_good = true;
 	
 	// See if we should load anything from a file
@@ -107,6 +107,13 @@ bool SymbolTable::create(Symbol* symbol) {
 	// Add the symbol
 	_symbols[symbol->type()][*(symbol->name())] = symbol;
 	_config->ostream(Verb::TRACE_SYMTAB) << "Success!" << std::endl;
+
+	// initialize the metadata
+	if (_metaInit) {
+		_metaInit->initMetadata(symbol);
+	}
+
+
 	return true;
 }
 
@@ -157,6 +164,12 @@ Symbol* SymbolTable::resolveOrCreate(Symbol* symbol) {
 	// Add the symbol
 	_symbols[symbol->type()][*(symbol->name())] = symbol;
 	_config->ostream(Verb::TRACE_SYMTAB) << "Not found.. creating it." << std::endl;
+
+	// initialize the meta data
+	if (_metaInit) {
+		_metaInit->initMetadata(symbol);
+	}
+
 	return symbol;
 }
 

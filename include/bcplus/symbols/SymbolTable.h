@@ -55,6 +55,14 @@ public:
 
 	typedef std::map<std::string, babb::utils::ref_ptr<const ReferencedString> > DataMap;
 
+	/// Functor interface for call to initialize metadata on a symbol
+	class SymbolMetadataInitializer : public Referenced {
+	public:
+		/// A call to initialize the metadata of sym
+		virtual void initMetadata(Symbol* sym) const = 0;
+	};
+
+
 private:
 	/*******************************************************************************/
 	/* Private Members */
@@ -74,6 +82,9 @@ private:
 
 	/// A pointer to the boolean sort
 	babb::utils::ref_ptr<SortSymbol const> _boolean;
+
+	babb::utils::ref_ptr<const SymbolMetadataInitializer> _metaInit;
+
 public:
 
 	/*******************************************************************************/
@@ -81,7 +92,8 @@ public:
 	/*******************************************************************************/
 	/// Creates a symbol table based on the provided configuration information.
 	/// @param config The system-wide configuration information to read from.
-	SymbolTable(Configuration const* config);
+	/// @param metaInit An object which is used to initialize the metadata fields in new symbols.
+	SymbolTable(Configuration const* config, SymbolMetadataInitializer const* metaInit = NULL);
 
 	/// Destructor for the symbol table. 
 	/// Saves the table state according to the configuration information.

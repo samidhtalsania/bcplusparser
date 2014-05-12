@@ -87,6 +87,8 @@ public:
 	/// Gets an iterator for the super sorts
 	inline SortList::const_iterator beginSuperSorts() const		{ return _supersorts->begin(); }
 	inline SortList::const_iterator endSuperSorts() const		{ return _supersorts->end(); }
+	inline SortList::iterator beginSuperSorts() 				{ return _supersorts->begin(); }
+	inline SortList::iterator endSuperSorts() 					{ return _supersorts->end(); }
 
 	/// Get the number of registered super sorts
 	inline size_t numSuperSorts() const							{ return _supersorts->size(); }
@@ -94,6 +96,8 @@ public:
 	/// Gets an iterator for the sub sorts
 	inline SortList::const_iterator beginSubSorts() const		{ return _subsorts->begin(); }
 	inline SortList::const_iterator endSubSorts() const			{ return _subsorts->end(); }
+	inline SortList::iterator beginSubSorts() 					{ return _subsorts->begin(); }
+	inline SortList::iterator endSubSorts() 					{ return _subsorts->end(); }
 
 	/// Get the number of registered subsorts
 	inline size_t numSubSorts() const							{ return _subsorts->size(); }
