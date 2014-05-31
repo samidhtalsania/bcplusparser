@@ -7,7 +7,7 @@
 namespace bcplus {
 namespace elements {
 
-AtomicFormula::AtomicFormula(Constant* c, Term* v, Location const& begin, Location const& end, bool p)
+AtomicFormula::AtomicFormula(Constant const* c, Term const* v, Location const& begin, Location const& end, bool p)
 	: Formula(Formula::Type::ATOMIC, begin, end, p), _c(c), _v(v) {
 	/* Intentionally left blank */
 }

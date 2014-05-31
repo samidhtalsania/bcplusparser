@@ -24,10 +24,10 @@ private:
     /****************************************************************************/
 
     /// The constant
-    babb::utils::ref_ptr<Constant> _c;
+    babb::utils::ref_ptr<const Constant> _c;
 
 	/// The value
-	babb::utils::ref_ptr<Term> _v;
+	babb::utils::ref_ptr<const Term> _v;
 
 public:
     /****************************************************************************/
@@ -39,7 +39,7 @@ public:
     /// @param begin The beginning location of this element
     /// @param end The ending location of this element
     /// @param parens Whether the element is surrounded by parentheses
-    AtomicFormula(Constant* c, Term* v, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+    AtomicFormula(Constant const* c, Term const* v, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
     /// Destructor stub
     virtual ~AtomicFormula();
@@ -49,11 +49,9 @@ public:
     /****************************************************************************/
 
 	/// The constant
-	inline Constant* c()							{ return _c; }
 	inline Constant const* c() const				{ return _c; }
 
 	/// The value
-	inline Term* v()								{ return _v; }
 	inline Term const* v() const					{ return _v; }
 
 	// inherited
