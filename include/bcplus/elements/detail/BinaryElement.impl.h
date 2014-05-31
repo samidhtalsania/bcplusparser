@@ -6,7 +6,7 @@ namespace elements {
 namespace detail {
 
 template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
-BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::BinaryElement(typename Op::type const& op, LHS* left, RHS* right, Location const& begin, Location const& end, bool parens)
+BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::BinaryElement(typename Op::type const& op, LHS const* left, RHS const* right, Location const& begin, Location const& end, bool parens)
 	: BaseType((typename BaseType::Type::type)type, begin, end, parens), _op(op), _left(left), _right(right) {
 	/* Intentionally left blank */
 }
@@ -18,7 +18,7 @@ BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::~BinaryElement() {
 
 template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
 Element* BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::copy() const {
-	return new BinaryElement(op(), (LHS*)left()->copy(), (RHS*)right()->copy(), ((BaseType*)this)->beginLoc(), ((BaseType*)this)->endLoc(), ((BaseType*)this)->parens());
+	return new BinaryElement(op(), (LHS const*)left()->copy(), (RHS const*)right()->copy(), ((BaseType*)this)->beginLoc(), ((BaseType*)this)->endLoc(), ((BaseType*)this)->parens());
 }
 
 template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>

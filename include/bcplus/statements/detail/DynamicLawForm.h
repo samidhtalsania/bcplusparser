@@ -11,7 +11,7 @@ namespace statements {
 namespace detail {
 
 /// Base law form for basic laws
-template <Statement::Type::type type, typename body_t, typename head_t, typename ifhead_t, typename unless_t, typename where_t>
+template <Statement::Type::type type, typename body_t, typename head_t, typename ifbody_t, typename unless_t, typename where_t>
 class DynamicLawForm : public Statement {
 public:
 	/**************************************************************************************/
@@ -20,7 +20,7 @@ public:
 	
 	typedef body_t body_type;
 	typedef head_t head_type;
-	typedef ifhead_t ifhead_type;
+	typedef ifbody_t ifbody_type;
 	typedef unless_t unless_type;
 	typedef where_t where_type;
 
@@ -38,7 +38,7 @@ private:
 	babb::utils::ref_ptr<const head_t> _head;
 
 	/// 'if' clause
-	babb::utils::ref_ptr<const ifhead_t> _ifhead;
+	babb::utils::ref_ptr<const ifbody_t> _ifbody;
 
 	/// 'unless' clause
 	babb::utils::ref_ptr<const unless_t> _unless;
@@ -50,7 +50,7 @@ public:
 	/**************************************************************************************/
 	/* Constructors / Destructors */
 	/**************************************************************************************/
-	DynamicLawForm(body_t const* body, head_t const* head, ifhead_t const* ifhead, 
+	DynamicLawForm(body_t const* body, head_t const* head, ifbody_t const* ifbody, 
 		unless_t const* unless, where_t const* where,
 		Location const& begin = Location(NULL, 0, 0), Location  
 		const& end = Location(NULL, 0, 0));
@@ -68,7 +68,7 @@ public:
 	inline head_t const* head() const							{ return _head; }
 
 	/// Get the 'if' clause
-	inline ifhead_t const* ifhead() const						{ return _ifhead; }
+	inline ifbody_t const* ifbody() const						{ return _ifbody; }
 
 	/// Get the 'unless' clause
 	inline unless_t const* unless() const						{ return _unless; }

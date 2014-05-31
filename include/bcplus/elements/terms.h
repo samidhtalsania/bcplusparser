@@ -24,6 +24,7 @@ struct TermType {
 		VARIABLE,
 		CONSTANT,
 		LUA,
+		ANON_VAR,
 		NULLARY
 	};
 };
@@ -167,6 +168,12 @@ typedef detail::AnonymousElement<
 	detail::TermType::LUA,
 	Term> LuaTerm;
 
+/**
+ * @brief An anonymous variable.
+ */
+typedef detail::AnonymousElement_bare<
+	Term,
+	detail::TermType::ANON_VAR> AnonymousVariable;
 
 
 /**

@@ -6,7 +6,7 @@ namespace elements {
 namespace detail {
 
 template <typename BaseType, int type, typename Op, typename Sub, typename preOpString, typename postOpString, typename dt>
-UnaryElement<BaseType,type,Op,Sub,preOpString,postOpString,dt>::UnaryElement(typename Op::type const& op, Sub* subformula, Location const& begin, Location const& end, bool parens)
+UnaryElement<BaseType,type,Op,Sub,preOpString,postOpString,dt>::UnaryElement(typename Op::type const& op, Sub const* subformula, Location const& begin, Location const& end, bool parens)
 	: BaseType((typename BaseType::Type::type)type, begin, end, parens), _op(op), _sub(subformula) {
 	/* Intentionally left blank */
 }
@@ -18,7 +18,7 @@ UnaryElement<BaseType,type,Op,Sub,preOpString,postOpString,dt>::~UnaryElement() 
 
 template <typename BaseType, int type, typename Op, typename Sub, typename preOpString, typename postOpString, typename dt>
 Element* UnaryElement<BaseType,type,Op,Sub,preOpString,postOpString,dt>::copy() const {
-	return new UnaryElement<BaseType,type,Op,Sub,preOpString,postOpString,dt>(op(), (Sub*)sub()->copy(), ((BaseType*)this)->beginLoc(), ((BaseType*)this)->endLoc(), ((BaseType*)this)->parens());
+	return new UnaryElement<BaseType,type,Op,Sub,preOpString,postOpString,dt>(op(), (Sub const*)sub()->copy(), ((BaseType*)this)->beginLoc(), ((BaseType*)this)->endLoc(), ((BaseType*)this)->parens());
 }
 
 template <typename BaseType, int type, typename Op, typename Sub, typename preOpString, typename postOpString, typename dt>

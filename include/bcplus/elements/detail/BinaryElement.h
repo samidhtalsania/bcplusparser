@@ -42,10 +42,10 @@ private:
     typename Op::type _op;
 
 	/// The left subformula
-	babb::utils::ref_ptr<LHS> _left;
+	babb::utils::ref_ptr<const LHS> _left;
 
 	/// The right subformula
-	babb::utils::ref_ptr<RHS> _right;
+	babb::utils::ref_ptr<const RHS> _right;
 
 
 public:
@@ -59,7 +59,7 @@ public:
     /// @param begin The beginning location of this element
     /// @param end The ending location of this element
     /// @param parens Whether the element is surrounded by parentheses
-    BinaryElement(typename Op::type const& op, LHS* left, RHS* right, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+    BinaryElement(typename Op::type const& op, LHS const* left, RHS const* right, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
     /// Destructor stub
     virtual ~BinaryElement();
@@ -69,14 +69,12 @@ public:
     /****************************************************************************/
 
 	/// The left-hand subformula
-	inline LHS* left()								{ return _left; }
 	inline LHS const* left() const					{ return _left; }	
 
 	/// The operator for the formula
 	inline typename Op::type const& op() const		{ return _op; }
 
 	/// The right-hand subformula
-	inline RHS* right()								{ return _right; }
 	inline RHS const* right() const					{ return _right; }
 
 	// inherited from Element

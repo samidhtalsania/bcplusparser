@@ -42,7 +42,7 @@ private:
     typename Op::type _op;
 
 	/// The subformula
-	babb::utils::ref_ptr<Sub> _sub;
+	babb::utils::ref_ptr<const Sub> _sub;
 
 
 public:
@@ -55,7 +55,7 @@ public:
     /// @param begin The beginning location of this element
     /// @param end The ending location of this element
     /// @param parens Whether the element is surrounded by parentheses
-    UnaryElement(typename Op::type const& op, Sub* sub, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+    UnaryElement(typename Op::type const& op, Sub const* sub, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
     /// Destructor stub
     virtual ~UnaryElement();
@@ -68,7 +68,6 @@ public:
 	inline typename Op::type const& op() const	{ return _op; }
 
 	/// The subformula
-	inline Sub* sub()							{ return _sub; }
 	inline Sub const* sub() const				{ return _sub; }
 
 	// inherited from Element

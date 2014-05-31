@@ -131,7 +131,7 @@ State 1:
           stmt_law ::= * law_observed
           law_basic ::= * head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
           law_caused ::= * CAUSED head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
-          law_pcaused ::= * POSSIBLY_CAUSED head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
+          law_pcaused ::= * POSSIBLY_CAUSED atomic_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
           law_impl ::= * head_formula ARROW_LDASH formula clause_where PERIOD
           law_causes ::= * atomic_formula CAUSES head_formula clause_if clause_unless clause_where PERIOD
           law_increments ::= * atomic_formula INCREMENTS constant BY term clause_if clause_unless clause_where PERIOD
@@ -164,10 +164,10 @@ State 1:
                        F2LP_GR shift  448
                        F2LP_CP shift  447
                         ALWAYS shift  10
-                        CAUSED shift  38
+                        CAUSED shift  37
                     IMPOSSIBLE shift  8
                     CONSTRAINT shift  9
-                       DEFAULT shift  157
+                       DEFAULT shift  156
                      EXOGENOUS shift  207
                       INERTIAL shift  201
                    MAXADDITIVE shift  646
@@ -177,21 +177,21 @@ State 1:
                  NOCONCURRENCY shift  483
           STRONG_NOCONCURRENCY shift  482
                  NONEXECUTABLE shift  6
-               POSSIBLY_CAUSED shift  37
+               POSSIBLY_CAUSED shift  157
                          RIGID shift  193
                          FALSE shift  613
                           TRUE shift  614
                     COLON_DASH shift  263
-                    CBRACKET_L shift  153
-                       PAREN_L shift  110
+                    CBRACKET_L shift  152
+                       PAREN_L shift  109
                          TILDE shift  250
-                          DASH shift  108
-                           ABS shift  93
+                          DASH shift  107
+                           ABS shift  92
                            EOF shift  444
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
-                      OBSERVED shift  156
+                      OBSERVED shift  155
                          error shift  696
                      statement shift  695
                 stmt_macro_def shift  694
@@ -356,7 +356,7 @@ State 2:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -492,7 +492,7 @@ State 3:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -625,7 +625,7 @@ State 4:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -758,7 +758,7 @@ State 5:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -885,7 +885,7 @@ State 6:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -1010,7 +1010,7 @@ State 7:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -1135,7 +1135,7 @@ State 8:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -1260,7 +1260,7 @@ State 9:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -1385,7 +1385,7 @@ State 10:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -1510,7 +1510,7 @@ State 11:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -1635,7 +1635,7 @@ State 12:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -1760,7 +1760,7 @@ State 13:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -1886,7 +1886,7 @@ State 14:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -2012,7 +2012,7 @@ State 15:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -2138,7 +2138,7 @@ State 16:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -2264,7 +2264,7 @@ State 17:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -2390,7 +2390,7 @@ State 18:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -2516,7 +2516,7 @@ State 19:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -2642,7 +2642,7 @@ State 20:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -2770,7 +2770,7 @@ State 21:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -2896,7 +2896,7 @@ State 22:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -3023,7 +3023,7 @@ State 23:
                          TILDE shift  250
                            NOT shift  20
                           DASH shift  21
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -3149,7 +3149,7 @@ State 24:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -3275,7 +3275,7 @@ State 25:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -3400,7 +3400,7 @@ State 26:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -3525,7 +3525,7 @@ State 27:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -3650,7 +3650,7 @@ State 28:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -3775,7 +3775,7 @@ State 29:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -3900,7 +3900,7 @@ State 30:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4025,7 +4025,7 @@ State 31:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4150,7 +4150,7 @@ State 32:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4275,7 +4275,7 @@ State 33:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4402,7 +4402,7 @@ State 34:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4528,7 +4528,7 @@ State 35:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4653,7 +4653,7 @@ State 36:
                          TILDE shift  250
                            NOT shift  33
                           DASH shift  34
-                           ABS shift  93
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4746,112 +4746,6 @@ State 37:
           formula_smpl_card ::= * term_strong CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R
           formula_smpl_card ::= * CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R term
           formula_smpl_card ::= * term_strong CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R term
-          law_pcaused ::= POSSIBLY_CAUSED * head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
-
-                       INTEGER shift  653
-                    IDENTIFIER shift  440
-                 AT_IDENTIFIER shift  441
-                STRING_LITERAL shift  652
-                   MAXADDITIVE shift  646
-                    MAXAFVALUE shift  645
-                       MAXSTEP shift  647
-                         FALSE shift  613
-                          TRUE shift  614
-                    CBRACKET_L shift  153
-                       PAREN_L shift  110
-                         TILDE shift  250
-                          DASH shift  108
-                           ABS shift  93
-                   CONSTANT_ID shift  443
-                   VARIABLE_ID shift  671
-                     OBJECT_ID shift  442
-            base_elem_no_const shift  654
-                      constant shift  261
-                        object shift  680
-                object_nullary shift  673
-                      variable shift  679
-                           lua shift  678
-                    undeclared shift  672
-                   term_strong shift  258
-         term_strong_candidate shift  262
-                    comparison shift  617
-                atomic_formula shift  616
-                  head_formula shift  225
-             formula_smpl_card shift  615
-
-State 38:
-          base_elem_no_const ::= * object
-          base_elem_no_const ::= * variable
-          base_elem_no_const ::= * lua
-          constant ::= * CONSTANT_ID PAREN_L term_lst PAREN_R
-          constant ::= * CONSTANT_ID
-          object ::= * OBJECT_ID PAREN_L term_lst PAREN_R
-          object ::= * object_nullary
-          object_nullary ::= * OBJECT_ID
-          object ::= * undeclared
-          variable ::= * VARIABLE_ID
-          lua ::= * AT_IDENTIFIER PAREN_L term_lst PAREN_R
-          lua ::= * AT_IDENTIFIER
-          undeclared ::= * IDENTIFIER PAREN_L term_lst PAREN_R
-          undeclared ::= * IDENTIFIER
-          term_strong ::= * base_elem_no_const
-          term_strong ::= * INTEGER
-          term_strong ::= * STRING_LITERAL
-          term_strong ::= * PAREN_L term_strong PAREN_R
-          term_strong ::= * MAXSTEP
-          term_strong ::= * MAXADDITIVE
-          term_strong ::= * MAXAFVALUE
-          term_strong ::= * DASH term_strong
-          term_strong ::= * ABS term
-          term_strong_candidate ::= * DASH constant
-          term_strong ::= * term_strong_candidate DASH term
-          term_strong ::= * term_strong_candidate PLUS term
-          term_strong ::= * term_strong_candidate STAR term
-          term_strong ::= * term_strong_candidate INT_DIV term
-          term_strong ::= * term_strong_candidate MOD term
-          term_strong ::= * constant DASH term
-          term_strong ::= * constant PLUS term
-          term_strong ::= * constant STAR term
-          term_strong ::= * constant INT_DIV term
-          term_strong ::= * constant MOD term
-          term_strong ::= * term_strong DASH term
-          term_strong ::= * term_strong PLUS term
-          term_strong ::= * term_strong STAR term
-          term_strong ::= * term_strong INT_DIV term
-          term_strong ::= * term_strong MOD term
-          comparison ::= * term_strong EQ term
-          comparison ::= * term_strong DBL_EQ term
-          comparison ::= * term_strong NEQ term
-          comparison ::= * term_strong LTHAN term
-          comparison ::= * term_strong GTHAN term
-          comparison ::= * term_strong LTHAN_EQ term
-          comparison ::= * term_strong GTHAN_EQ term
-          comparison ::= * term_strong_candidate EQ term
-          comparison ::= * term_strong_candidate DBL_EQ term
-          comparison ::= * term_strong_candidate NEQ term
-          comparison ::= * term_strong_candidate LTHAN term
-          comparison ::= * term_strong_candidate GTHAN term
-          comparison ::= * term_strong_candidate LTHAN_EQ term
-          comparison ::= * term_strong_candidate GTHAN_EQ term
-          comparison ::= * constant DBL_EQ term
-          comparison ::= * constant NEQ term
-          comparison ::= * constant LTHAN term
-          comparison ::= * constant GTHAN term
-          comparison ::= * constant LTHAN_EQ term
-          comparison ::= * constant GTHAN_EQ term
-          atomic_formula ::= * constant
-          atomic_formula ::= * TILDE constant
-          atomic_formula ::= * constant EQ term
-          head_formula ::= * comparison
-          head_formula ::= * atomic_formula
-          head_formula ::= * formula_smpl_card
-          head_formula ::= * TRUE
-          head_formula ::= * FALSE
-          head_formula ::= * DASH constant
-          formula_smpl_card ::= * CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R
-          formula_smpl_card ::= * term_strong CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R
-          formula_smpl_card ::= * CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R term
-          formula_smpl_card ::= * term_strong CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R term
           law_caused ::= CAUSED * head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
 
                        INTEGER shift  653
@@ -4863,11 +4757,11 @@ State 38:
                        MAXSTEP shift  647
                          FALSE shift  613
                           TRUE shift  614
-                    CBRACKET_L shift  153
-                       PAREN_L shift  110
+                    CBRACKET_L shift  152
+                       PAREN_L shift  109
                          TILDE shift  250
-                          DASH shift  108
-                           ABS shift  93
+                          DASH shift  107
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4885,7 +4779,7 @@ State 38:
                   head_formula shift  230
              formula_smpl_card shift  615
 
-State 39:
+State 38:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -4969,11 +4863,11 @@ State 39:
                        MAXSTEP shift  647
                          FALSE shift  613
                           TRUE shift  614
-                    CBRACKET_L shift  153
-                       PAREN_L shift  110
+                    CBRACKET_L shift  152
+                       PAREN_L shift  109
                          TILDE shift  250
-                          DASH shift  108
-                           ABS shift  93
+                          DASH shift  107
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -4991,7 +4885,7 @@ State 39:
                   head_formula shift  241
              formula_smpl_card shift  615
 
-State 40:
+State 39:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5075,11 +4969,11 @@ State 40:
                        MAXSTEP shift  647
                          FALSE shift  613
                           TRUE shift  614
-                    CBRACKET_L shift  153
-                       PAREN_L shift  110
+                    CBRACKET_L shift  152
+                       PAREN_L shift  109
                          TILDE shift  250
-                          DASH shift  108
-                           ABS shift  93
+                          DASH shift  107
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5097,7 +4991,7 @@ State 40:
                   head_formula shift  249
              formula_smpl_card shift  615
 
-State 41:
+State 40:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5158,10 +5052,10 @@ State 41:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5177,7 +5071,7 @@ State 41:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 42:
+State 41:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5238,10 +5132,10 @@ State 42:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5257,7 +5151,7 @@ State 42:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 43:
+State 42:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5318,10 +5212,10 @@ State 43:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5337,7 +5231,7 @@ State 43:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 44:
+State 43:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5398,10 +5292,10 @@ State 44:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5417,7 +5311,7 @@ State 44:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 45:
+State 44:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5478,10 +5372,10 @@ State 45:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5497,7 +5391,7 @@ State 45:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 46:
+State 45:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5558,10 +5452,10 @@ State 46:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5577,7 +5471,7 @@ State 46:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 47:
+State 46:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5638,10 +5532,10 @@ State 47:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5657,7 +5551,7 @@ State 47:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 48:
+State 47:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5719,10 +5613,10 @@ State 48:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5738,7 +5632,7 @@ State 48:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 49:
+State 48:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5800,10 +5694,10 @@ State 49:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5819,7 +5713,7 @@ State 49:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 50:
+State 49:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -5880,10 +5774,10 @@ State 50:
                        MAXSTEP shift  587
                          FALSE shift  576
                           TRUE shift  577
-                       PAREN_L shift  49
-                           NOT shift  47
-                          DASH shift  48
-                           ABS shift  114
+                       PAREN_L shift  48
+                           NOT shift  46
+                          DASH shift  47
+                           ABS shift  113
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5899,7 +5793,7 @@ State 50:
          formula_no_const_base shift  581
            comparison_no_const shift  578
 
-State 51:
+State 50:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -5945,9 +5839,9 @@ State 51:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -5962,7 +5856,7 @@ State 51:
                       term_lst shift  382
                           term shift  332
 
-State 52:
+State 51:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6008,9 +5902,9 @@ State 52:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6025,7 +5919,7 @@ State 52:
                       term_lst shift  383
                           term shift  332
 
-State 53:
+State 52:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6071,9 +5965,9 @@ State 53:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6088,7 +5982,7 @@ State 53:
                       term_lst shift  384
                           term shift  332
 
-State 54:
+State 53:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6134,9 +6028,9 @@ State 54:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6151,7 +6045,7 @@ State 54:
                       term_lst shift  385
                           term shift  332
 
-State 55:
+State 54:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6195,9 +6089,9 @@ State 55:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6211,7 +6105,7 @@ State 55:
                     undeclared shift  672
                           term shift  176
 
-State 56:
+State 55:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6256,9 +6150,9 @@ State 56:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6273,7 +6167,7 @@ State 56:
                           term shift  298
                      {default} reduce 199
 
-State 57:
+State 56:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6318,9 +6212,9 @@ State 57:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6335,7 +6229,7 @@ State 57:
                           term shift  299
                      {default} reduce 203
 
-State 58:
+State 57:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6380,9 +6274,9 @@ State 58:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6397,7 +6291,7 @@ State 58:
                           term shift  300
                      {default} reduce 198
 
-State 59:
+State 58:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6442,9 +6336,9 @@ State 59:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6459,7 +6353,7 @@ State 59:
                           term shift  301
                      {default} reduce 202
 
-State 60:
+State 59:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6504,9 +6398,9 @@ State 60:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6521,7 +6415,7 @@ State 60:
                           term shift  303
                      {default} reduce 215
 
-State 61:
+State 60:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6566,9 +6460,9 @@ State 61:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6583,7 +6477,7 @@ State 61:
                           term shift  304
                      {default} reduce 216
 
-State 62:
+State 61:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6627,9 +6521,9 @@ State 62:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6643,7 +6537,7 @@ State 62:
                     undeclared shift  672
                           term shift  308
 
-State 63:
+State 62:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6687,9 +6581,9 @@ State 63:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6703,7 +6597,7 @@ State 63:
                     undeclared shift  672
                           term shift  309
 
-State 64:
+State 63:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6747,9 +6641,9 @@ State 64:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6763,7 +6657,7 @@ State 64:
                     undeclared shift  672
                           term shift  310
 
-State 65:
+State 64:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6807,9 +6701,9 @@ State 65:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6823,7 +6717,7 @@ State 65:
                     undeclared shift  672
                           term shift  311
 
-State 66:
+State 65:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6867,9 +6761,9 @@ State 66:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6883,7 +6777,7 @@ State 66:
                     undeclared shift  672
                           term shift  312
 
-State 67:
+State 66:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6927,9 +6821,9 @@ State 67:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -6943,7 +6837,7 @@ State 67:
                     undeclared shift  672
                           term shift  313
 
-State 68:
+State 67:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -6987,9 +6881,9 @@ State 68:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7003,7 +6897,7 @@ State 68:
                     undeclared shift  672
                           term shift  314
 
-State 69:
+State 68:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7047,9 +6941,9 @@ State 69:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7063,7 +6957,7 @@ State 69:
                     undeclared shift  672
                           term shift  315
 
-State 70:
+State 69:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7107,9 +7001,9 @@ State 70:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7123,7 +7017,7 @@ State 70:
                     undeclared shift  672
                           term shift  316
 
-State 71:
+State 70:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7167,9 +7061,9 @@ State 71:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7183,7 +7077,7 @@ State 71:
                     undeclared shift  672
                           term shift  317
 
-State 72:
+State 71:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7227,9 +7121,9 @@ State 72:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7243,7 +7137,7 @@ State 72:
                     undeclared shift  672
                           term shift  318
 
-State 73:
+State 72:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7287,9 +7181,9 @@ State 73:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7303,7 +7197,7 @@ State 73:
                     undeclared shift  672
                           term shift  319
 
-State 74:
+State 73:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7347,9 +7241,9 @@ State 74:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7363,7 +7257,7 @@ State 74:
                     undeclared shift  672
                           term shift  320
 
-State 75:
+State 74:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7407,9 +7301,9 @@ State 75:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7423,7 +7317,7 @@ State 75:
                     undeclared shift  672
                           term shift  321
 
-State 76:
+State 75:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7467,9 +7361,9 @@ State 76:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7483,7 +7377,7 @@ State 76:
                     undeclared shift  672
                           term shift  322
 
-State 77:
+State 76:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7527,9 +7421,9 @@ State 77:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7543,7 +7437,7 @@ State 77:
                     undeclared shift  672
                           term shift  323
 
-State 78:
+State 77:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7587,9 +7481,9 @@ State 78:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7603,7 +7497,7 @@ State 78:
                     undeclared shift  672
                           term shift  324
 
-State 79:
+State 78:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7647,9 +7541,9 @@ State 79:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7663,7 +7557,7 @@ State 79:
                     undeclared shift  672
                           term shift  325
 
-State 80:
+State 79:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7707,9 +7601,9 @@ State 80:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7723,7 +7617,7 @@ State 80:
                     undeclared shift  672
                           term shift  326
 
-State 81:
+State 80:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7767,9 +7661,9 @@ State 81:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7783,7 +7677,7 @@ State 81:
                     undeclared shift  672
                           term shift  327
 
-State 82:
+State 81:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7827,9 +7721,9 @@ State 82:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7843,7 +7737,7 @@ State 82:
                     undeclared shift  672
                           term shift  328
 
-State 83:
+State 82:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7887,9 +7781,9 @@ State 83:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7903,7 +7797,7 @@ State 83:
                     undeclared shift  672
                           term shift  636
 
-State 84:
+State 83:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -7947,9 +7841,9 @@ State 84:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -7963,7 +7857,7 @@ State 84:
                     undeclared shift  672
                           term shift  637
 
-State 85:
+State 84:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8007,9 +7901,9 @@ State 85:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8023,7 +7917,7 @@ State 85:
                     undeclared shift  672
                           term shift  638
 
-State 86:
+State 85:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8067,9 +7961,9 @@ State 86:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8083,7 +7977,7 @@ State 86:
                     undeclared shift  672
                           term shift  347
 
-State 87:
+State 86:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8127,9 +8021,9 @@ State 87:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8143,7 +8037,7 @@ State 87:
                     undeclared shift  672
                           term shift  348
 
-State 88:
+State 87:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8187,9 +8081,9 @@ State 88:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8203,7 +8097,7 @@ State 88:
                     undeclared shift  672
                           term shift  639
 
-State 89:
+State 88:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8247,9 +8141,9 @@ State 89:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8263,7 +8157,7 @@ State 89:
                     undeclared shift  672
                           term shift  640
 
-State 90:
+State 89:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8307,9 +8201,9 @@ State 90:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8323,7 +8217,7 @@ State 90:
                     undeclared shift  672
                           term shift  641
 
-State 91:
+State 90:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8367,9 +8261,9 @@ State 91:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8383,7 +8277,7 @@ State 91:
                     undeclared shift  672
                           term shift  349
 
-State 92:
+State 91:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8427,9 +8321,9 @@ State 92:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8443,7 +8337,7 @@ State 92:
                     undeclared shift  672
                           term shift  350
 
-State 93:
+State 92:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8487,9 +8381,9 @@ State 93:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8503,7 +8397,7 @@ State 93:
                     undeclared shift  672
                           term shift  643
 
-State 94:
+State 93:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8547,9 +8441,9 @@ State 94:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8563,7 +8457,7 @@ State 94:
                     undeclared shift  672
                           term shift  648
 
-State 95:
+State 94:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8607,9 +8501,9 @@ State 95:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8623,7 +8517,7 @@ State 95:
                     undeclared shift  672
                           term shift  649
 
-State 96:
+State 95:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8667,9 +8561,9 @@ State 96:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8683,7 +8577,7 @@ State 96:
                     undeclared shift  672
                           term shift  650
 
-State 97:
+State 96:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8727,9 +8621,9 @@ State 97:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8743,7 +8637,7 @@ State 97:
                     undeclared shift  672
                           term shift  351
 
-State 98:
+State 97:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8787,9 +8681,9 @@ State 98:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8803,7 +8697,7 @@ State 98:
                     undeclared shift  672
                           term shift  352
 
-State 99:
+State 98:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8847,9 +8741,9 @@ State 99:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8863,7 +8757,7 @@ State 99:
                     undeclared shift  672
                           term shift  656
 
-State 100:
+State 99:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8907,9 +8801,9 @@ State 100:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8923,7 +8817,7 @@ State 100:
                     undeclared shift  672
                           term shift  657
 
-State 101:
+State 100:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -8967,9 +8861,9 @@ State 101:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -8983,7 +8877,7 @@ State 101:
                     undeclared shift  672
                           term shift  658
 
-State 102:
+State 101:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -9027,9 +8921,9 @@ State 102:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9043,7 +8937,7 @@ State 102:
                     undeclared shift  672
                           term shift  655
 
-State 103:
+State 102:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -9087,9 +8981,9 @@ State 103:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9103,7 +8997,7 @@ State 103:
                     undeclared shift  672
                           term shift  659
 
-State 104:
+State 103:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -9147,9 +9041,9 @@ State 104:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9163,7 +9057,7 @@ State 104:
                     undeclared shift  672
                           term shift  354
 
-State 105:
+State 104:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -9207,9 +9101,9 @@ State 105:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9223,7 +9117,7 @@ State 105:
                     undeclared shift  672
                           term shift  287
 
-State 106:
+State 105:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -9267,9 +9161,9 @@ State 106:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9283,7 +9177,7 @@ State 106:
                     undeclared shift  672
                           term shift  353
 
-State 107:
+State 106:
           base_elem ::= * constant
           base_elem ::= * base_elem_no_const
           base_elem_no_const ::= * object
@@ -9327,9 +9221,9 @@ State 107:
                        MAXSTEP shift  662
                          FALSE shift  663
                           TRUE shift  664
-                       PAREN_L shift  105
-                          DASH shift  103
-                           ABS shift  101
+                       PAREN_L shift  104
+                          DASH shift  102
+                           ABS shift  100
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9343,7 +9237,7 @@ State 107:
                     undeclared shift  672
                           term shift  331
 
-State 108:
+State 107:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9394,9 +9288,9 @@ State 108:
                    MAXADDITIVE shift  646
                     MAXAFVALUE shift  645
                        MAXSTEP shift  647
-                       PAREN_L shift  110
-                          DASH shift  109
-                           ABS shift  93
+                       PAREN_L shift  109
+                          DASH shift  108
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9410,7 +9304,7 @@ State 108:
                    term_strong shift  644
          term_strong_candidate shift  330
 
-State 109:
+State 108:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9460,9 +9354,9 @@ State 109:
                    MAXADDITIVE shift  646
                     MAXAFVALUE shift  645
                        MAXSTEP shift  647
-                       PAREN_L shift  110
-                          DASH shift  109
-                           ABS shift  93
+                       PAREN_L shift  109
+                          DASH shift  108
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9476,7 +9370,7 @@ State 109:
                    term_strong shift  644
          term_strong_candidate shift  330
 
-State 110:
+State 109:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9525,9 +9419,9 @@ State 110:
                    MAXADDITIVE shift  646
                     MAXAFVALUE shift  645
                        MAXSTEP shift  647
-                       PAREN_L shift  110
-                          DASH shift  109
-                           ABS shift  93
+                       PAREN_L shift  109
+                          DASH shift  108
+                           ABS shift  92
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9541,7 +9435,7 @@ State 110:
                    term_strong shift  286
          term_strong_candidate shift  330
 
-State 111:
+State 110:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9580,9 +9474,9 @@ State 111:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9596,7 +9490,7 @@ State 111:
              term_no_const_lst shift  380
                  term_no_const shift  306
 
-State 112:
+State 111:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -9662,7 +9556,7 @@ State 112:
              constant_dcl_type shift  421
                    attrib_spec shift  419
 
-State 113:
+State 112:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9699,9 +9593,9 @@ State 113:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9714,7 +9608,7 @@ State 113:
                     undeclared shift  672
                  term_no_const shift  273
 
-State 114:
+State 113:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9751,9 +9645,9 @@ State 114:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9766,7 +9660,7 @@ State 114:
                     undeclared shift  672
                  term_no_const shift  582
 
-State 115:
+State 114:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9803,9 +9697,9 @@ State 115:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9818,7 +9712,7 @@ State 115:
                     undeclared shift  672
                  term_no_const shift  291
 
-State 116:
+State 115:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9855,9 +9749,9 @@ State 116:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9870,7 +9764,7 @@ State 116:
                     undeclared shift  672
                  term_no_const shift  292
 
-State 117:
+State 116:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9907,9 +9801,9 @@ State 117:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9922,7 +9816,7 @@ State 117:
                     undeclared shift  672
                  term_no_const shift  293
 
-State 118:
+State 117:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -9959,9 +9853,9 @@ State 118:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -9974,7 +9868,7 @@ State 118:
                     undeclared shift  672
                  term_no_const shift  294
 
-State 119:
+State 118:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10011,9 +9905,9 @@ State 119:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10026,7 +9920,7 @@ State 119:
                     undeclared shift  672
                  term_no_const shift  295
 
-State 120:
+State 119:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10063,9 +9957,9 @@ State 120:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10078,7 +9972,7 @@ State 120:
                     undeclared shift  672
                  term_no_const shift  296
 
-State 121:
+State 120:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10115,9 +10009,9 @@ State 121:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10130,7 +10024,7 @@ State 121:
                     undeclared shift  672
                  term_no_const shift  297
 
-State 122:
+State 121:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10167,9 +10061,9 @@ State 122:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10182,7 +10076,7 @@ State 122:
                     undeclared shift  672
                  term_no_const shift  588
 
-State 123:
+State 122:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10219,9 +10113,9 @@ State 123:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10234,7 +10128,7 @@ State 123:
                     undeclared shift  672
                  term_no_const shift  589
 
-State 124:
+State 123:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10271,9 +10165,9 @@ State 124:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10286,7 +10180,7 @@ State 124:
                     undeclared shift  672
                  term_no_const shift  590
 
-State 125:
+State 124:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10323,9 +10217,9 @@ State 125:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10338,7 +10232,7 @@ State 125:
                     undeclared shift  672
                  term_no_const shift  340
 
-State 126:
+State 125:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10375,9 +10269,9 @@ State 126:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10390,7 +10284,7 @@ State 126:
                     undeclared shift  672
                  term_no_const shift  341
 
-State 127:
+State 126:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10427,9 +10321,9 @@ State 127:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10442,7 +10336,7 @@ State 127:
                     undeclared shift  672
                  term_no_const shift  305
 
-State 128:
+State 127:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10479,9 +10373,9 @@ State 128:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10494,7 +10388,7 @@ State 128:
                     undeclared shift  672
                  term_no_const shift  621
 
-State 129:
+State 128:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10531,9 +10425,9 @@ State 129:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10546,7 +10440,7 @@ State 129:
                     undeclared shift  672
                  term_no_const shift  622
 
-State 130:
+State 129:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10583,9 +10477,9 @@ State 130:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10598,7 +10492,7 @@ State 130:
                     undeclared shift  672
                  term_no_const shift  623
 
-State 131:
+State 130:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10635,9 +10529,9 @@ State 131:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10650,7 +10544,7 @@ State 131:
                     undeclared shift  672
                  term_no_const shift  620
 
-State 132:
+State 131:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10687,9 +10581,9 @@ State 132:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10702,7 +10596,7 @@ State 132:
                     undeclared shift  672
                  term_no_const shift  624
 
-State 133:
+State 132:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10739,9 +10633,9 @@ State 133:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10754,7 +10648,7 @@ State 133:
                     undeclared shift  672
                  term_no_const shift  346
 
-State 134:
+State 133:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10791,9 +10685,9 @@ State 134:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10806,7 +10700,7 @@ State 134:
                     undeclared shift  672
                  term_no_const shift  285
 
-State 135:
+State 134:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10843,9 +10737,9 @@ State 135:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10858,7 +10752,7 @@ State 135:
                     undeclared shift  672
                  term_no_const shift  345
 
-State 136:
+State 135:
           base_elem_no_const ::= * object
           base_elem_no_const ::= * variable
           base_elem_no_const ::= * lua
@@ -10895,9 +10789,9 @@ State 136:
                 STRING_LITERAL shift  629
                          FALSE shift  626
                           TRUE shift  627
-                       PAREN_L shift  134
-                          DASH shift  132
-                           ABS shift  130
+                       PAREN_L shift  133
+                          DASH shift  131
+                           ABS shift  129
                    CONSTANT_ID shift  443
                    VARIABLE_ID shift  671
                      OBJECT_ID shift  442
@@ -10910,7 +10804,7 @@ State 136:
                     undeclared shift  672
                  term_no_const shift  307
 
-State 137:
+State 136:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -10948,7 +10842,7 @@ State 137:
                        sort_nr shift  423
                        sort_id shift  422
 
-State 138:
+State 137:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -10986,7 +10880,7 @@ State 138:
                        sort_nr shift  423
                        sort_id shift  422
 
-State 139:
+State 138:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11024,7 +10918,7 @@ State 139:
                        sort_nr shift  423
                        sort_id shift  422
 
-State 140:
+State 139:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11062,7 +10956,7 @@ State 140:
                        sort_nr shift  423
                        sort_id shift  422
 
-State 141:
+State 140:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11095,7 +10989,7 @@ State 141:
                     object_lst shift  368
                    object_spec shift  518
 
-State 142:
+State 141:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11130,7 +11024,7 @@ State 142:
                        sort_nr shift  423
                        sort_id shift  422
 
-State 143:
+State 142:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11165,7 +11059,7 @@ State 143:
                        sort_nr shift  423
                        sort_id shift  422
 
-State 144:
+State 143:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11200,7 +11094,7 @@ State 144:
                        sort_nr shift  423
                        sort_id shift  422
 
-State 145:
+State 144:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11230,7 +11124,7 @@ State 145:
                     object_lst shift  368
                    object_spec shift  518
 
-State 146:
+State 145:
           constant_one_const ::= * CONSTANT_ID PAREN_L term_no_const_lst PAREN_R
           constant_one_const ::= * CONSTANT_ID
           atomic_formula_one_const ::= * constant_one_const
@@ -11250,7 +11144,7 @@ State 146:
                       show_lst shift  358
                      show_elem shift  502
 
-State 147:
+State 146:
           constant_one_const ::= * CONSTANT_ID PAREN_L term_no_const_lst PAREN_R
           constant_one_const ::= * CONSTANT_ID
           atomic_formula_one_const ::= * constant_one_const
@@ -11270,7 +11164,7 @@ State 147:
                       show_lst shift  359
                      show_elem shift  502
 
-State 148:
+State 147:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11295,7 +11189,7 @@ State 148:
                   term_numeric shift  282
                    object_spec shift  521
 
-State 149:
+State 148:
           constant_one_const ::= * CONSTANT_ID PAREN_L term_no_const_lst PAREN_R
           constant_one_const ::= * CONSTANT_ID
           atomic_formula_one_const ::= * constant_one_const
@@ -11310,7 +11204,7 @@ State 149:
       atomic_formula_one_const shift  504
                      show_elem shift  505
 
-State 150:
+State 149:
           stmt_sort_def ::= COLON_DASH SORTS * sort_bnd_lst PERIOD
           sort_bnd_lst ::= * sort_bnd
           sort_bnd_lst ::= * sort_bnd_lst SEMICOLON sort_bnd
@@ -11327,7 +11221,7 @@ State 150:
                       sort_bnd shift  360
                   sort_dcl_lst shift  409
 
-State 151:
+State 150:
           stmt_variable_def ::= COLON_DASH VARIABLES * variable_bnd_lst PERIOD
           variable_bnd_lst ::= * variable_bnd
           variable_bnd_lst ::= * variable_bnd_lst SEMICOLON variable_bnd
@@ -11340,7 +11234,7 @@ State 151:
                   variable_bnd shift  511
                   variable_lst shift  365
 
-State 152:
+State 151:
           stmt_constant_def ::= COLON_DASH CONSTANTS * constant_bnd_lst PERIOD
           constant_bnd_lst ::= * constant_bnd
           constant_bnd_lst ::= * constant_bnd_lst SEMICOLON constant_bnd
@@ -11359,7 +11253,7 @@ State 152:
                   constant_bnd shift  525
               constant_dcl_lst shift  374
 
-State 153:
+State 152:
           variable ::= * VARIABLE_ID
           card_var_lst ::= * card_var_lst_inner PIPE
           card_var_lst_inner ::= * variable
@@ -11372,7 +11266,7 @@ State 153:
                   card_var_lst shift  165
             card_var_lst_inner shift  381
 
-State 154:
+State 153:
           variable ::= * VARIABLE_ID
           card_var_lst ::= * card_var_lst_inner PIPE
           card_var_lst_inner ::= * variable
@@ -11385,7 +11279,7 @@ State 154:
                   card_var_lst shift  166
             card_var_lst_inner shift  381
 
-State 155:
+State 154:
           num_range ::= * term_numeric DBL_PERIOD term_numeric
           term_numeric ::= * INTEGER
           term_numeric ::= * PAREN_L term_numeric PAREN_R
@@ -11406,7 +11300,7 @@ State 155:
                      num_range shift  491
                   term_numeric shift  282
 
-State 156:
+State 155:
           constant ::= * CONSTANT_ID PAREN_L term_lst PAREN_R
           constant ::= * CONSTANT_ID
           atomic_formula ::= * constant
@@ -11419,7 +11313,7 @@ State 156:
                       constant shift  433
                 atomic_formula shift  386
 
-State 157:
+State 156:
           constant ::= * CONSTANT_ID PAREN_L term_lst PAREN_R
           constant ::= * CONSTANT_ID
           atomic_formula ::= * constant
@@ -11431,6 +11325,19 @@ State 157:
                    CONSTANT_ID shift  443
                       constant shift  433
                 atomic_formula shift  212
+
+State 157:
+          constant ::= * CONSTANT_ID PAREN_L term_lst PAREN_R
+          constant ::= * CONSTANT_ID
+          atomic_formula ::= * constant
+          atomic_formula ::= * TILDE constant
+          atomic_formula ::= * constant EQ term
+          law_pcaused ::= POSSIBLY_CAUSED * atomic_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
+
+                         TILDE shift  250
+                   CONSTANT_ID shift  443
+                      constant shift  433
+                atomic_formula shift  225
 
 State 158:
           sort_bnd ::= * sort_dcl_lst
@@ -11706,7 +11613,7 @@ State 175:
     (320) clause_where ::= *
           law_impl ::= head_formula ARROW_LDASH formula * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                          EQUIV shift  29
                           IMPL shift  28
                    ARROW_RDASH shift  27
@@ -11727,11 +11634,11 @@ State 176:
           law_increments ::= atomic_formula INCREMENTS constant BY term * clause_if clause_unless clause_where PERIOD
 
                             IF shift  36
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      clause_if shift  243
                      {default} reduce 312
 
@@ -11978,7 +11885,7 @@ State 192:
     (320) clause_where ::= *
           law_rigid ::= RIGID constant * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  387
                      {default} reduce 320
 
@@ -11995,7 +11902,7 @@ State 194:
     (320) clause_where ::= *
           law_nonexecutable ::= NONEXECUTABLE formula clause_if clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  388
                      {default} reduce 320
 
@@ -12013,7 +11920,7 @@ State 196:
     (320) clause_where ::= *
           law_inertial ::= INERTIAL constant clause_if clause_ifcons clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  389
                      {default} reduce 320
 
@@ -12066,7 +11973,7 @@ State 202:
     (320) clause_where ::= *
           law_exogenous ::= EXOGENOUS constant clause_if clause_ifcons clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  390
                      {default} reduce 320
 
@@ -12119,7 +12026,7 @@ State 208:
     (320) clause_where ::= *
           law_default ::= DEFAULT atomic_formula clause_if clause_ifcons clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  391
                      {default} reduce 320
 
@@ -12164,7 +12071,7 @@ State 213:
     (320) clause_where ::= *
           law_never ::= NEVER formula clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  392
                      {default} reduce 320
 
@@ -12182,7 +12089,7 @@ State 215:
     (320) clause_where ::= *
           law_impossible ::= IMPOSSIBLE formula clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  393
                      {default} reduce 320
 
@@ -12200,7 +12107,7 @@ State 217:
     (320) clause_where ::= *
           law_constraint ::= CONSTRAINT formula clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  394
                      {default} reduce 320
 
@@ -12218,7 +12125,7 @@ State 219:
     (320) clause_where ::= *
           law_always ::= ALWAYS formula clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  395
                      {default} reduce 320
 
@@ -12234,16 +12141,16 @@ State 220:
 State 221:
           clause_where ::= * WHERE formula_no_const
     (320) clause_where ::= *
-          law_pcaused ::= POSSIBLY_CAUSED head_formula clause_if clause_ifcons clause_after clause_unless * clause_where PERIOD
+          law_pcaused ::= POSSIBLY_CAUSED atomic_formula clause_if clause_ifcons clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  396
                      {default} reduce 320
 
 State 222:
           clause_unless ::= * UNLESS atomic_formula
     (318) clause_unless ::= *
-          law_pcaused ::= POSSIBLY_CAUSED head_formula clause_if clause_ifcons clause_after * clause_unless clause_where PERIOD
+          law_pcaused ::= POSSIBLY_CAUSED atomic_formula clause_if clause_ifcons clause_after * clause_unless clause_where PERIOD
 
                         UNLESS shift  163
                  clause_unless shift  221
@@ -12252,7 +12159,7 @@ State 222:
 State 223:
           clause_after ::= * AFTER formula
     (314) clause_after ::= *
-          law_pcaused ::= POSSIBLY_CAUSED head_formula clause_if clause_ifcons * clause_after clause_unless clause_where PERIOD
+          law_pcaused ::= POSSIBLY_CAUSED atomic_formula clause_if clause_ifcons * clause_after clause_unless clause_where PERIOD
 
                          AFTER shift  12
                   clause_after shift  222
@@ -12261,7 +12168,7 @@ State 223:
 State 224:
           clause_ifcons ::= * IFCONS formula
     (316) clause_ifcons ::= *
-          law_pcaused ::= POSSIBLY_CAUSED head_formula clause_if * clause_ifcons clause_after clause_unless clause_where PERIOD
+          law_pcaused ::= POSSIBLY_CAUSED atomic_formula clause_if * clause_ifcons clause_after clause_unless clause_where PERIOD
 
                         IFCONS shift  13
                  clause_ifcons shift  223
@@ -12270,7 +12177,7 @@ State 224:
 State 225:
           clause_if ::= * IF formula
     (312) clause_if ::= *
-          law_pcaused ::= POSSIBLY_CAUSED head_formula * clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
+          law_pcaused ::= POSSIBLY_CAUSED atomic_formula * clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
 
                             IF shift  36
                      clause_if shift  224
@@ -12281,7 +12188,7 @@ State 226:
     (320) clause_where ::= *
           law_caused ::= CAUSED head_formula clause_if clause_ifcons clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  397
                      {default} reduce 320
 
@@ -12326,7 +12233,7 @@ State 231:
     (320) clause_where ::= *
           law_basic ::= head_formula clause_if clause_ifcons clause_after clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  399
                      {default} reduce 320
 
@@ -12391,7 +12298,7 @@ State 239:
     (320) clause_where ::= *
           law_mcause ::= atomic_formula MAY_CAUSE head_formula clause_if clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  427
                      {default} reduce 320
 
@@ -12418,7 +12325,7 @@ State 242:
     (320) clause_where ::= *
           law_increments ::= atomic_formula INCREMENTS constant BY term clause_if clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  428
                      {default} reduce 320
 
@@ -12444,7 +12351,7 @@ State 245:
     (320) clause_where ::= *
           law_causes ::= atomic_formula CAUSES head_formula clause_if clause_unless * clause_where PERIOD
 
-                         WHERE shift  50
+                         WHERE shift  49
                   clause_where shift  430
                      {default} reduce 320
 
@@ -12526,18 +12433,18 @@ State 253:
                     CBRACKET_L shift  5
                        PAREN_R shift  651
                          COLON shift  22
-                            EQ shift  68
-                        DBL_EQ shift  67
-                           NEQ shift  66
-                         LTHAN shift  65
-                         GTHAN shift  64
-                      LTHAN_EQ shift  63
-                      GTHAN_EQ shift  62
-                          DASH shift  98
-                          PLUS shift  97
-                          STAR shift  96
-                       INT_DIV shift  95
-                           MOD shift  94
+                            EQ shift  67
+                        DBL_EQ shift  66
+                           NEQ shift  65
+                         LTHAN shift  64
+                         GTHAN shift  63
+                      LTHAN_EQ shift  62
+                      GTHAN_EQ shift  61
+                          DASH shift  97
+                          PLUS shift  96
+                          STAR shift  95
+                       INT_DIV shift  94
+                           MOD shift  93
 
 State 254:
           term_strong ::= term_strong * DASH term
@@ -12560,18 +12467,18 @@ State 254:
 
                     CBRACKET_L shift  5
                          COLON shift  22
-                            EQ shift  68
-                        DBL_EQ shift  67
-                           NEQ shift  66
-                         LTHAN shift  65
-                         GTHAN shift  64
-                      LTHAN_EQ shift  63
-                      GTHAN_EQ shift  62
-                          DASH shift  98
-                          PLUS shift  97
-                          STAR shift  96
-                       INT_DIV shift  95
-                           MOD shift  94
+                            EQ shift  67
+                        DBL_EQ shift  66
+                           NEQ shift  65
+                         LTHAN shift  64
+                         GTHAN shift  63
+                      LTHAN_EQ shift  62
+                      GTHAN_EQ shift  61
+                          DASH shift  97
+                          PLUS shift  96
+                          STAR shift  95
+                       INT_DIV shift  94
+                           MOD shift  93
 
 State 255:
           term_strong ::= PAREN_L term_strong * PAREN_R
@@ -12594,18 +12501,18 @@ State 255:
 
                     CBRACKET_L shift  5
                        PAREN_R shift  651
-                            EQ shift  68
-                        DBL_EQ shift  67
-                           NEQ shift  66
-                         LTHAN shift  65
-                         GTHAN shift  64
-                      LTHAN_EQ shift  63
-                      GTHAN_EQ shift  62
-                          DASH shift  98
-                          PLUS shift  97
-                          STAR shift  96
-                       INT_DIV shift  95
-                           MOD shift  94
+                            EQ shift  67
+                        DBL_EQ shift  66
+                           NEQ shift  65
+                         LTHAN shift  64
+                         GTHAN shift  63
+                      LTHAN_EQ shift  62
+                      GTHAN_EQ shift  61
+                          DASH shift  97
+                          PLUS shift  96
+                          STAR shift  95
+                       INT_DIV shift  94
+                           MOD shift  93
 
 State 256:
           term_no_const_strong ::= PAREN_L term_no_const_strong * PAREN_R
@@ -12623,18 +12530,18 @@ State 256:
           comparison_no_const ::= term_no_const_strong * GTHAN_EQ term_no_const
 
                        PAREN_R shift  591
-                            EQ shift  121
-                        DBL_EQ shift  120
-                           NEQ shift  119
-                         LTHAN shift  118
-                         GTHAN shift  117
-                      LTHAN_EQ shift  116
-                      GTHAN_EQ shift  115
-                          DASH shift  126
-                          PLUS shift  125
-                          STAR shift  124
-                       INT_DIV shift  123
-                           MOD shift  122
+                            EQ shift  120
+                        DBL_EQ shift  119
+                           NEQ shift  118
+                         LTHAN shift  117
+                         GTHAN shift  116
+                      LTHAN_EQ shift  115
+                      GTHAN_EQ shift  114
+                          DASH shift  125
+                          PLUS shift  124
+                          STAR shift  123
+                       INT_DIV shift  122
+                           MOD shift  121
 
 State 257:
           term_strong ::= term_strong * DASH term
@@ -12655,18 +12562,18 @@ State 257:
           formula_card ::= term_strong * CBRACKET_L formula CBRACKET_R term
 
                     CBRACKET_L shift  5
-                            EQ shift  68
-                        DBL_EQ shift  67
-                           NEQ shift  66
-                         LTHAN shift  65
-                         GTHAN shift  64
-                      LTHAN_EQ shift  63
-                      GTHAN_EQ shift  62
-                          DASH shift  98
-                          PLUS shift  97
-                          STAR shift  96
-                       INT_DIV shift  95
-                           MOD shift  94
+                            EQ shift  67
+                        DBL_EQ shift  66
+                           NEQ shift  65
+                         LTHAN shift  64
+                         GTHAN shift  63
+                      LTHAN_EQ shift  62
+                      GTHAN_EQ shift  61
+                          DASH shift  97
+                          PLUS shift  96
+                          STAR shift  95
+                       INT_DIV shift  94
+                           MOD shift  93
 
 State 258:
           term_strong ::= term_strong * DASH term
@@ -12684,19 +12591,19 @@ State 258:
           formula_smpl_card ::= term_strong * CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R
           formula_smpl_card ::= term_strong * CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R term
 
-                    CBRACKET_L shift  154
-                            EQ shift  68
-                        DBL_EQ shift  67
-                           NEQ shift  66
-                         LTHAN shift  65
-                         GTHAN shift  64
-                      LTHAN_EQ shift  63
-                      GTHAN_EQ shift  62
-                          DASH shift  98
-                          PLUS shift  97
-                          STAR shift  96
-                       INT_DIV shift  95
-                           MOD shift  94
+                    CBRACKET_L shift  153
+                            EQ shift  67
+                        DBL_EQ shift  66
+                           NEQ shift  65
+                         LTHAN shift  64
+                         GTHAN shift  63
+                      LTHAN_EQ shift  62
+                      GTHAN_EQ shift  61
+                          DASH shift  97
+                          PLUS shift  96
+                          STAR shift  95
+                       INT_DIV shift  94
+                           MOD shift  93
 
 State 259:
           term_no_const_strong ::= term_no_const_strong * DASH term_no_const
@@ -12712,18 +12619,18 @@ State 259:
           comparison_no_const ::= term_no_const_strong * LTHAN_EQ term_no_const
           comparison_no_const ::= term_no_const_strong * GTHAN_EQ term_no_const
 
-                            EQ shift  121
-                        DBL_EQ shift  120
-                           NEQ shift  119
-                         LTHAN shift  118
-                         GTHAN shift  117
-                      LTHAN_EQ shift  116
-                      GTHAN_EQ shift  115
-                          DASH shift  126
-                          PLUS shift  125
-                          STAR shift  124
-                       INT_DIV shift  123
-                           MOD shift  122
+                            EQ shift  120
+                        DBL_EQ shift  119
+                           NEQ shift  118
+                         LTHAN shift  117
+                         GTHAN shift  116
+                      LTHAN_EQ shift  115
+                      GTHAN_EQ shift  114
+                          DASH shift  125
+                          PLUS shift  124
+                          STAR shift  123
+                       INT_DIV shift  122
+                           MOD shift  121
 
 State 260:
      (65) term_strong_candidate ::= DASH constant *
@@ -12770,18 +12677,18 @@ State 261:
     (156) atomic_formula ::= constant *
           atomic_formula ::= constant * EQ term
 
-                            EQ shift  69
-                        DBL_EQ shift  75
-                           NEQ shift  74
-                         LTHAN shift  73
-                         GTHAN shift  72
-                      LTHAN_EQ shift  71
-                      GTHAN_EQ shift  70
-                          DASH shift  92
-                          PLUS shift  91
-                          STAR shift  90
-                       INT_DIV shift  89
-                           MOD shift  88
+                            EQ shift  68
+                        DBL_EQ shift  74
+                           NEQ shift  73
+                         LTHAN shift  72
+                         GTHAN shift  71
+                      LTHAN_EQ shift  70
+                      GTHAN_EQ shift  69
+                          DASH shift  91
+                          PLUS shift  90
+                          STAR shift  89
+                       INT_DIV shift  88
+                           MOD shift  87
                      {default} reduce 156
 
 State 262:
@@ -12798,18 +12705,18 @@ State 262:
           comparison ::= term_strong_candidate * LTHAN_EQ term
           comparison ::= term_strong_candidate * GTHAN_EQ term
 
-                            EQ shift  82
-                        DBL_EQ shift  81
-                           NEQ shift  80
-                         LTHAN shift  79
-                         GTHAN shift  78
-                      LTHAN_EQ shift  77
-                      GTHAN_EQ shift  76
-                          DASH shift  87
-                          PLUS shift  86
-                          STAR shift  85
-                       INT_DIV shift  84
-                           MOD shift  83
+                            EQ shift  81
+                        DBL_EQ shift  80
+                           NEQ shift  79
+                         LTHAN shift  78
+                         GTHAN shift  77
+                      LTHAN_EQ shift  76
+                      GTHAN_EQ shift  75
+                          DASH shift  86
+                          PLUS shift  85
+                          STAR shift  84
+                       INT_DIV shift  83
+                           MOD shift  82
 
 State 263:
           stmt_macro_def ::= COLON_DASH * MACROS macro_def_lst PERIOD
@@ -12825,16 +12732,16 @@ State 263:
           stmt_maxadditive ::= COLON_DASH * MAXADDITIVE EQ term_numeric PERIOD
           stmt_query ::= COLON_DASH * QUERY query_lst PERIOD
 
-                     CONSTANTS shift  152
+                     CONSTANTS shift  151
                         MACROS shift  169
-                       OBJECTS shift  141
+                       OBJECTS shift  140
                          QUERY shift  2
-                          SHOW shift  147
-                         SORTS shift  150
-                     VARIABLES shift  151
+                          SHOW shift  146
+                         SORTS shift  149
+                     VARIABLES shift  150
                    MAXADDITIVE shift  404
                     MAXAFVALUE shift  405
-                          HIDE shift  146
+                          HIDE shift  145
 
 State 264:
           formula_temporal ::= PAREN_L formula_temporal * PAREN_R
@@ -12863,12 +12770,12 @@ State 265:
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
 
                        PAREN_R shift  574
-                         EQUIV shift  43
-                          IMPL shift  42
-                   ARROW_RDASH shift  41
-                      DBL_PLUS shift  45
-                          PIPE shift  44
-                           AMP shift  46
+                         EQUIV shift  42
+                          IMPL shift  41
+                   ARROW_RDASH shift  40
+                      DBL_PLUS shift  44
+                          PIPE shift  43
+                           AMP shift  45
 
 State 266:
           formula ::= PAREN_L formula * PAREN_R
@@ -12897,7 +12804,7 @@ State 267:
           formula_card ::= term_strong CBRACKET_L card_var_lst formula * CBRACKET_R
           formula_card ::= term_strong CBRACKET_L card_var_lst formula * CBRACKET_R term
 
-                    CBRACKET_R shift  56
+                    CBRACKET_R shift  55
                          EQUIV shift  29
                           IMPL shift  28
                    ARROW_RDASH shift  27
@@ -12915,7 +12822,7 @@ State 268:
           formula_card ::= term_strong CBRACKET_L formula * CBRACKET_R
           formula_card ::= term_strong CBRACKET_L formula * CBRACKET_R term
 
-                    CBRACKET_R shift  57
+                    CBRACKET_R shift  56
                          EQUIV shift  29
                           IMPL shift  28
                    ARROW_RDASH shift  27
@@ -12933,7 +12840,7 @@ State 269:
           formula_card ::= CBRACKET_L card_var_lst formula * CBRACKET_R
           formula_card ::= CBRACKET_L card_var_lst formula * CBRACKET_R term
 
-                    CBRACKET_R shift  58
+                    CBRACKET_R shift  57
                          EQUIV shift  29
                           IMPL shift  28
                    ARROW_RDASH shift  27
@@ -12951,7 +12858,7 @@ State 270:
           formula_card ::= CBRACKET_L formula * CBRACKET_R
           formula_card ::= CBRACKET_L formula * CBRACKET_R term
 
-                    CBRACKET_R shift  59
+                    CBRACKET_R shift  58
                          EQUIV shift  29
                           IMPL shift  28
                    ARROW_RDASH shift  27
@@ -13003,11 +12910,11 @@ State 273:
           law_observed ::= OBSERVED atomic_formula AT term_no_const * PERIOD
 
                         PERIOD shift  451
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
 
 State 274:
           formula ::= formula * AMP formula
@@ -13163,12 +13070,12 @@ State 283:
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
     (319) clause_where ::= WHERE formula_no_const *
 
-                         EQUIV shift  43
-                          IMPL shift  42
-                   ARROW_RDASH shift  41
-                      DBL_PLUS shift  45
-                          PIPE shift  44
-                           AMP shift  46
+                         EQUIV shift  42
+                          IMPL shift  41
+                   ARROW_RDASH shift  40
+                      DBL_PLUS shift  44
+                          PIPE shift  43
+                           AMP shift  45
                      {default} reduce 319
 
 State 284:
@@ -13197,11 +13104,11 @@ State 285:
           term_no_const ::= term_no_const * MOD term_no_const
 
                        PAREN_R shift  628
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
 
 State 286:
           term_strong ::= PAREN_L term_strong * PAREN_R
@@ -13212,11 +13119,11 @@ State 286:
           term_strong ::= term_strong * MOD term
 
                        PAREN_R shift  651
-                          DASH shift  98
-                          PLUS shift  97
-                          STAR shift  96
-                       INT_DIV shift  95
-                           MOD shift  94
+                          DASH shift  97
+                          PLUS shift  96
+                          STAR shift  95
+                       INT_DIV shift  94
+                           MOD shift  93
 
 State 287:
           term ::= PAREN_L term * PAREN_R
@@ -13227,11 +13134,11 @@ State 287:
           term ::= term * MOD term
 
                        PAREN_R shift  665
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
 
 State 288:
           formula_temporal ::= formula_temporal * AMP formula_temporal
@@ -13273,11 +13180,11 @@ State 290:
           formula_no_const ::= formula_no_const * IMPL formula_no_const
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
 
-                          IMPL shift  42
-                   ARROW_RDASH shift  41
-                      DBL_PLUS shift  45
-                          PIPE shift  44
-                           AMP shift  46
+                          IMPL shift  41
+                   ARROW_RDASH shift  40
+                      DBL_PLUS shift  44
+                          PIPE shift  43
+                           AMP shift  45
                      {default} reduce 166
 
 State 291:
@@ -13288,11 +13195,11 @@ State 291:
           term_no_const ::= term_no_const * MOD term_no_const
     (178) comparison_no_const ::= term_no_const_strong GTHAN_EQ term_no_const *
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 178
 
 State 292:
@@ -13303,11 +13210,11 @@ State 292:
           term_no_const ::= term_no_const * MOD term_no_const
     (177) comparison_no_const ::= term_no_const_strong LTHAN_EQ term_no_const *
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 177
 
 State 293:
@@ -13318,11 +13225,11 @@ State 293:
           term_no_const ::= term_no_const * MOD term_no_const
     (176) comparison_no_const ::= term_no_const_strong GTHAN term_no_const *
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 176
 
 State 294:
@@ -13333,11 +13240,11 @@ State 294:
           term_no_const ::= term_no_const * MOD term_no_const
     (175) comparison_no_const ::= term_no_const_strong LTHAN term_no_const *
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 175
 
 State 295:
@@ -13348,11 +13255,11 @@ State 295:
           term_no_const ::= term_no_const * MOD term_no_const
     (174) comparison_no_const ::= term_no_const_strong NEQ term_no_const *
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 174
 
 State 296:
@@ -13363,11 +13270,11 @@ State 296:
           term_no_const ::= term_no_const * MOD term_no_const
     (173) comparison_no_const ::= term_no_const_strong DBL_EQ term_no_const *
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 173
 
 State 297:
@@ -13378,11 +13285,11 @@ State 297:
           term_no_const ::= term_no_const * MOD term_no_const
     (172) comparison_no_const ::= term_no_const_strong EQ term_no_const *
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 172
 
 State 298:
@@ -13393,11 +13300,11 @@ State 298:
           term ::= term * MOD term
     (201) formula_card ::= term_strong CBRACKET_L card_var_lst formula CBRACKET_R term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 201
 
 State 299:
@@ -13408,11 +13315,11 @@ State 299:
           term ::= term * MOD term
     (205) formula_card ::= term_strong CBRACKET_L formula CBRACKET_R term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 205
 
 State 300:
@@ -13423,11 +13330,11 @@ State 300:
           term ::= term * MOD term
     (200) formula_card ::= CBRACKET_L card_var_lst formula CBRACKET_R term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 200
 
 State 301:
@@ -13438,11 +13345,11 @@ State 301:
           term ::= term * MOD term
     (204) formula_card ::= CBRACKET_L formula CBRACKET_R term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 204
 
 State 302:
@@ -13469,11 +13376,11 @@ State 303:
           term ::= term * MOD term
     (217) formula_smpl_card ::= CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 217
 
 State 304:
@@ -13484,11 +13391,11 @@ State 304:
           term ::= term * MOD term
     (218) formula_smpl_card ::= term_strong CBRACKET_L card_var_lst atomic_formula_one_const CBRACKET_R term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 218
 
 State 305:
@@ -13499,11 +13406,11 @@ State 305:
           term_no_const ::= term_no_const * MOD term_no_const
     (181) atomic_formula_one_const ::= constant_one_const EQ term_no_const *
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 181
 
 State 306:
@@ -13514,11 +13421,11 @@ State 306:
           term_no_const ::= term_no_const * INT_DIV term_no_const
           term_no_const ::= term_no_const * MOD term_no_const
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 38
 
 State 307:
@@ -13529,11 +13436,11 @@ State 307:
           term_no_const ::= term_no_const * INT_DIV term_no_const
           term_no_const ::= term_no_const * MOD term_no_const
 
-                          DASH shift  135
-                          PLUS shift  133
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          DASH shift  134
+                          PLUS shift  132
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 39
 
 State 308:
@@ -13544,11 +13451,11 @@ State 308:
           term ::= term * MOD term
     (142) comparison ::= term_strong GTHAN_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 142
 
 State 309:
@@ -13559,11 +13466,11 @@ State 309:
           term ::= term * MOD term
     (141) comparison ::= term_strong LTHAN_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 141
 
 State 310:
@@ -13574,11 +13481,11 @@ State 310:
           term ::= term * MOD term
     (140) comparison ::= term_strong GTHAN term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 140
 
 State 311:
@@ -13589,11 +13496,11 @@ State 311:
           term ::= term * MOD term
     (139) comparison ::= term_strong LTHAN term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 139
 
 State 312:
@@ -13604,11 +13511,11 @@ State 312:
           term ::= term * MOD term
     (138) comparison ::= term_strong NEQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 138
 
 State 313:
@@ -13619,11 +13526,11 @@ State 313:
           term ::= term * MOD term
     (137) comparison ::= term_strong DBL_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 137
 
 State 314:
@@ -13634,11 +13541,11 @@ State 314:
           term ::= term * MOD term
     (136) comparison ::= term_strong EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 136
 
 State 315:
@@ -13649,11 +13556,11 @@ State 315:
           term ::= term * MOD term
     (158) atomic_formula ::= constant EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 158
 
 State 316:
@@ -13664,11 +13571,11 @@ State 316:
           term ::= term * MOD term
     (155) comparison ::= constant GTHAN_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 155
 
 State 317:
@@ -13679,11 +13586,11 @@ State 317:
           term ::= term * MOD term
     (154) comparison ::= constant LTHAN_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 154
 
 State 318:
@@ -13694,11 +13601,11 @@ State 318:
           term ::= term * MOD term
     (153) comparison ::= constant GTHAN term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 153
 
 State 319:
@@ -13709,11 +13616,11 @@ State 319:
           term ::= term * MOD term
     (152) comparison ::= constant LTHAN term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 152
 
 State 320:
@@ -13724,11 +13631,11 @@ State 320:
           term ::= term * MOD term
     (151) comparison ::= constant NEQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 151
 
 State 321:
@@ -13739,11 +13646,11 @@ State 321:
           term ::= term * MOD term
     (150) comparison ::= constant DBL_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 150
 
 State 322:
@@ -13754,11 +13661,11 @@ State 322:
           term ::= term * MOD term
     (149) comparison ::= term_strong_candidate GTHAN_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 149
 
 State 323:
@@ -13769,11 +13676,11 @@ State 323:
           term ::= term * MOD term
     (148) comparison ::= term_strong_candidate LTHAN_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 148
 
 State 324:
@@ -13784,11 +13691,11 @@ State 324:
           term ::= term * MOD term
     (147) comparison ::= term_strong_candidate GTHAN term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 147
 
 State 325:
@@ -13799,11 +13706,11 @@ State 325:
           term ::= term * MOD term
     (146) comparison ::= term_strong_candidate LTHAN term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 146
 
 State 326:
@@ -13814,11 +13721,11 @@ State 326:
           term ::= term * MOD term
     (145) comparison ::= term_strong_candidate NEQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 145
 
 State 327:
@@ -13829,11 +13736,11 @@ State 327:
           term ::= term * MOD term
     (144) comparison ::= term_strong_candidate DBL_EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 144
 
 State 328:
@@ -13844,11 +13751,11 @@ State 328:
           term ::= term * MOD term
     (143) comparison ::= term_strong_candidate EQ term *
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 143
 
 State 329:
@@ -13858,11 +13765,11 @@ State 329:
           term_strong ::= constant * INT_DIV term
           term_strong ::= constant * MOD term
 
-                          DASH shift  92
-                          PLUS shift  91
-                          STAR shift  90
-                       INT_DIV shift  89
-                           MOD shift  88
+                          DASH shift  91
+                          PLUS shift  90
+                          STAR shift  89
+                       INT_DIV shift  88
+                           MOD shift  87
 
 State 330:
           term_strong ::= term_strong_candidate * DASH term
@@ -13871,11 +13778,11 @@ State 330:
           term_strong ::= term_strong_candidate * INT_DIV term
           term_strong ::= term_strong_candidate * MOD term
 
-                          DASH shift  87
-                          PLUS shift  86
-                          STAR shift  85
-                       INT_DIV shift  84
-                           MOD shift  83
+                          DASH shift  86
+                          PLUS shift  85
+                          STAR shift  84
+                       INT_DIV shift  83
+                           MOD shift  82
 
 State 331:
      (35) term_lst ::= term_lst COMMA term *
@@ -13885,11 +13792,11 @@ State 331:
           term ::= term * INT_DIV term
           term ::= term * MOD term
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 35
 
 State 332:
@@ -13900,11 +13807,11 @@ State 332:
           term ::= term * INT_DIV term
           term ::= term * MOD term
 
-                          DASH shift  106
-                          PLUS shift  104
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          DASH shift  105
+                          PLUS shift  103
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 34
 
 State 333:
@@ -13979,9 +13886,9 @@ State 338:
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
     (168) formula_no_const ::= formula_no_const ARROW_RDASH formula_no_const *
 
-                      DBL_PLUS shift  45
-                          PIPE shift  44
-                           AMP shift  46
+                      DBL_PLUS shift  44
+                          PIPE shift  43
+                           AMP shift  45
                      {default} reduce 168
 
 State 339:
@@ -13993,9 +13900,9 @@ State 339:
     (167) formula_no_const ::= formula_no_const IMPL formula_no_const *
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
 
-                      DBL_PLUS shift  45
-                          PIPE shift  44
-                           AMP shift  46
+                      DBL_PLUS shift  44
+                          PIPE shift  43
+                           AMP shift  45
                      {default} reduce 167
 
 State 340:
@@ -14006,9 +13913,9 @@ State 340:
           term_no_const ::= term_no_const * INT_DIV term_no_const
           term_no_const ::= term_no_const * MOD term_no_const
 
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 92
 
 State 341:
@@ -14019,9 +13926,9 @@ State 341:
           term_no_const ::= term_no_const * INT_DIV term_no_const
           term_no_const ::= term_no_const * MOD term_no_const
 
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 91
 
 State 342:
@@ -14058,9 +13965,9 @@ State 344:
           law_increments ::= atomic_formula * INCREMENTS constant BY term clause_if clause_unless clause_where PERIOD
           law_mcause ::= atomic_formula * MAY_CAUSE head_formula clause_if clause_unless clause_where PERIOD
 
-                        CAUSES shift  40
+                        CAUSES shift  39
                     INCREMENTS shift  244
-                     MAY_CAUSE shift  39
+                     MAY_CAUSE shift  38
                      {default} reduce 210
 
 State 345:
@@ -14071,9 +13978,9 @@ State 345:
           term_no_const ::= term_no_const * INT_DIV term_no_const
           term_no_const ::= term_no_const * MOD term_no_const
 
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 105
 
 State 346:
@@ -14084,9 +13991,9 @@ State 346:
           term_no_const ::= term_no_const * INT_DIV term_no_const
           term_no_const ::= term_no_const * MOD term_no_const
 
-                          STAR shift  131
-                       INT_DIV shift  129
-                           MOD shift  128
+                          STAR shift  130
+                       INT_DIV shift  128
+                           MOD shift  127
                      {default} reduce 106
 
 State 347:
@@ -14097,9 +14004,9 @@ State 347:
           term ::= term * MOD term
      (67) term_strong ::= term_strong_candidate PLUS term *
 
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 67
 
 State 348:
@@ -14110,9 +14017,9 @@ State 348:
           term ::= term * MOD term
      (66) term_strong ::= term_strong_candidate DASH term *
 
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 66
 
 State 349:
@@ -14123,9 +14030,9 @@ State 349:
           term ::= term * MOD term
      (72) term_strong ::= constant PLUS term *
 
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 72
 
 State 350:
@@ -14136,9 +14043,9 @@ State 350:
           term ::= term * MOD term
      (71) term_strong ::= constant DASH term *
 
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 71
 
 State 351:
@@ -14149,9 +14056,9 @@ State 351:
           term ::= term * MOD term
      (77) term_strong ::= term_strong PLUS term *
 
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 77
 
 State 352:
@@ -14162,9 +14069,9 @@ State 352:
           term ::= term * MOD term
      (76) term_strong ::= term_strong DASH term *
 
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 76
 
 State 353:
@@ -14175,9 +14082,9 @@ State 353:
           term ::= term * INT_DIV term
           term ::= term * MOD term
 
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 51
 
 State 354:
@@ -14188,9 +14095,9 @@ State 354:
           term ::= term * INT_DIV term
           term ::= term * MOD term
 
-                          STAR shift  102
-                       INT_DIV shift  100
-                           MOD shift  99
+                          STAR shift  101
+                       INT_DIV shift  99
+                           MOD shift  98
                      {default} reduce 52
 
 State 355:
@@ -14222,14 +14129,14 @@ State 358:
           show_lst ::= show_lst * COMMA show_elem
 
                         PERIOD shift  501
-                         COMMA shift  149
+                         COMMA shift  148
 
 State 359:
           stmt_show ::= COLON_DASH SHOW show_lst * PERIOD
           show_lst ::= show_lst * COMMA show_elem
 
                         PERIOD shift  506
-                         COMMA shift  149
+                         COMMA shift  148
 
 State 360:
     (281) sort_bnd_lst ::= sort_bnd *
@@ -14293,42 +14200,42 @@ State 367:
           object_spec ::= IDENTIFIER PAREN_L sort_lst * PAREN_R
 
                        PAREN_R shift  520
-                         COMMA shift  143
+                         COMMA shift  142
 
 State 368:
           object_bnd ::= object_lst * DBL_COLON sort_id
           object_lst ::= object_lst * COMMA object_spec
 
                      DBL_COLON shift  236
-                         COMMA shift  148
+                         COMMA shift  147
 
 State 369:
           stmt_object_def ::= COLON_DASH OBJECTS object_bnd_lst * PERIOD
           object_bnd_lst ::= object_bnd_lst * SEMICOLON object_bnd
 
                         PERIOD shift  524
-                     SEMICOLON shift  145
+                     SEMICOLON shift  144
 
 State 370:
           sort_lst ::= sort_lst * COMMA sort
           constant_dcl_lst ::= IDENTIFIER PAREN_L sort_lst * PAREN_R
 
                        PAREN_R shift  526
-                         COMMA shift  143
+                         COMMA shift  142
 
 State 371:
           sort_lst ::= sort_lst * COMMA sort
           constant_dcl_lst ::= constant_dcl_lst COMMA IDENTIFIER PAREN_L sort_lst * PAREN_R
 
                        PAREN_R shift  527
-                         COMMA shift  143
+                         COMMA shift  142
 
 State 372:
           sort_lst ::= sort_lst * COMMA sort
           constant_bnd ::= constant_dcl_lst DBL_COLON attrib_spec OF IDENTIFIER PAREN_L sort_lst * PAREN_R
 
                        PAREN_R shift  540
-                         COMMA shift  143
+                         COMMA shift  142
 
 State 373:
     (230) sort ::= sort_id_nr *
@@ -14348,7 +14255,7 @@ State 374:
           constant_dcl_lst ::= constant_dcl_lst * COMMA IDENTIFIER
           constant_dcl_lst ::= constant_dcl_lst * COMMA IDENTIFIER PAREN_L sort_lst PAREN_R
 
-                     DBL_COLON shift  112
+                     DBL_COLON shift  111
                          COMMA shift  414
 
 State 375:
@@ -14392,7 +14299,7 @@ State 380:
           term_no_const_lst ::= term_no_const_lst * COMMA term_no_const
 
                        PAREN_R shift  632
-                         COMMA shift  136
+                         COMMA shift  135
 
 State 381:
           card_var_lst ::= card_var_lst_inner * PIPE
@@ -14406,33 +14313,33 @@ State 382:
           term_lst ::= term_lst * COMMA term
 
                        PAREN_R shift  669
-                         COMMA shift  107
+                         COMMA shift  106
 
 State 383:
           lua ::= AT_IDENTIFIER PAREN_L term_lst * PAREN_R
           term_lst ::= term_lst * COMMA term
 
                        PAREN_R shift  670
-                         COMMA shift  107
+                         COMMA shift  106
 
 State 384:
           object ::= OBJECT_ID PAREN_L term_lst * PAREN_R
           term_lst ::= term_lst * COMMA term
 
                        PAREN_R shift  674
-                         COMMA shift  107
+                         COMMA shift  106
 
 State 385:
           constant ::= CONSTANT_ID PAREN_L term_lst * PAREN_R
           term_lst ::= term_lst * COMMA term
 
                        PAREN_R shift  675
-                         COMMA shift  107
+                         COMMA shift  106
 
 State 386:
           law_observed ::= OBSERVED atomic_formula * AT term_no_const PERIOD
 
-                            AT shift  113
+                            AT shift  112
 
 State 387:
           law_rigid ::= RIGID constant clause_where * PERIOD
@@ -14480,7 +14387,7 @@ State 395:
                         PERIOD shift  460
 
 State 396:
-          law_pcaused ::= POSSIBLY_CAUSED head_formula clause_if clause_ifcons clause_after clause_unless clause_where * PERIOD
+          law_pcaused ::= POSSIBLY_CAUSED atomic_formula clause_if clause_ifcons clause_after clause_unless clause_where * PERIOD
 
                         PERIOD shift  461
 
@@ -14510,7 +14417,7 @@ State 401:
           query_maxstep_decl ::= MAXSTEP * DBL_COLON INTEGER
           query_maxstep_decl ::= MAXSTEP * DBL_COLON num_range
 
-                     DBL_COLON shift  155
+                     DBL_COLON shift  154
                      {default} reduce 60
 
 State 402:
@@ -14578,21 +14485,21 @@ State 411:
     (271) object_spec ::= IDENTIFIER *
           object_spec ::= IDENTIFIER * PAREN_L sort_lst PAREN_R
 
-                       PAREN_L shift  137
+                       PAREN_L shift  136
                      {default} reduce 271
 
 State 412:
     (248) constant_dcl_lst ::= IDENTIFIER *
           constant_dcl_lst ::= IDENTIFIER * PAREN_L sort_lst PAREN_R
 
-                       PAREN_L shift  138
+                       PAREN_L shift  137
                      {default} reduce 248
 
 State 413:
     (250) constant_dcl_lst ::= constant_dcl_lst COMMA IDENTIFIER *
           constant_dcl_lst ::= constant_dcl_lst COMMA IDENTIFIER * PAREN_L sort_lst PAREN_R
 
-                       PAREN_L shift  139
+                       PAREN_L shift  138
                      {default} reduce 250
 
 State 414:
@@ -14610,14 +14517,14 @@ State 416:
     (263) attrib_spec ::= ATTRIBUTE *
           attrib_spec ::= ATTRIBUTE * PAREN_L sort PAREN_R
 
-                       PAREN_L shift  142
+                       PAREN_L shift  141
                      {default} reduce 263
 
 State 417:
     (246) constant_bnd ::= constant_dcl_lst DBL_COLON attrib_spec OF IDENTIFIER *
           constant_bnd ::= constant_dcl_lst DBL_COLON attrib_spec OF IDENTIFIER * PAREN_L sort_lst PAREN_R
 
-                       PAREN_L shift  140
+                       PAREN_L shift  139
                      {default} reduce 246
 
 State 418:
@@ -14641,7 +14548,7 @@ State 421:
           constant_bnd ::= constant_dcl_lst DBL_COLON constant_dcl_type * PAREN_L sort PAREN_R
     (245) constant_bnd ::= constant_dcl_lst DBL_COLON constant_dcl_type *
 
-                       PAREN_L shift  144
+                       PAREN_L shift  143
                      {default} reduce 245
 
 State 422:
@@ -14687,7 +14594,7 @@ State 428:
 State 429:
           law_increments ::= atomic_formula INCREMENTS constant * BY term clause_if clause_unless clause_where PERIOD
 
-                            BY shift  55
+                            BY shift  54
 
 State 430:
           law_causes ::= atomic_formula CAUSES head_formula clause_if clause_unless clause_where * PERIOD
@@ -14703,7 +14610,7 @@ State 431:
           formula_no_const ::= formula_no_const * IMPL formula_no_const
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
 
-                           AMP shift  46
+                           AMP shift  45
                      {default} reduce 165
 
 State 432:
@@ -14715,14 +14622,14 @@ State 432:
           formula_no_const ::= formula_no_const * IMPL formula_no_const
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
 
-                           AMP shift  46
+                           AMP shift  45
                      {default} reduce 164
 
 State 433:
     (156) atomic_formula ::= constant *
           atomic_formula ::= constant * EQ term
 
-                            EQ shift  69
+                            EQ shift  68
                      {default} reduce 156
 
 State 434:
@@ -14753,54 +14660,54 @@ State 436:
           formula_smpl_card ::= CBRACKET_L card_var_lst atomic_formula_one_const * CBRACKET_R
           formula_smpl_card ::= CBRACKET_L card_var_lst atomic_formula_one_const * CBRACKET_R term
 
-                    CBRACKET_R shift  60
+                    CBRACKET_R shift  59
 
 State 437:
           formula_smpl_card ::= term_strong CBRACKET_L card_var_lst atomic_formula_one_const * CBRACKET_R
           formula_smpl_card ::= term_strong CBRACKET_L card_var_lst atomic_formula_one_const * CBRACKET_R term
 
-                    CBRACKET_R shift  61
+                    CBRACKET_R shift  60
 
 State 438:
     (179) atomic_formula_one_const ::= constant_one_const *
           atomic_formula_one_const ::= constant_one_const * EQ term_no_const
 
-                            EQ shift  127
+                            EQ shift  126
                      {default} reduce 179
 
 State 439:
           constant_one_const ::= CONSTANT_ID * PAREN_L term_no_const_lst PAREN_R
      (37) constant_one_const ::= CONSTANT_ID *
 
-                       PAREN_L shift  111
+                       PAREN_L shift  110
                      {default} reduce 37
 
 State 440:
           undeclared ::= IDENTIFIER * PAREN_L term_lst PAREN_R
      (33) undeclared ::= IDENTIFIER *
 
-                       PAREN_L shift  51
+                       PAREN_L shift  50
                      {default} reduce 33
 
 State 441:
           lua ::= AT_IDENTIFIER * PAREN_L term_lst PAREN_R
      (31) lua ::= AT_IDENTIFIER *
 
-                       PAREN_L shift  52
+                       PAREN_L shift  51
                      {default} reduce 31
 
 State 442:
           object ::= OBJECT_ID * PAREN_L term_lst PAREN_R
      (27) object_nullary ::= OBJECT_ID *
 
-                       PAREN_L shift  53
+                       PAREN_L shift  52
                      {default} reduce 27
 
 State 443:
           constant ::= CONSTANT_ID * PAREN_L term_lst PAREN_R
      (24) constant ::= CONSTANT_ID *
 
-                       PAREN_L shift  54
+                       PAREN_L shift  53
                      {default} reduce 24
 
 State 444:
@@ -14889,7 +14796,7 @@ State 460:
                      {default} reduce 345
 
 State 461:
-    (340) law_pcaused ::= POSSIBLY_CAUSED head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD *
+    (340) law_pcaused ::= POSSIBLY_CAUSED atomic_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD *
 
                      {default} reduce 340
 

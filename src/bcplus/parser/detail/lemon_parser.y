@@ -2431,7 +2431,7 @@ law_caused(law)			::= CAUSED(kw) head_formula(head) clause_if(ifbody) clause_ifc
 																																														unless, where, p, Language::Feature::LAW_CAUSED_S, 
 																																															Language::Feature::LAW_CAUSED_D, CausedLaw); }
 
-law_pcaused(law) 		::= POSSIBLY_CAUSED(kw) head_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).	{ LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, 
+law_pcaused(law) 		::= POSSIBLY_CAUSED(kw) atomic_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).	{ LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, 
 																																														unless, where, p, Language::Feature::LAW_PCAUSED_S, 
 																																															Language::Feature::LAW_PCAUSED_D, PossiblyCausedLaw); }
 
