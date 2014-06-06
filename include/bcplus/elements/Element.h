@@ -3,12 +3,15 @@
 #include <ostream>
 #include <string>
 #include <sstream>
+#include <set>
 
 #include "babb/utils/memory.h"
 
 #include "bcplus/DomainType.h"
 #include "bcplus/Location.h"
 
+#include "bcplus/symbols/Symbol.h"
+#include "bcplus/symbols/ConstantSymbol.h"
 
 namespace bcplus {
 namespace elements {
@@ -25,15 +28,17 @@ public:
 	/// Container of enumeration of possible types
 	struct Type {
 		enum type {
-			STATEMENT,
 			FORMULA,
 			TERM,
-			MACRO
+			MACRO			///< NOTE: Only present prior to macro expansion
 		};
+
+
 	};
 
 
-
+	/// A set oc constant symbols
+	typedef ReferencedSet<babb::utils::ref_ptr<const symbols::ConstantSymbol> >::type ConstantSet;
 
 private:
 	/****************************************************************************/
@@ -51,16 +56,24 @@ private:
 	Location _end;
 
 
+	/// A set of constant symbols occuring within the element
+	babb::utils::ref_ptr<const ConstantSet> _constants;
+
+	/// A type mask of constant symbol types occuring within the element
+	int _cmask;
+
 public:
 	/****************************************************************************/
 	/* Constructor / Destructor */
 	/****************************************************************************/
 	/// Full constructor
 	/// @param type The type of element this is
+	/// @param The set of constants ocurring within the element.
+	/// @param A mask of constant types occurring within the element.
 	/// @param begin The beginning location of this element
 	/// @param end The ending location of this element
 	/// @param parens Whether the element is surrounded by parentheses
-	Element(Type::type type, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+	Element(Type::type type, ConstantSet const* constants, int cmask, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
 	/// Destructor stub
 	virtual ~Element();
@@ -86,6 +99,14 @@ public:
 
 	/// Helper function to output a string representing this element.
 	inline std::string str() const						{ std::stringstream out; output(out); return out.str(); }
+	
+	/// Get the mask of constant types occurring within the element
+	inline int cmask() const							{ return _cmask; }
+
+	/// Iterate through the list of constants occurring within the element
+	inline ConstantSet const* constants() const							{ return _constants; }
+	inline ConstantSet::const_iterator beginConstants() const			{ return _constants->begin(); }
+	inline ConstantSet::const_iterator endConstants() const				{ return _constants->end(); }
 
 	/// Does a deep copy of the element
 	virtual Element* copy() const = 0;
@@ -96,6 +117,21 @@ public:
 	
 	/// Get a description of the domain this element ranges over.
 	virtual DomainType::type domainType() const = 0;
+
+
+protected:
+
+	/// Initializes a new constant set as the union of the two constant sets provided
+	static ConstantSet* newConstSet(Element const* a = NULL, Element const* b = NULL);
+
+	/// Initializes a new constant set and the provided symbol if it's a constant symbol.
+	static ConstantSet* newConstSet(symbols::Symbol const* sym);
+
+	/// Adds the constants from an element to the provided set
+	static ConstantSet* insertConstants(ConstantSet* dest, Element const* src = NULL);
+
+
+
 };
 
 }}

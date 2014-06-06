@@ -5,15 +5,23 @@
 #include "bcplus/Location.h"
 #include "bcplus/elements/Element.h"
 #include "bcplus/elements/detail/IdentifierElement.h"
+#include "bcplus/symbols/ConstantSymbol.h"
+
 
 namespace u = babb::utils;
+namespace sy = bcplus::symbols;
 
 namespace bcplus {
 namespace elements {
 namespace detail {
 
 template <typename BaseType, int type, typename SymbolType>
-IdentifierElement_bare<BaseType, type, SymbolType>::IdentifierElement_bare(SymbolType const* symbol, Location const& begin, Location const& end, bool parens) : BaseType((typename BaseType::Type::type)type, begin, end, parens), _sym(symbol) {
+IdentifierElement_bare<BaseType, type, SymbolType>::IdentifierElement_bare(SymbolType const* symbol, Location const& begin, Location const& end, bool parens) 
+	: BaseType(
+		(typename BaseType::Type::type)type, 
+		BaseType::newConstSet(symbol), 
+		(symbol->type() == sy::Symbol::Type::CONSTANT ? ((sy::ConstantSymbol const*)symbol)->constType() : 0),
+		begin, end, parens), _sym(symbol) {
 	/* Intentionally left blank */
 }
 
@@ -24,7 +32,8 @@ IdentifierElement_bare<BaseType, type, SymbolType>::~IdentifierElement_bare() {
 
 template <typename BaseType, int type, typename SymbolType>
 Element* IdentifierElement_bare<BaseType, type, SymbolType>::copy() const {
-	return new IdentifierElement_bare<BaseType, type, SymbolType>(symbol(), ((BaseType const*)this)->beginLoc(), ((BaseType const*)this)->endLoc(), ((BaseType const*)this)->parens());
+	BaseType const* bt = (BaseType const*)this;
+	return new IdentifierElement_bare<BaseType, type, SymbolType>(symbol(), bt->beginLoc(), bt->endLoc(), bt->parens());
 }
 
 template <typename BaseType, int type, typename SymbolType>

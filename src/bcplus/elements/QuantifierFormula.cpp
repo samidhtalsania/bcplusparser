@@ -13,7 +13,7 @@ QuantifierFormula::QuantifierFormula(
 	Location const& begin,
 	Location const& end,
 	bool parens) 
-	: Formula(Formula::Type::QUANTIFIER, begin, end, parens), _quants(quants), _sub(subformula)
+	: Formula(Formula::Type::QUANTIFIER, subformula->constants(), subformula->cmask(), begin, end, parens), _quants(quants), _sub(subformula)
 {
 	/* Intentionally left blank */
 }

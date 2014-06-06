@@ -11,7 +11,7 @@ namespace detail {
 
 template <typename BaseType, int t, typename Op, typename toString, typename dt>
 NullaryElement<BaseType, t, Op, toString, dt>::NullaryElement(typename Op::type const& op, Location const& begin, Location const& end, bool parens) 
-	: BaseType((typename BaseType::Type::type)t, begin, end, parens), _op(op) {
+	: BaseType((typename BaseType::Type::type)t, BaseType::newConstSet(), 0, begin, end, parens), _op(op) {
 	/* Intentionally left blank */
 }
 

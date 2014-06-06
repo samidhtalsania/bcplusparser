@@ -13,7 +13,7 @@ namespace elements {
 namespace detail {
 
 template <typename BaseType, int type>
-AnonymousElement_bare<BaseType, type>::AnonymousElement_bare(ReferencedString const* base, Location const& begin, Location const& end, bool parens) : BaseType((typename BaseType::Type::type)type, begin, end, parens), _base(base) {
+AnonymousElement_bare<BaseType, type>::AnonymousElement_bare(ReferencedString const* base, Location const& begin, Location const& end, bool parens) : BaseType((typename BaseType::Type::type)type, BaseType::newConstSet(), 0, begin, end, parens), _base(base) {
 	/* Intentionally left blank */
 }
 
@@ -57,7 +57,9 @@ Element* AnonymousElement<BaseType, type, ArgType>::copy() const {
 		l->push_back((ArgType*)(*it)->copy());
 	}
 
-	return new AnonymousElement<BaseType, type, ArgType>(AnonymousElement_bare<BaseType, type>::base(), l, ((BaseType const*)this)->beginLoc(), ((BaseType const*)this)->endLoc(), ((BaseType const*)this)->parens());
+	BaseType const* bt = (BaseType const*)this;
+
+	return new AnonymousElement<BaseType, type, ArgType>(AnonymousElement_bare<BaseType, type>::base(), l, bt->beginLoc(), bt->endLoc(), bt->parens());
 }
 
 template <typename BaseType, int type, typename ArgType>
