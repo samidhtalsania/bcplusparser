@@ -48,7 +48,7 @@ Element::ConstantSet* Element::newConstSet(sy::Symbol const* sym) {
 	if (sym->type() == sy::Symbol::Type::CONSTANT) {
 		set->insert((sy::ConstantSymbol const*)sym);
 	}
-	return set;
+	return set.release();
 }
 
 Element::ConstantSet* Element::insertConstants(ConstantSet* dest, Element const* src) {
