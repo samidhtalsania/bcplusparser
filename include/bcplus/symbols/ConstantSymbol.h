@@ -25,18 +25,18 @@ public:
 	/// The different types a constant can be
 	struct Type {
 		enum type {
-			ABACTION,
-			ACTION,
-			ADDITIVEFLUENT,
-			ADDITIVEACTION,
-			ATTRIBUTE,
-			EXTERNALACTION,
-			EXTERNALFLUENT,
-			EXOGENOUSACTION,
-			INERTIALFLUENT,
-			RIGID,
-			SDFLUENT,
-			SIMPLEFLUENT
+			ABACTION 				= 0x0001,
+			ACTION 					= 0x0002,
+			ADDITIVEFLUENT 			= 0x0004,
+			ADDITIVEACTION 			= 0x0008,
+			ATTRIBUTE 				= 0x0010,
+			EXTERNALACTION 			= 0x0020,
+			EXTERNALFLUENT 			= 0x0040,
+			EXOGENOUSACTION			= 0x0080,
+			INERTIALFLUENT			= 0x0100,
+			RIGID					= 0x0200,
+			SDFLUENT				= 0x0400,
+			SIMPLEFLUENT			= 0x0800
 		};
 
 		enum mask {

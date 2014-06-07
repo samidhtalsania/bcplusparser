@@ -77,7 +77,7 @@ std::ostream& Configuration::ostream(Verb::type v) const {
 #endif
 	else return std::cout;
 }
-void Configuration::error(std::string const& err, Location const* loc = NULL) const {
+void Configuration::error(std::string const& err, Location const* loc) const {
 	std::ostream& out = ostream(Verb::ERROR);
 
 	out << "ERROR: ";
