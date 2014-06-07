@@ -35,6 +35,7 @@ char const* Language::Feature::descr(type feature) {
 		case CONST_SDFLUENT:					return "\"sdFluent\" constants";
 
 
+		case FORMULA_CONSTANT_ARGS:				return "constants occurring within atom parameters";
 		case FORMULA_NESTED:             		return "arbitrary nested formulas";
 		case FORMULA_CARDINALITY_BODY:			return "cardinality formulas in the body of a law";
 		case FORMULA_CARDINALITY_HEAD:			return "cardinality formulas in the head of a law";

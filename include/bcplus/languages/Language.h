@@ -42,6 +42,7 @@ public:
 
 
 			FORMULA_NESTED,				///< nested formulas
+			FORMULA_CONSTANT_ARGS,		///< Constants ocurring within arguments of an atom.
 			FORMULA_CARDINALITY_BODY,	///< Cardinality rules in the body of laws
 			FORMULA_CARDINALITY_HEAD,	///< Cardinality (choice) rules in the head of laws
 			FORMULA_QUANTIFIER,			///< Quantifier formulas in the body of laws

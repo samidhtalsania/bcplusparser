@@ -89,6 +89,7 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::CODE_LUA_GR: 
 			return true;
 
+		case Feature::FORMULA_CONSTANT_ARGS:
 		case Feature::DECL_MAXAFVALUE:            
 		case Feature::MAXAFVALUE:
 		case Feature::LAW_CAUSED_S:               

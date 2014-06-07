@@ -332,16 +332,33 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 		ref_ptr<const Token> rparen_ptr = rparen;																			\
 		size_t arity = (args_ptr ? args_ptr->size() : 0);																	\
 																															\
-		Symbol const* sym = parser->symtab()->resolve(symtype, *id_ptr->str(), arity);										\
-		if (sym && sym->type() == symtype) {																				\
-			elem = new class((symclass*)sym, args, id_ptr->beginLoc(), (arity ? rparen_ptr->endLoc() : id_ptr->endLoc()));	\
-		} else {																											\
-			/* The preprocessor indicated this was a constant and it's not... oops. */										\
-			parser->_parse_error(std::string("INTERNAL ERROR: Could not locate symbol table entry for ")					\
-				+ Symbol::Type::cstr(symtype) + " \"" + Symbol::genName(*id_ptr->str(), arity)		 						\
-				+ "\".", &id_ptr->beginLoc());																				\
-			YYERROR;																										\
-		}	
+		/* Check to see if we have constants in any of the terms */															\
+		bool good = true;																									\
+		if (!parser->lang()->support(Language::Feature::FORMULA_CONSTANT_ARGS) && arity) {									\
+			int cargs = 0;																									\
+			/*BOOST_FOREACH(Element const* elem, *args_ptr) { */															\
+			for (TermList::const_iterator it = args_ptr->begin(); it != args_ptr->end(); it++) {							\
+				cargs |=(*it)->cmask();																						\
+			}																												\
+			if (cargs) {																									\
+				parser->_feature_error(Language::Feature::FORMULA_CONSTANT_ARGS, &id->beginLoc());							\
+				YYERROR;																									\
+				good = false;																								\
+			}																												\
+		}																													\
+																															\
+		if (good) {																											\
+			Symbol const* sym = parser->symtab()->resolve(symtype, *id_ptr->str(), arity);									\
+			if (sym && sym->type() == symtype) {																			\
+				elem = new class((symclass*)sym, args, id_ptr->beginLoc(), (arity ? rparen_ptr->endLoc() : id_ptr->endLoc()));	\
+			} else {																										\
+				/* The preprocessor indicated this was a constant and it's not... oops. */									\
+				parser->_parse_error(std::string("INTERNAL ERROR: Could not locate symbol table entry for ")				\
+					+ Symbol::Type::cstr(symtype) + " \"" + Symbol::genName(*id_ptr->str(), arity)		 					\
+					+ "\".", &id_ptr->beginLoc());																			\
+				YYERROR;																									\
+			}																												\
+		}
 	
 	#define BASE_ELEM_BARE_DEF(elem, id, symtype, class, symclass)															\
 		elem = NULL;																										\
