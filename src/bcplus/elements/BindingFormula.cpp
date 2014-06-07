@@ -8,7 +8,7 @@ namespace bcplus {
 namespace elements {
 
 BindingFormula::BindingFormula(Term* step, Formula* formula, Location const& begin, Location const& end, bool p)
-	: Formula(Formula::Type::ATOMIC, newConstSet(step, formula), step->cmask() | formula->cmask(), begin, end, p), _step(step), _formula(formula) {
+	: Formula(Formula::Type::BINDING, newConstSet(step, formula), step->cmask() | formula->cmask(), begin, end, p), _step(step), _formula(formula) {
 	/* Intentionally left blank */
 }
 

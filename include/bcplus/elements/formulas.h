@@ -19,7 +19,8 @@ struct FormulaType {
 		QUANTIFIER,
 		ATOMIC,
 		NULLARY,
-		CARDINALITY
+		CARDINALITY,
+		BINDING
 	};
 };
 
