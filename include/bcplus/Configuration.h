@@ -12,6 +12,8 @@
 #include "babb/utils/memory.h"
 #include "memwrappers.h"
 
+#include "bcplus/Location.h"
+
 namespace bcplus {
 
 
@@ -154,6 +156,12 @@ public:
 	/// Get the output stream for the provided verbosity level
 	/// This will return a null-sink, std::cerr, or std::cout.
 	std::ostream& ostream(Verb::type v) const;
+
+	/// Output a formatted error
+	/// @param err The error message to output
+	/// @param loc The locatio nthe error occurred (if any)
+	void error(std::string const& err, Location const* loc = NULL);
+
 
 	// --------------------------------------------------------------------------
 	

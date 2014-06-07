@@ -12,6 +12,7 @@
 #include "babb/utils/memory.h"
 #include "babb/utils/utils.h"
 
+#include "bcplus/Location.h"
 #include "bcplus/Configuration.h"
 
 namespace ios = boost::iostreams;
@@ -75,6 +76,13 @@ std::ostream& Configuration::ostream(Verb::type v) const {
 	else if (v > Verb::STD) return NULLSTREAM;
 #endif
 	else return std::cout;
+}
+void Configuration::error(std::string const& err, Location const* loc = NULL) {
+	std::ostream& out = ostream(Verb::ERROR);
+
+	out << "ERROR: ";
+	if (loc) out << *loc << ": ";
+	out << err << std::endl;
 }
 
 int Configuration::parseOption(char const* opt) {
