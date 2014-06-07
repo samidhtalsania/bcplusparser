@@ -160,7 +160,7 @@ public:
 	/// Output a formatted error
 	/// @param err The error message to output
 	/// @param loc The locatio nthe error occurred (if any)
-	void error(std::string const& err, Location const* loc = NULL);
+	void error(std::string const& err, Location const* loc = NULL) const;
 
 
 	// --------------------------------------------------------------------------
