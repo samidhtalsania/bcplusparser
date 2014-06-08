@@ -201,11 +201,11 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												  goto re2c_finish;	
 												}
 
-		<NORMAL> INTEGER						{ ret = T_INTEGER;						goto re2c_finish;					}
-		<NORMAL> IDENTIFIER						{ ret = T_IDENTIFIER;					goto re2c_finish;					}
-		<NORMAL> "#" IDENTIFIER					{ ret = T_POUND_IDENTIFIER;				goto re2c_finish;					}
-		<NORMAL> "#" INTEGER					{ ret = T_POUND_INTEGER;				goto re2c_finish;					}
-		<NORMAL> "@" IDENTIFIER					{ ret = T_AT_IDENTIFIER;				goto re2c_finish;					}
+		<NORMAL> INTEGER						{ ret = T_INTEGER;								goto re2c_finish;				}
+		<NORMAL> IDENTIFIER						{ ret = T_IDENTIFIER;							goto re2c_finish;				}
+		<NORMAL> "#" IDENTIFIER					{ ret = T_POUND_IDENTIFIER;						goto re2c_finish;				}
+		<NORMAL> "#" INTEGER					{ ret = T_POUND_INTEGER;						goto re2c_finish;				}
+		<NORMAL> "@" IDENTIFIER					{ ret = T_AT_IDENTIFIER;		preskip = 1;	goto re2c_finish;				}
 
 		<DBL_STRING> NL							{ source->newline();				 			goto yyc_DBL_STRING; 				}
 		<DBL_STRING> [\\]["]					{ 												goto yyc_DBL_STRING; 				}
