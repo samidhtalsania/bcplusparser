@@ -19,7 +19,7 @@ CardinalityFormula::CardinalityFormula(VariableList* vars, Formula* formula, Ter
 			formula->cmask() | (min ? min->cmask() : 0) | (max ? max->cmask() : 0), 
 			begin, end, parens), 
 		_min(min), _max(max), _vars(vars), _formula(formula) {
-	if (vars) _vars = new VariableList();
+	if (!vars) _vars = new VariableList();
 	/* Intentionally left blank */
 }
 
