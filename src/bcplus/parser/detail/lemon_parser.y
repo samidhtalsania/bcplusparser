@@ -2472,8 +2472,8 @@ law_always(law)			::= ALWAYS(kw) formula(body) clause_after(after) clause_unless
 																																															Language::Feature::LAW_ALWAYS_D, AlwaysLaw); }
 
 law_constraint(law)		::= CONSTRAINT(kw) formula(body) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).													{ LAW_CONSTRAINT_FORM(law, kw, body, after, unless, where, p,
-																																														Language::Feature::LAW_ALWAYS_S, 
-																																															Language::Feature::LAW_ALWAYS_D, AlwaysLaw); }
+																																														Language::Feature::LAW_CONSTRAINT_S, 
+																																															Language::Feature::LAW_CONSTRAINT_D, ConstraintLaw); }
 
 law_impossible(law) 	::= IMPOSSIBLE(kw) formula(body) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).													{ LAW_CONSTRAINT_FORM(law, kw, body, after, unless, where, p,
 																																														Language::Feature::LAW_IMPOSSIBLE_S, 
