@@ -7,7 +7,7 @@ namespace detail {
 
 template <typename BaseType, int type, typename Op, typename Sub, typename preOpString, typename postOpString, typename dt>
 UnaryElement<BaseType,type,Op,Sub,preOpString,postOpString,dt>::UnaryElement(typename Op::type const& op, Sub const* subformula, Location const& begin, Location const& end, bool parens)
-	: BaseType((typename BaseType::Type::type)type, subformula->constants(), subformula->cmask(), begin, end, parens), _op(op), _sub(subformula) {
+	: BaseType((typename BaseType::Type::type)type, subformula->constants(), subformula->freeVariables(), subformula->cmask(), begin, end, parens), _op(op), _sub(subformula) {
 	/* Intentionally left blank */
 }
 

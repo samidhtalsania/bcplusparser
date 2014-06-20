@@ -7,7 +7,13 @@ namespace detail {
 
 template <typename BaseType, int type, typename Op, typename LHS, typename RHS, typename opString, typename dt>
 BinaryElement<BaseType, type, Op, LHS, RHS, opString, dt>::BinaryElement(typename Op::type const& op, LHS const* left, RHS const* right, Location const& begin, Location const& end, bool parens)
-	: BaseType((typename BaseType::Type::type)type, BaseType::newConstSet(left, right), ((LHS const*)left)->cmask() | ((RHS const*)right)->cmask(), begin, end, parens), _op(op), _left(left), _right(right) {
+	: BaseType(
+		(typename BaseType::Type::type)type, 
+		BaseType::newConstSet(left, right), 
+		BaseType::newVarSet(left, right), 
+		((LHS const*)left)->cmask() | ((RHS const*)right)->cmask(), 
+		begin, end, parens), 
+		_op(op), _left(left), _right(right) {
 	/* Intentionally left blank */
 }
 

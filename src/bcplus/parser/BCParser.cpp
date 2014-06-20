@@ -70,7 +70,7 @@ BCParser::ParseType BCParser::parse() {
 
 	
 	// output any comments
-	if (stmt = makeCommentStmt()) return ParseType(Status::OK, stmt);
+	//if (stmt = makeCommentStmt()) return ParseType(Status::OK, stmt);
 
 	// output existing statement
 	if (_stmt) {

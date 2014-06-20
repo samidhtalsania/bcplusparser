@@ -1,6 +1,8 @@
 #include <ostream>
 #include <boost/foreach.hpp>
 
+#include "babb/utils/memory.h"
+
 #include "bcplus/Location.h"
 #include "bcplus/DomainType.h"
 #include "bcplus/symbols/VariableSymbol.h"
@@ -9,6 +11,8 @@
 #include "bcplus/elements/terms.h"
 #include "bcplus/elements/CardinalityFormula.h"
 
+namespace u = babb::utils;
+
 namespace bcplus {
 namespace elements {
 
@@ -16,11 +20,21 @@ namespace elements {
 CardinalityFormula::CardinalityFormula(VariableList* vars, Formula* formula, Term* min, Term* max, Location const& begin, Location const& end, bool parens)
 	: Formula(Formula::Type::CARDINALITY, 
 			insertConstants(newConstSet(formula, min), max), 
+			NULL,
 			formula->cmask() | (min ? min->cmask() : 0) | (max ? max->cmask() : 0), 
 			begin, end, parens), 
 		_min(min), _max(max), _vars(vars), _formula(formula) {
 	if (!vars) _vars = new VariableList();
-	/* Intentionally left blank */
+
+	u::ref_ptr<VariableSet> v = newVarSet(formula);
+
+	BOOST_FOREACH(symbols::VariableSymbol const* var, *this) {
+		v->erase(var);
+	}
+
+	if (min) v->insert(min->beginFreeVariables(), min->endFreeVariables());
+	if (max) v->insert(max->beginFreeVariables(), max->endFreeVariables());
+	freeVariables(v);
 }
 
 CardinalityFormula::~CardinalityFormula() {

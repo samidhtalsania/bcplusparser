@@ -43,11 +43,12 @@ public:
 	/// Full constructor
 	/// @param type The type of element this is
 	/// @param constants A set of constants occuring within the element
+	/// @param variables A set of variables occuring within the element
 	/// @param cmask A mask of constant types occurring within the element
 	/// @param begin The beginning location of this element
 	/// @param end The ending location of this element
 	/// @param parens Whether the element is surrounded by parentheses
-	ElementClass(typename Type::type type, ConstantSet const* constants, int cmask, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+	ElementClass(typename Type::type type, ConstantSet const* constants, VariableSet const* variables, int cmask, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
 	/// Destructor stub
 	virtual ~ElementClass();

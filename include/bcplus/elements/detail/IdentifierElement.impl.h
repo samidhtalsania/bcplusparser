@@ -20,6 +20,7 @@ IdentifierElement_bare<BaseType, type, SymbolType>::IdentifierElement_bare(Symbo
 	: BaseType(
 		(typename BaseType::Type::type)type, 
 		BaseType::newConstSet(symbol), 
+		BaseType::newVarSet(symbol),
 		(symbol->type() == sy::Symbol::Type::CONSTANT ? ((sy::ConstantSymbol const*)symbol)->constType() : 0),
 		begin, end, parens), _sym(symbol) {
 	/* Intentionally left blank */

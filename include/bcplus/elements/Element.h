@@ -12,6 +12,7 @@
 
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/ConstantSymbol.h"
+#include "bcplus/symbols/VariableSymbol.h"
 
 namespace bcplus {
 namespace elements {
@@ -40,6 +41,9 @@ public:
 	/// A set oc constant symbols
 	typedef ReferencedSet<babb::utils::ref_ptr<const symbols::ConstantSymbol> >::type ConstantSet;
 
+	/// A set of variable symbols
+	typedef ReferencedSet<babb::utils::ref_ptr<const symbols::VariableSymbol> >::type VariableSet;
+
 private:
 	/****************************************************************************/
 	/* Private Members */
@@ -59,6 +63,10 @@ private:
 	/// A set of constant symbols occuring within the element
 	babb::utils::ref_ptr<const ConstantSet> _constants;
 
+
+	/// A set of free variable symbols occuring within the element
+	babb::utils::ref_ptr<const VariableSet> _variables;
+
 	/// A type mask of constant symbol types occuring within the element
 	int _cmask;
 
@@ -68,12 +76,13 @@ public:
 	/****************************************************************************/
 	/// Full constructor
 	/// @param type The type of element this is
-	/// @param The set of constants ocurring within the element.
+	/// @param The set of constants occurring within the element.
+	/// @param The set of variables occurring within the element.
 	/// @param A mask of constant types occurring within the element.
 	/// @param begin The beginning location of this element
 	/// @param end The ending location of this element
 	/// @param parens Whether the element is surrounded by parentheses
-	Element(Type::type type, ConstantSet const* constants, int cmask, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
+	Element(Type::type type, ConstantSet const* constants, VariableSet const* variables, int cmask, Location const& begin = Location(NULL, 0, 0), Location const& end = Location(NULL, 0, 0), bool parens = false);
 
 	/// Destructor stub
 	virtual ~Element();
@@ -108,6 +117,11 @@ public:
 	inline ConstantSet::const_iterator beginConstants() const			{ return _constants->begin(); }
 	inline ConstantSet::const_iterator endConstants() const				{ return _constants->end(); }
 
+	/// Iterate through the list of FREE variables occurring within the element
+	inline VariableSet const* freeVariables() const						{ return _variables; }
+	inline VariableSet::const_iterator beginFreeVariables() const		{ return _variables->begin(); }
+	inline VariableSet::const_iterator endFreeVariables() const			{ return _variables->end(); }
+
 	/// Does a deep copy of the element
 	virtual Element* copy() const = 0;
 
@@ -119,17 +133,31 @@ public:
 	virtual DomainType::type domainType() const = 0;
 
 
+
+
+
 protected:
 
 	/// Initializes a new constant set as the union of the two constant sets provided
 	static ConstantSet* newConstSet(Element const* a = NULL, Element const* b = NULL);
 
-	/// Initializes a new constant set and the provided symbol if it's a constant symbol.
+	/// Initializes a new constant set and adds the provided symbol if it's a constant symbol.
 	static ConstantSet* newConstSet(symbols::Symbol const* sym);
-
+	
 	/// Adds the constants from an element to the provided set
 	static ConstantSet* insertConstants(ConstantSet* dest, Element const* src = NULL);
 
+	/// Iinitializes a new variable set as the union of the two variable sets provided
+	static VariableSet* newVarSet(Element const* a = NULL, Element const* b = NULL);
+
+	/// Initializes a new constant set and adds the provided symbol if it's a variable symbol.
+	static VariableSet* newVarSet(symbols::Symbol const* sym);
+
+	/// Adds the variables from an element to the provided set.
+	static VariableSet* insertVariables(VariableSet* dest, Element const* src = NULL);
+
+	/// setter for the set of free variables (for use in constructors)
+	inline void freeVariables(VariableSet const* set)					{ _variables = set; }
 
 
 };

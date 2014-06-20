@@ -7,8 +7,8 @@ namespace elements  {
 namespace detail {
 
 template<int t, typename Subtypes>
-ElementClass<t, Subtypes>::ElementClass(typename Type::type subtype, ConstantSet const* constants, int cmask, Location const& begin, Location const& end, bool parens)
-	: Element((Element::Type::type)t, constants, cmask, begin, end, parens), _subtype(subtype) {
+ElementClass<t, Subtypes>::ElementClass(typename Type::type subtype, ConstantSet const* constants, VariableSet const* variables, int cmask, Location const& begin, Location const& end, bool parens)
+	: Element((Element::Type::type)t, constants, variables, cmask, begin, end, parens), _subtype(subtype) {
 	/* Intentionally left blank */
 }
 

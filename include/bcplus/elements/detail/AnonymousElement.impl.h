@@ -13,7 +13,8 @@ namespace elements {
 namespace detail {
 
 template <typename BaseType, int type>
-AnonymousElement_bare<BaseType, type>::AnonymousElement_bare(ReferencedString const* base, Location const& begin, Location const& end, bool parens) : BaseType((typename BaseType::Type::type)type, BaseType::newConstSet(), 0, begin, end, parens), _base(base) {
+AnonymousElement_bare<BaseType, type>::AnonymousElement_bare(ReferencedString const* base, Location const& begin, Location const& end, bool parens) 
+	: BaseType((typename BaseType::Type::type)type, BaseType::newConstSet(), BaseType::newVarSet(), 0, begin, end, parens), _base(base) {
 	/* Intentionally left blank */
 }
 

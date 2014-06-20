@@ -1,8 +1,12 @@
 
+#include "babb/utils/memory.h"
+
 #include "bcplus/Location.h"
 #include "bcplus/DomainType.h"
 #include "bcplus/elements/Element.h"
 #include "bcplus/elements/QuantifierFormula.h"
+
+namespace u = babb::utils;
 
 namespace bcplus {
 namespace elements {
@@ -10,12 +14,16 @@ namespace elements {
 QuantifierFormula::QuantifierFormula(
 	QuantifierList* quants,
 	Formula* subformula,
-	Location const& begin,
-	Location const& end,
+	Location const& beginLoc,
+	Location const& endLoc,
 	bool parens) 
-	: Formula(Formula::Type::QUANTIFIER, subformula->constants(), subformula->cmask(), begin, end, parens), _quants(quants), _sub(subformula)
+	: Formula(Formula::Type::QUANTIFIER, subformula->constants(), NULL, subformula->cmask(), beginLoc, endLoc, parens), _quants(quants), _sub(subformula)
 {
-	/* Intentionally left blank */
+	u::ref_ptr<VariableSet> vars = newVarSet(subformula);
+	for (const_iterator it = begin(); it != end(); it++) {
+		vars->erase(it->second->symbol());
+	}
+	freeVariables(vars);
 }
 
 QuantifierFormula::~QuantifierFormula() {
