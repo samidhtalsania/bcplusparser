@@ -172,8 +172,8 @@ BCParser::ParseType BCParser::parse() {
 	// Figure out exactly why we stopped
 	if (_stat != Status::OK && _stat != Status::END_INPUT) {
 		return ParseType(_stat, NULL);
-	} else if (stmt = makeCommentStmt()) {
-		return ParseType(Status::OK, stmt);
+//	} else if (stmt = makeCommentStmt()) {
+//		return ParseType(Status::OK, stmt);
 	} else {
 		stmt = _stmt;
 		_stmt = NULL;
