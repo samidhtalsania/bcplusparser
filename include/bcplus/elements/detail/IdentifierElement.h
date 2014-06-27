@@ -79,7 +79,7 @@ public:
 	    
 
 	/// Argument iterators
-	typedef typename ArgumentList::iterator iterator;
+	typedef typename ArgumentList::const_iterator iterator;
 	typedef typename ArgumentList::const_iterator const_iterator;
 
 private:
@@ -114,9 +114,7 @@ public:
 	inline size_t arity() const							{ return _args->size(); }
 
 	/// Argument list iterators
-	inline iterator begin() 							{ return _args->begin(); }
 	inline const_iterator begin() const					{ return _args->begin(); }
-	inline iterator end()								{ return _args->end(); }
 	inline const_iterator end() const					{ return _args->end(); }
 
 	// Inherited from element

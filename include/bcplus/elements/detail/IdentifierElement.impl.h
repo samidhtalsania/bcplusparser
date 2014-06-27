@@ -1,5 +1,8 @@
 #pragma once
 
+#include <boost/foreach.hpp>
+#include <boost/type_traits/is_base_of.hpp>
+
 #include "babb/utils/memory.h"
 
 #include "bcplus/Location.h"
@@ -10,6 +13,7 @@
 
 namespace u = babb::utils;
 namespace sy = bcplus::symbols;
+namespace el = bcplus::elements;
 
 namespace bcplus {
 namespace elements {
@@ -50,9 +54,33 @@ DomainType::type IdentifierElement_bare<BaseType, type, SymbolType>::domainType(
 template <typename BaseType, int type, typename SymbolType, typename ArgType>
 IdentifierElement<BaseType, type, SymbolType, ArgType>::IdentifierElement(SymbolType const* symbol, ArgumentList const* args, Location const& begin, Location const& end, bool parens) 
 	: IdentifierElement_bare<BaseType, type, SymbolType>(symbol, begin, end, parens) {
+	
 	if (args) _args = args;
 	else _args = new ArgumentList();
-	/* Intentionally left blank */
+	
+
+	if (boost::is_base_of<el::Element, ArgType>::value) {
+
+			// update list of constants
+			// this is a bit of a hack for efficiency since we know that we just instantiated it
+			typename BaseType::ConstantSet* consts = const_cast<typename BaseType::ConstantSet*>(BaseType::constants());
+
+			BOOST_FOREACH(void const* elem, *this) {
+				BaseType::insertConstants(consts, (el::Element const*)elem);
+			}
+
+			BaseType::constants(consts);
+
+			// update list of free variables
+			// this is a bit of a hack for efficiency since we know that we just instantiated it
+			typename BaseType::VariableSet* vars = const_cast<typename BaseType::VariableSet*>(BaseType::freeVariables());
+
+			BOOST_FOREACH(void const* elem, *this) {
+				BaseType::insertVariables(vars, (el::Element const*)elem);
+			}
+
+			BaseType::freeVariables(vars);
+	}
 }
 
 template <typename BaseType, int type, typename SymbolType, typename ArgType>
@@ -74,6 +102,10 @@ Element* IdentifierElement<BaseType, type, SymbolType, ArgType>::copy() const {
 
 template <typename BaseType, int type, typename SymbolType, typename ArgType>
 void IdentifierElement<BaseType, type, SymbolType, ArgType>::output(std::ostream& out) const {
+
+
+
+
 	IdentifierElement_bare<BaseType, type, SymbolType>::output(out);
 	if (arity() > 0) {
 		out << "(";

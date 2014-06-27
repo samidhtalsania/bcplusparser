@@ -17,7 +17,7 @@ AtomicFormula::~AtomicFormula() {
 }
 
 Element* AtomicFormula::copy() const {
-	return new AtomicFormula((Constant*)c()->copy(), (Term*)v()->copy(), beginLoc(), endLoc(), parens());
+	return new AtomicFormula((Constant const*)c()->copy(), (Term*)v()->copy(), beginLoc(), endLoc(), parens());
 }
 
 void AtomicFormula::output(std::ostream& out) const {

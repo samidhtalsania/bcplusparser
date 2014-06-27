@@ -156,8 +156,13 @@ protected:
 	/// Adds the variables from an element to the provided set.
 	static VariableSet* insertVariables(VariableSet* dest, Element const* src = NULL);
 
+	/// setter for the set of constants
+	inline void constants(ConstantSet const* set)						{ _constants = set; }
+
 	/// setter for the set of free variables (for use in constructors)
 	inline void freeVariables(VariableSet const* set)					{ _variables = set; }
+
+
 
 
 };
