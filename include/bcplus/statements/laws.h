@@ -73,6 +73,16 @@ typedef detail::DynamicValueLawForm<
 	elements::Formula			// where N
 	> IncrementsLaw;
 
+typedef detail::DynamicValueLawForm<
+	Statement::Type::LAW_DECREMENTS,
+	elements::AtomicFormula,	// G
+	elements::Constant,			// increments c
+	elements::Term,				// by V
+	elements::Formula,			// if H
+	elements::AtomicFormula,	// unless M
+	elements::Formula			// where N
+	> DecrementsLaw;
+
 typedef detail::DynamicLawForm<
 	Statement::Type::LAW_MCAUSE,
 	elements::AtomicFormula,	// G

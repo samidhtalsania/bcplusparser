@@ -11,7 +11,7 @@ namespace statements {
 namespace detail {
 
 /// Base law form for basic laws
-template <Statement::Type::type type, typename body_t, typename head_t, typename value_t, typename ifhead_t, typename unless_t, typename where_t>
+template <Statement::Type::type type, typename body_t, typename head_t, typename value_t, typename ifbody_t, typename unless_t, typename where_t>
 class DynamicValueLawForm : public Statement {
 public:
 	/**************************************************************************************/
@@ -21,7 +21,7 @@ public:
 	typedef body_t body_type;
 	typedef head_t head_type;
 	typedef value_t value_type;
-	typedef ifhead_t ifhead_type;
+	typedef ifbody_t ifbody_type;
 	typedef unless_t unless_type;
 	typedef where_t where_type;
 
@@ -42,7 +42,7 @@ private:
 	babb::utils::ref_ptr<const value_t> _value;
 
 	/// 'if' clause
-	babb::utils::ref_ptr<const ifhead_t> _ifhead;
+	babb::utils::ref_ptr<const ifbody_t> _ifbody;
 
 	/// 'unless' clause
 	babb::utils::ref_ptr<const unless_t> _unless;
@@ -54,7 +54,7 @@ public:
 	/**************************************************************************************/
 	/* Constructors / Destructors */
 	/**************************************************************************************/
-	DynamicValueLawForm(body_t const* body, head_t const* head, value_t const* value, ifhead_t const* ifhead, 
+	DynamicValueLawForm(body_t const* body, head_t const* head, value_t const* value, ifbody_t const* ifbody, 
 		unless_t const* unless, where_t const* where,
 		Location const& begin = Location(NULL, 0, 0), Location  
 		const& end = Location(NULL, 0, 0));
@@ -75,7 +75,7 @@ public:
 	inline value_t const* value() const							{ return _value; }
 
 	/// Get the 'if' clause
-	inline ifhead_t const* ifhead() const						{ return _ifhead; }
+	inline ifbody_t const* ifbody() const						{ return _ifbody; }
 
 	/// Get the 'unless' clause
 	inline unless_t const* unless() const						{ return _unless; }

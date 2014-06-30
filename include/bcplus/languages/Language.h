@@ -83,6 +83,7 @@ public:
 
 			LAW_CAUSES,					///< G causes F if H.
 			LAW_INCREMENTS,				///< G increments c by v if H.
+			LAW_DECREMENTS,				///< G decrements c by v if H.
 			LAW_MCAUSE,					///< G may cause F if H.
 
 			LAW_ALWAYS_S,				///< always G

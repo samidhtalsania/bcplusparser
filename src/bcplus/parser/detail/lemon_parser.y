@@ -2302,6 +2302,8 @@ clause_where(new_f) ::= .								{ new_f = NULL; }
 %destructor law_causes				{ DEALLOC($$);									}			
 %type       law_increments			{ Statement*									}			// G increment F by I...
 %destructor law_increments			{ DEALLOC($$);									}			
+%type       law_decrements			{ Statement*									}			// G decrements F by I...
+%destructor law_decrements			{ DEALLOC($$);									}			
 %type       law_mcause				{ Statement*									}			// G may cause F...
 %destructor law_mcause				{ DEALLOC($$);									}			
 %type       law_always				{ Statement*									}			// always G...
@@ -2331,6 +2333,7 @@ stmt_law(stmt) ::= law_pcaused(law).				{stmt = law;}
 stmt_law(stmt) ::= law_impl(law).					{stmt = law;}
 stmt_law(stmt) ::= law_causes(law).					{stmt = law;}
 stmt_law(stmt) ::= law_increments(law).				{stmt = law;}
+stmt_law(stmt) ::= law_decrements(law).				{stmt = law;}
 stmt_law(stmt) ::= law_mcause(law).					{stmt = law;}
 stmt_law(stmt) ::= law_always(law).					{stmt = law;}
 stmt_law(stmt) ::= law_constraint(law).				{stmt = law;}
@@ -2461,6 +2464,9 @@ law_causes(law)			::= atomic_formula(body) CAUSES(kw) head_formula(head) clause_
 
 law_increments(law)		::= atomic_formula(body) INCREMENTS(kw) constant(head) BY term(v) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).					{ LAW_INCREMENTAL_FORM(law, body, kw, head, v, ifbody, unless, where, p,
 																																														Language::Feature::LAW_INCREMENTS, IncrementsLaw); }
+
+law_decrements(law)		::= atomic_formula(body) DECREMENTS(kw) constant(head) BY term(v) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).					{ LAW_INCREMENTAL_FORM(law, body, kw, head, v, ifbody, unless, where, p,
+																																														Language::Feature::LAW_DECREMENTS, DecrementsLaw); }
 
 
 law_mcause(law)			::= atomic_formula(body) MAY_CAUSE(kw) head_formula(head) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).							{ LAW_DYNAMIC_FORM(law, body, kw, head, ifbody, unless, where, p,

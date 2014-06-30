@@ -63,6 +63,7 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::LAW_BASIC_D:                
 		case Feature::LAW_CAUSES:                 
 		case Feature::LAW_INCREMENTS:             
+		case Feature::LAW_DECREMENTS:             
 		case Feature::LAW_MCAUSE:                 
 		case Feature::LAW_ALWAYS_S:               
 		case Feature::LAW_ALWAYS_D:               
