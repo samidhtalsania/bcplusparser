@@ -315,6 +315,8 @@ statement(stmt) ::= stmt_query(q).					{ stmt = q; }
 %destructor term_no_const_lst				{ DEALLOC($$);								}
 %type		term_no_const					{ Term*										}			// A term without constants
 %destructor term_no_const					{ DEALLOC($$);								}
+%type		const_anon						{ Constant*									}			// anonymous (undeclared) base element
+%destructor const_anon						{ DEALLOC($$);								}
 
 base_elem(elem) ::= constant(c).			{ elem = c; }
 base_elem(elem) ::= base_elem_no_const(c).	{ elem = c; }
@@ -325,6 +327,9 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 //base_elem_no_const(elem) ::= undeclared.	{ /* This should never be called*/ elem = NULL; }
 %include {
 	#define BASE_ELEM_DEF(elem, id, lparen, args, rparen, symtype, class, symclass)											\
+		BASE_ELEM_DEF9(elem, id, lparen, args, rparen, symtype, class, symclass, false)
+
+	#define BASE_ELEM_DEF9(elem, id, lparen, args, rparen, symtype, class, symclass, dynamic)								\
 		elem = NULL;																										\
 		ref_ptr<const Token> id_ptr = id;																					\
 		ref_ptr<const Token> lparen_ptr = lparen;																			\
@@ -342,23 +347,65 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 			}																												\
 			if (cargs) {																									\
 				parser->_feature_error(Language::Feature::FORMULA_CONSTANT_ARGS, &id->beginLoc());							\
-				YYERROR;																									\
 				good = false;																								\
 			}																												\
 		}																													\
 																															\
 		if (good) {																											\
 			Symbol const* sym = parser->symtab()->resolve(symtype, *id_ptr->str(), arity);									\
-			if (sym && sym->type() == symtype) {																			\
-				elem = new class((symclass*)sym, args, id_ptr->beginLoc(), (arity ? rparen_ptr->endLoc() : id_ptr->endLoc()));	\
-			} else {																										\
+																															\
+			if (!sym && dynamic) {																							\
+				/* Dynamic declarations are allowed. Attempt to create a new symbol */										\
+				ref_ptr<ConstantSymbol::SortList> sorts = new ConstantSymbol::SortList();									\
+				int argnum = 0;																								\
+				BOOST_FOREACH(Term const* t, *args_ptr) {																	\
+						argnum++;																							\
+					switch (t->subType()) {																					\
+					case Term::Type::VARIABLE:																				\
+						sorts->push_back(((Variable const*)t)->symbol()->sort());											\
+						break;																								\
+					case Term::Type::CONSTANT:																				\
+						sorts->push_back(((Constant const*)t)->symbol()->sort());											\
+						break;																								\
+					case Term::Type::ANON_VAR:																				\
+					case Term::Type::NULLARY:																				\
+					case Term::Type::LUA:																					\
+					case Term::Type::OBJECT:																				\
+					case Term::Type::BINARY:																				\
+					case Term::Type::UNARY:																					\
+						parser->_parse_error("Unable to dynamically declare abAction \"" + Symbol::genName(*id_ptr->str(), (args_ptr ? args_ptr->size() : 0))\
+						+ "\". Could not deduce the sort of argument #" + boost::lexical_cast<std::string>(argnum)			\
+						+ " as it isn't a constant or variable. This problem can be fixed by explicitly declaring the abAction" \
+						" prior to this rule.", &id_ptr->beginLoc());														\
+						good = false;																						\
+						break;																								\
+					}																										\
+				}																											\
+				if  (good) {																								\
+					ref_ptr<ConstantSymbol> cs = new ConstantSymbol(														\
+						ConstantSymbol::Type::ABACTION, id_ptr->str(), parser->symtab()->boolsort(), sorts);				\
+					/* add the sort to the symbol table */																	\
+					if (!parser->symtab()->create(cs)) {																	\
+						/* It seems there was a problem. */																	\
+						parser->_parse_error("An error occurred while declaring \"" + Symbol::genName(*id_ptr->str(), (args_ptr ? args_ptr->size() : 0)) + "\".");\
+						good = false;																						\
+						break;																								\
+					}																										\
+				}																											\
+			}																												\
+																															\
+			if (!good) {																									\
+				YYERROR;																									\
+			} else if (!sym || sym->type() != symtype) {																	\
 				/* The preprocessor indicated this was a constant and it's not... oops. */									\
 				parser->_parse_error(std::string("INTERNAL ERROR: Could not locate symbol table entry for ")				\
 					+ Symbol::Type::cstr(symtype) + " \"" + Symbol::genName(*id_ptr->str(), arity)		 					\
 					+ "\".", &id_ptr->beginLoc());																			\
 				YYERROR;																									\
-			}																												\
-		}
+			} else {																										\
+				elem = new class((symclass*)sym, args, id_ptr->beginLoc(), (arity ? rparen_ptr->endLoc() : id_ptr->endLoc()));	\
+			} 																												\
+		}																													\
 	
 	#define BASE_ELEM_BARE_DEF(elem, id, symtype, class, symclass)															\
 		elem = NULL;																										\
@@ -394,10 +441,15 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 
 constant(c) ::= CONSTANT_ID(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).			{ BASE_ELEM_DEF(c, id, pl, args, pr, Symbol::Type::CONSTANT, Constant, ConstantSymbol);	}
 constant(c) ::= CONSTANT_ID(id).												{ BASE_ELEM_DEF(c, id, NULL, NULL, NULL, Symbol::Type::CONSTANT, Constant, ConstantSymbol); }
+
+const_anon(c) ::= IDENTIFIER(id).												{ BASE_ELEM_DEF9(c, id, NULL, NULL, NULL, Symbol::Type::CONSTANT, Constant, ConstantSymbol, true); }
+const_anon(c) ::= IDENTIFIER(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).		{ BASE_ELEM_DEF9(c, id, pl, args, pr, Symbol::Type::CONSTANT, Constant, ConstantSymbol, true);	}
+
+
 object(o)   ::= OBJECT_ID(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).			{ BASE_ELEM_DEF(o, id, pl, args, pr, Symbol::Type::OBJECT, Object, ObjectSymbol);	}
 object(new_o)	::= object_nullary(o).											{ new_o = o; }
 object_nullary(o)   ::= OBJECT_ID(id).											{ BASE_ELEM_DEF(o, id, NULL, NULL, NULL, Symbol::Type::OBJECT, Object, ObjectSymbol); }
-object ::= undeclared.															{ /* never called */ }
+object ::= undeclared.															{ /* never called */ }	
 
 variable(o) ::= VARIABLE_ID(id).												
 	{ 
@@ -725,6 +777,8 @@ term_numeric(t) ::= term_numeric(l) MOD term_numeric(r).				{ NUM_BOP(t, l, r, l
 %destructor formula_quant					{ DEALLOC($$);								}
 %type       formula_card					{ Formula*									}		// cardinality formula
 %destructor formula_card					{ DEALLOC($$);								}
+%type		atomic_formula_anon				{ AtomicFormula*							}		// an atomic formula with a dynamically defined constant.
+%destructor atomic_formula_anon				{ DEALLOC($$);								}
 
 %include {
 	#define NESTED_BOP(new_f, lhs, op, rhs, operator)															\
@@ -837,6 +891,12 @@ comparison(c) ::= constant(lhs) GTHAN_EQ term(rhs).									{ c = new Comparison
 atomic_formula(af) ::= constant(c).										{ ATOMIC_FORMULA(af, c, "true"); }
 atomic_formula(af) ::= TILDE constant(c).								{ ATOMIC_FORMULA(af, c, "false"); }
 atomic_formula(af) ::= constant(c) EQ term(t). 							{ af = new AtomicFormula(c, t, c->beginLoc(), t->endLoc());	}
+
+atomic_formula_anon(new_af) ::= atomic_formula(af).						{ new_af = af; }
+atomic_formula_anon(af) ::= const_anon(c).								{ ATOMIC_FORMULA(af, c, "true"); }
+atomic_formula_anon(af) ::= TILDE const_anon(c).						{ ATOMIC_FORMULA(af, c, "false"); }
+atomic_formula_anon(af) ::= const_anon(c) EQ term(t). 					{ af = new AtomicFormula(c, t, c->beginLoc(), t->endLoc());	}
+
 
 /*************************************************************************************************/
 /* Formulas without constants */
@@ -2273,16 +2333,16 @@ query_label_decl(decl) ::= LABEL(kw) DBL_COLON IDENTIFIER(i).			{ QUERY_DECL(dec
 
 
 
-clause_if(new_f) ::= IF(kw) formula(f).					{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_IF); 		}
-clause_if(new_f) ::= .									{ new_f = NULL; }
-clause_after(new_f) ::= AFTER(kw) formula(f).			{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_AFTER);	}
-clause_after(new_f) ::= .								{ new_f = NULL; }
-clause_ifcons(new_f) ::= IFCONS(kw) formula(f).			{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_IFCONS); 	}
-clause_ifcons(new_f) ::= .								{ new_f = NULL; }
-clause_unless(new_f) ::= UNLESS(kw) atomic_formula(f).	{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_UNLESS); 	}
-clause_unless(new_f) ::= .								{ new_f = NULL; }
-clause_where(new_f) ::= WHERE(kw) formula_no_const(f).	{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_WHERE); 	}
-clause_where(new_f) ::= .								{ new_f = NULL; }
+clause_if(new_f) ::= IF(kw) formula(f).						{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_IF); 		}
+clause_if(new_f) ::= .										{ new_f = NULL; }
+clause_after(new_f) ::= AFTER(kw) formula(f).				{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_AFTER);	}
+clause_after(new_f) ::= .									{ new_f = NULL; }
+clause_ifcons(new_f) ::= IFCONS(kw) formula(f).				{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_IFCONS); 	}
+clause_ifcons(new_f) ::= .									{ new_f = NULL; }
+clause_unless(new_f) ::= UNLESS(kw) atomic_formula_anon(f).	{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_UNLESS); 	}
+clause_unless(new_f) ::= .									{ new_f = NULL; }
+clause_where(new_f) ::= WHERE(kw) formula_no_const(f).		{ CLAUSE(new_f, kw, f, Language::Feature::CLAUSE_WHERE); 	}
+clause_where(new_f) ::= .									{ new_f = NULL; }
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/
