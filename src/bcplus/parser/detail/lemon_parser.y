@@ -384,15 +384,14 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 					}																										\
 				}																											\
 				if  (good) {																								\
-					ref_ptr<ConstantSymbol> cs = new ConstantSymbol(														\
-						ConstantSymbol::Type::ABACTION, id_ptr->str(), parser->symtab()->boolsort(), sorts);				\
+					ref_ptr<ConstantSymbol> cs = new ConstantSymbol(ConstantSymbol::Type::ABACTION, id_ptr->str(), parser->symtab()->boolsort(), sorts);\
 					/* add the sort to the symbol table */																	\
 					if (!parser->symtab()->create(cs)) {																	\
 						/* It seems there was a problem. */																	\
 						parser->_parse_error("An error occurred while declaring \"" + Symbol::genName(*id_ptr->str(), (args_ptr ? args_ptr->size() : 0)) + "\".");\
 						good = false;																						\
 						break;																								\
-					}																										\
+					} else sym = cs;																						\
 				}																											\
 			}																												\
 																															\
