@@ -358,27 +358,29 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 				/* Dynamic declarations are allowed. Attempt to create a new symbol */										\
 				ref_ptr<ConstantSymbol::SortList> sorts = new ConstantSymbol::SortList();									\
 				int argnum = 0;																								\
-				BOOST_FOREACH(Term const* t, *args_ptr) {																	\
-						argnum++;																							\
-					switch (t->subType()) {																					\
-					case Term::Type::VARIABLE:																				\
-						sorts->push_back(((Variable const*)t)->symbol()->sort());											\
-						break;																								\
-					case Term::Type::CONSTANT:																				\
-						sorts->push_back(((Constant const*)t)->symbol()->sort());											\
-						break;																								\
-					case Term::Type::ANON_VAR:																				\
-					case Term::Type::NULLARY:																				\
-					case Term::Type::LUA:																					\
-					case Term::Type::OBJECT:																				\
-					case Term::Type::BINARY:																				\
-					case Term::Type::UNARY:																					\
-						parser->_parse_error("Unable to dynamically declare abAction \"" + Symbol::genName(*id_ptr->str(), (args_ptr ? args_ptr->size() : 0))\
-						+ "\". Could not deduce the sort of argument #" + boost::lexical_cast<std::string>(argnum)			\
-						+ " as it isn't a constant or variable. This problem can be fixed by explicitly declaring the abAction" \
-						" prior to this rule.", &id_ptr->beginLoc());														\
-						good = false;																						\
-						break;																								\
+				if (args) {																									\
+					BOOST_FOREACH(Term const* t, *args_ptr) {																\
+							argnum++;																						\
+						switch (t->subType()) {																				\
+						case Term::Type::VARIABLE:																			\
+							sorts->push_back(((Variable const*)t)->symbol()->sort());										\
+							break;																							\
+						case Term::Type::CONSTANT:																			\
+							sorts->push_back(((Constant const*)t)->symbol()->sort());										\
+							break;																							\
+						case Term::Type::ANON_VAR:																			\
+						case Term::Type::NULLARY:																			\
+						case Term::Type::LUA:																				\
+						case Term::Type::OBJECT:																			\
+						case Term::Type::BINARY:																			\
+						case Term::Type::UNARY:																				\
+							parser->_parse_error("Unable to dynamically declare abAction \"" + Symbol::genName(*id_ptr->str(), (args_ptr ? args_ptr->size() : 0))\
+							+ "\". Could not deduce the sort of argument #" + boost::lexical_cast<std::string>(argnum)		\
+							+ " as it isn't a constant or variable. This problem can be fixed by explicitly declaring the abAction" \
+							" prior to this rule.", &id_ptr->beginLoc());													\
+							good = false;																					\
+							break;																							\
+						}																									\
 					}																										\
 				}																											\
 				if  (good) {																								\
