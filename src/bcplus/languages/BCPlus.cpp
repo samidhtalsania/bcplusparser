@@ -5,6 +5,9 @@
 namespace bcplus {
 namespace languages {
 
+const size_t BCPlus::ID = (size_t)"BC+";
+
+
 char const* BCPlus::name() const {
 	return "BC+";
 }
@@ -103,6 +106,10 @@ bool BCPlus::support(Feature::type feature) const {
 		default:
 			return false;
 	}
+}
+
+size_t BCPlus::id() const {
+	return ID;
 }
 
 

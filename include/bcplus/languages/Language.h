@@ -139,6 +139,9 @@ public:
 	virtual bool support(Feature::type feature) const = 0;
 
 
+	/// Get a unique integral identifier for this language.
+	virtual size_t id() const = 0;
+
 };
 
 }}
