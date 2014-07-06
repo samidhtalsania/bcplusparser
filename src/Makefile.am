@@ -56,6 +56,9 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/elements/BindingFormula.cpp \
 	bcplus/languages/Language.cpp \
 	bcplus/languages/BCPlus.cpp \
+	bcplus/languages/CPlus.cpp \
+	bcplus/languages/BC.cpp \
+	bcplus/languages/MVASP.cpp \
 	bcplus/symbols/ConstantSymbol.cpp \
 	bcplus/symbols/AttributeSymbol.cpp \
 	bcplus/symbols/ObjectSymbol.cpp \
