@@ -35,11 +35,14 @@ SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer 
 	if (config->symtabInput()) _good = load(*(config->symtabInput()));
 	_good = _good && loadMacros(config);
 
+	// setup the additive sort
+	SortSymbol* a = (SortSymbol*)resolveOrCreate(new SortSymbol(new ReferencedString("additive")));
+
 	// setup the boolean sort
 	SortSymbol* s = (SortSymbol*)resolveOrCreate(new SortSymbol(new ReferencedString("boolean")));
 	ObjectSymbol* o1 = (ObjectSymbol*)resolveOrCreate(new ObjectSymbol(new ReferencedString("true")));
 	ObjectSymbol* o2 = (ObjectSymbol*)resolveOrCreate(new ObjectSymbol(new ReferencedString("false")));
-	if (!s || !o1 || !o2) {
+	if (!a || !s || !o1 || !o2) {
 		_good = false;
 		config->ostream(Verb::ERROR) << "ERROR: INTERNAL ERROR: An error occurred initializing the builting \"boolean\" sort in the symbol table." << std::endl;
 	} else {

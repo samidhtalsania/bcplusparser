@@ -83,6 +83,9 @@ private:
 	/// A pointer to the boolean sort
 	babb::utils::ref_ptr<SortSymbol const> _boolean;
 
+	/// A pointer to the builtin additive sort
+	babb::utils::ref_ptr<SortSymbol const> _addsort;
+
 	babb::utils::ref_ptr<const SymbolMetadataInitializer> _metaInit;
 
 public:
@@ -126,6 +129,9 @@ public:
 	
 	/// Get the builtin boolean sort
 	SortSymbol const* boolsort() const							{ return _boolean; }
+
+	/// Get the builtin additive sort
+	SortSymbol const* addsort() const							{ return _addsort; }
 
 
 	// Inherited from Resolver

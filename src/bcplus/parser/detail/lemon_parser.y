@@ -1454,6 +1454,10 @@ constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON constant_dcl_type(type).
 		bnd = new ConstantDeclaration::ElementList();
 		BOOST_FOREACH(IdentifierDecl& decl, *names) {
 			// attempt to declare each symbol
+			// NOTE: additive constants default to the additive sort, not the boolean sort
+			ref_ptr<const SortSymbol> s = (type & ConstantSymbol::Type::M_ADDITIVE ? parser->symtab()->addsort() : parser->symtab()->boolsort());
+
+
 			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), parser->symtab()->boolsort(), decl.second);
 			bnd->push_back(c);
 			CONSTANT_DECL(c, decl.first->beginLoc());
