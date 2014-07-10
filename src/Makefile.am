@@ -58,7 +58,7 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/languages/BCPlus.cpp \
 	bcplus/languages/CPlus.cpp \
 	bcplus/languages/BC.cpp \
-	bcplus/languages/MVASP.cpp \
+	bcplus/languages/MVPF.cpp \
 	bcplus/symbols/ConstantSymbol.cpp \
 	bcplus/symbols/AttributeSymbol.cpp \
 	bcplus/symbols/ObjectSymbol.cpp \

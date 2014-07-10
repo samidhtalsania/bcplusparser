@@ -1,18 +1,18 @@
 
 #include "bcplus/languages/Language.h"
-#include "bcplus/languages/MVASP.h"
+#include "bcplus/languages/MVPF.h"
 
 namespace bcplus {
 namespace languages {
 
-const size_t MVASP::ID = (size_t)"MVASP";
+const size_t MVPF::ID = (size_t)"MVPF";
 
 
-char const* MVASP::name() const {
-	return "MVASP";
+char const* MVPF::name() const {
+	return "MVPF";
 }
 
-bool MVASP::support(Feature::type feature) const {
+bool MVPF::support(Feature::type feature) const {
 	switch (feature) {
 		case Feature::DECL_INCLUDE:               
 		case Feature::DECL_MACRO:                 
@@ -48,6 +48,10 @@ bool MVASP::support(Feature::type feature) const {
 		case Feature::CODE_LUA_GR: 
 		case Feature::FORMULA_NESTED:
 		case Feature::DECL_HIDE_ALL:
+		case Feature::FORMULA_CARDINALITY_BODY:
+		case Feature::FORMULA_CARDINALITY_HEAD:
+		case Feature::FORMULA_QUANTIFIER:
+		case Feature::LAW_IMPL:                   
 			return true;
 
 		case Feature::LAW_CAUSES:                 
@@ -88,9 +92,6 @@ bool MVASP::support(Feature::type feature) const {
 		case Feature::CONST_ATTRIBUTE:
 		case Feature::CONST_EXTERNALACTION:
 		case Feature::CONST_EXTERNALFLUENT:
-		case Feature::FORMULA_CARDINALITY_BODY:
-		case Feature::FORMULA_CARDINALITY_HEAD:
-		case Feature::FORMULA_QUANTIFIER:
 		case Feature::FORMULA_NOT_DASH:
 		case Feature::FORMULA_NOT_DASH_HEAD:
 		case Feature::FORMULA_CONSTANT_ARGS:
@@ -100,7 +101,6 @@ bool MVASP::support(Feature::type feature) const {
 		case Feature::LAW_CAUSED_D:               
 		case Feature::LAW_PCAUSED_S:              
 		case Feature::LAW_PCAUSED_D:              
-		case Feature::LAW_IMPL:                   
 		case Feature::LAW_OBSERVED:               
 		case Feature::STRONG_NOCONCURRENCY:       
 		default:
@@ -108,7 +108,7 @@ bool MVASP::support(Feature::type feature) const {
 	}
 }
 
-size_t MVASP::id() const {
+size_t MVPF::id() const {
 	return ID;
 }
 

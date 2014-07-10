@@ -5,8 +5,8 @@
 namespace bcplus {
 namespace languages {
 
-/// MVASP language
-class MVASP : public Language {
+/// MVPF language
+class MVPF : public Language {
 
 public:
 	static const size_t ID;

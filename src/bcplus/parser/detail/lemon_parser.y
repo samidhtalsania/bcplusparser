@@ -1058,12 +1058,12 @@ quant_op(op) ::= BIG_DISJ.												{ op = QuantifierFormula::Operator::DISJ; 
 //formula_card(new_card) ::= formula_smpl_card(card). { new_card = card; }
 formula_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br).				[PREC_1]	{ CARD_FORMULA(card, NULL, bl, vars, f, br, NULL);  }
 formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br).				[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, NULL);  }
-formula_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br) term(max).		[PREC_1]	{ CARD_FORMULA(card, NULL, bl, vars, f, br, max); }
-formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br) term(max).		[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, max); }
+formula_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br) term(max).		[PREC_1]	{ CARD_FORMULA(card, NULL, bl, vars, f, br, max); 	}
+formula_card(card) ::= term_strong(min) CBRACKET_L(bl) card_var_lst(vars) formula(f) CBRACKET_R(br) term(max).		[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, max); 	}
 formula_card(card) ::= 					CBRACKET_L(bl) formula(f) CBRACKET_R(br).									[PREC_1]	{ CARD_FORMULA(card, NULL, bl, NULL, f, br, NULL);  }
 formula_card(card) ::= term_strong(min) CBRACKET_L(bl) formula(f) CBRACKET_R(br).									[PREC_1]	{ CARD_FORMULA(card, min, bl, NULL, f,  br, NULL);  }
-formula_card(card) ::= 					CBRACKET_L(bl) formula(f) CBRACKET_R(br) term(max).							[PREC_1]	{ CARD_FORMULA(card, NULL, bl, NULL, f, br, max); }
-formula_card(card) ::= term_strong(min) CBRACKET_L(bl) formula(f) CBRACKET_R(br) term(max).							[PREC_1]	{ CARD_FORMULA(card, min, bl, NULL, f,  br, max); }
+formula_card(card) ::= 					CBRACKET_L(bl) formula(f) CBRACKET_R(br) term(max).							[PREC_1]	{ CARD_FORMULA(card, NULL, bl, NULL, f, br, max); 	}
+formula_card(card) ::= term_strong(min) CBRACKET_L(bl) formula(f) CBRACKET_R(br) term(max).							[PREC_1]	{ CARD_FORMULA(card, min, bl, NULL, f,  br, max); 	}
 
 
 card_var_lst(new_vars) ::= card_var_lst_inner(vars) PIPE.
@@ -1124,8 +1124,12 @@ head_formula(f) ::= DASH(d) constant(c).
 
 formula_smpl_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br).			[PREC_0]		{ CARD_FORMULA(card, NULL, bl, vars, f, br, NULL);  }
 formula_smpl_card(card) ::= term_strong(min) 	CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br).			[PREC_0]		{ CARD_FORMULA(card, min, bl, vars, f,  br, NULL);  }
-formula_smpl_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br) term(max).	[PREC_0]		{ CARD_FORMULA(card, NULL, bl, vars, f, br, max); }
-formula_smpl_card(card) ::= term_strong(min) 	CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br) term(max).	[PREC_0]		{ CARD_FORMULA(card, min, bl, vars, f,  br, max); }
+formula_smpl_card(card) ::= 					CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br) term(max).	[PREC_0]		{ CARD_FORMULA(card, NULL, bl, vars, f, br, max); 	}
+formula_smpl_card(card) ::= term_strong(min) 	CBRACKET_L(bl) card_var_lst(vars) atomic_formula_one_const(f) CBRACKET_R(br) term(max).	[PREC_0]		{ CARD_FORMULA(card, min, bl, vars, f,  br, max); 	}
+formula_smpl_card(card) ::= 					CBRACKET_L(bl) atomic_formula_one_const(f) CBRACKET_R(br).								[PREC_0]		{ CARD_FORMULA(card, NULL, bl, NULL, f, br, NULL);  }
+formula_smpl_card(card) ::= term_strong(min) 	CBRACKET_L(bl) atomic_formula_one_const(f) CBRACKET_R(br).								[PREC_0]		{ CARD_FORMULA(card, min, bl, NULL, f,  br, NULL);  }
+formula_smpl_card(card) ::= 					CBRACKET_L(bl) atomic_formula_one_const(f) CBRACKET_R(br) term(max).					[PREC_0]		{ CARD_FORMULA(card, NULL, bl, NULL, f, br, max); 	}
+formula_smpl_card(card) ::= term_strong(min) 	CBRACKET_L(bl) atomic_formula_one_const(f) CBRACKET_R(br) term(max).					[PREC_0]		{ CARD_FORMULA(card, min, bl, NULL, f,  br, max); 	}
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/
