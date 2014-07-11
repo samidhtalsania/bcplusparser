@@ -59,7 +59,8 @@ public:
 			STAT_OK,		///< Everything is a-ok.
 			STAT_BAD_ARG,	///< The user provided an option we don't recognize.
 			STAT_HELP,		///< The user needs help.
-			STAT_VERSION	///< The user wants the application version.
+			STAT_VERSION,	///< The user wants the application version.
+			STAT_NEXT_ARG	///< The next argument is needed in order to complete parsing the option.
 		};
 	};
 
@@ -194,8 +195,9 @@ protected:
 	/***************************************************************************/
 	/// Parses the string option and performs the task specified by it
 	/// @param opt The option string to parse.
+	/// @param opt2 A second option which should be provided when STAT_NEXT_ARG is returned.
 	/// @return A status code indicating whether or not it was a success.
-	virtual int parseOption(char const* opt);
+	virtual int parseOption(char const* opt, char const* op2 = NULL);
 
 	/// Outputs the options for this configuration
 	/// FORMAT: (dash is a space)

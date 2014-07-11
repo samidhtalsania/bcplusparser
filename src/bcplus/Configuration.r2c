@@ -45,7 +45,17 @@ int Configuration::load(int argc, char const** argv) {
 	// parse arguments
 
 	for (int i = 1; i < argc; i++) {
-		ret = parseOption(argv[i]);
+		ret = parseOption(argv[i], NULL);
+
+		if (ret == Status::STAT_NEXT_ARG) {
+			if (i < argc-1 || argv[i+1][0] == '-') {
+				ret = parseOption(argv[i], argv[i+1]);
+				i++;
+			} else {
+				std::cerr << "ERROR: Expected an option following \"" << argv[i+1] << "\"." << std::endl;
+				return Status::STAT_BAD_ARG;
+			}
+		}
 
 		switch (ret) {
 		case Status::STAT_BAD_ARG:
@@ -57,7 +67,6 @@ int Configuration::load(int argc, char const** argv) {
 		default:
 			continue;
 		};
-
 
 	}
 	return ret;
@@ -85,7 +94,17 @@ void Configuration::error(std::string const& err, Location const* loc) const {
 	out << err << std::endl;
 }
 
-int Configuration::parseOption(char const* opt) {
+#define EXTRACT_NAME val.assign(token, (size_t)(opt - token - 1));
+#define EXTRACT_NAME_VAL                                        \
+    {                                                           \
+        size_t n;                                               \
+        if (*(opt-1) == '=') { val2 = opt; n = 2; }             \
+        else if (opt2) { val2 = opt2; n = 1; }                  \
+        else return Status::STAT_NEXT_ARG;                      \
+        val.assign(token, (size_t)(opt - token - n));           \
+    }
+
+int Configuration::parseOption(char const* opt, char const* opt2) {
 	int ret = Status::STAT_OK;
 	std::string val, val2;
     char const* marker;
@@ -102,37 +121,28 @@ int Configuration::parseOption(char const* opt) {
 	
 		IDENTIFIER								= [a-zA-Z_][a-zA-Z0-9_]*;
 
-		"-s="|"--symtab-in="					{ 
-												  val.assign(token, (size_t)(opt - token - 2));
-												  val2 = opt; 
+		("-s"|"--symtab-in")"="?				{ 
+												  EXTRACT_NAME_VAL;
 												  option = Option::SYMTAB_INPUT; 
 												  goto re2c_finish; }
-		"--symtab-out="							{ 
-												  val.assign(token, (size_t)(opt - token - 2));
-												  val2 = opt; 
+		"--symtab-out""="?						{ 
+												  EXTRACT_NAME_VAL;
 												  option = Option::SYMTAB_OUTPUT;
 												  goto re2c_finish; }
-		"--verb="								{ 
-												  val.assign(token, (size_t)(opt - token - 2));
-												  val2 = opt; 
+		"--verb""="?								{ 
+												  EXTRACT_NAME_VAL;
 												  option = Option::VERBOSITY;
 												  goto re2c_finish; }
-		"--parse-trace="						{ 
-												  val.assign(token, (size_t)(opt - token - 2));
-												  val = opt; 
-												  option = Option::PARSE_TRACE;
-												  goto re2c_finish; }
-		"--parse-trace"							{ 
-												  val.assign(token, (size_t)(opt - token - 2));
-												  val = "true"; 
+		"--parse-trace"							{
+												  EXTRACT_NAME; 
 												  option = Option::PARSE_TRACE;
 												  goto re2c_finish; }
 		"-h"|"-?"|"--help"						{ 
-												  val = token;
+												  EXTRACT_NAME; 
 												  option =  Option::HELP;
 												  goto re2c_finish; }
 		"-v"|"--version"						{ 
-												  val = token;
+												  EXTRACT_NAME; 
 												  option = Option::VERSION;
 												  goto re2c_finish; }
 		IDENTIFIER "=" [^\x00]*					{ 
@@ -178,14 +188,7 @@ re2c_finish:
 		}
 		break;
 	case Option::PARSE_TRACE:
-		if (val2 == "true") {
-			_parse_trace = true;
-		} else if (val2 == "false") {
-			_parse_trace = false;
-		} else {
-			ret = Status::STAT_BAD_ARG;
-			std::cerr << "ERROR: Bad value provided for command line option. Expected \"true\" or \"false\" for argument \"" << val <<"." << std::endl;
-		}
+		_parse_trace = true;
 		break;
 	case Option::MACRO_DEF:
 		addMacro(new ReferencedString(val), new ReferencedString(val2));
