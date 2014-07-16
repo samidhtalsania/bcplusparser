@@ -1,5 +1,7 @@
 #pragma once
 
+namespace bcplus {
+
 /// Container of enumeration of description of domain.
 struct DomainType {
 	enum type {
@@ -9,4 +11,7 @@ struct DomainType {
 		OTHER,				///< Ranges over various objects
 		UNKNOWN				///< All bets are off.
 	};
+};
+
+
 };
