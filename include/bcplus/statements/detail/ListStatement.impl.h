@@ -11,7 +11,7 @@ namespace statements {
 namespace detail {
 
 template <Statement::Type::type t, typename T>
-ListStatement<t, T>::ListStatement(ElementList* elements, Location const& begin, Location const& end)
+ListStatement<t, T>::ListStatement(ElementList const* elements, Location const& begin, Location const& end)
 	: Statement(t, begin, end), _elements(elements) {
 	/* Intentionally left blank */
 }

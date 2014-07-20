@@ -28,14 +28,14 @@ public:
 	typedef typename ElementList::const_iterator const_iterator;
 
 private:
-	babb::utils::ref_ptr<ElementList> _elements;
+	babb::utils::ref_ptr<const ElementList> _elements;
 
 public:
 	/// Basic Constructor
 	/// @param elements The list of elements in this statement.
 	/// @param begin The beginning location of this statement.
 	/// @param end The ending location of this tatement.
-	ListStatement(ElementList* elements, Location const& begin, Location const& end);
+	ListStatement(ElementList const* elements, Location const& begin, Location const& end);
 
 	/// Stub destructor
 	~ListStatement();

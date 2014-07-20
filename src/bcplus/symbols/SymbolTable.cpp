@@ -36,19 +36,30 @@ SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer 
 	_good = _good && loadMacros(config);
 
 	// setup the additive sort
-	SortSymbol* a = (SortSymbol*)resolveOrCreate(new SortSymbol(new ReferencedString("additive")));
+	_bsorts[BuiltinSort::ADDITIVE] 	= resolveOrCreate(new SortSymbol(new ReferencedString("additive")));
+	_bsorts[BuiltinSort::BOOLEAN] 	= resolveOrCreate(new SortSymbol(new ReferencedString("boolean")));
+	_bsorts[BuiltinSort::COMPUTED] 	= resolveOrCreate(new SortSymbol(new ReferencedString("computed")));
 
 	// setup the boolean sort
-	SortSymbol* s = (SortSymbol*)resolveOrCreate(new SortSymbol(new ReferencedString("boolean")));
-	ObjectSymbol* o1 = (ObjectSymbol*)resolveOrCreate(new ObjectSymbol(new ReferencedString("true")));
-	ObjectSymbol* o2 = (ObjectSymbol*)resolveOrCreate(new ObjectSymbol(new ReferencedString("false")));
-	if (!a || !s || !o1 || !o2) {
-		_good = false;
-		config->ostream(Verb::ERROR) << "ERROR: INTERNAL ERROR: An error occurred initializing the builting \"boolean\" sort in the symbol table." << std::endl;
+	_bobjs[BuiltinObject::TRUE] 	= resolveOrCreate(new ObjectSymbol(new ReferencedString("true")));
+	_bobjs[BuiltinObject::FALSE] 	= resolveOrCreate(new ObjectSymbol(new ReferencedString("false")));
+	_bobjs[BuiltinObject::NONE] 	= resolveOrCreate(new ObjectSymbol(new ReferencedString("none")));
+	_bobjs[BuiltinObject::UNKNOWN] 	= resolveOrCreate(new ObjectSymbol(new ReferencedString("unknown")));
+	
+
+	for (size_t i = 0; i < BuiltinSort::_LENGTH_; i++) {
+		if (!_bsorts[i]) _good = false;
+	}
+	
+	for (size_t i = 0; i < BuiltinObject::_LENGTH_; i++) {
+		if (!_bobjs[i]) _good = false;
+	}
+
+	if (_good) {
+		_bsorts[BuiltinSort::BOOLEAN]->add(_bobjs[BuiltinObject::TRUE]);
+		_bsorts[BuiltinSort::BOOLEAN]->add(_bobjs[BuiltinObject::FALSE]);
 	} else {
-		s->add(o1);
-		s->add(o2);
-		_boolean = s;
+		config->ostream(Verb::ERROR) << "ERROR: INTERNAL ERROR: An error occurred initializing the builtin constants in the symbol table." << std::endl;
 	}
 }
 
@@ -120,7 +131,7 @@ bool SymbolTable::create(Symbol* symbol) {
 	return true;
 }
 
-Symbol* SymbolTable::resolveOrCreate(Symbol* symbol) {
+Symbol* SymbolTable::_resolveOrCreate(Symbol* symbol) {
 	// reference pointer in order to ensure symbol is properly deallocated if they didn't save a reference to it
 	u::ref_ptr<Symbol> symbol_ptr = symbol;
 

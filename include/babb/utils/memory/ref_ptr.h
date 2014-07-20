@@ -59,7 +59,8 @@ public:
 	inline bool valid() const 			{ return _ptr != NULL; }
 
 	// Implicit conversion
-	inline operator T*() const { return _ptr; }
+	inline operator T*() { return _ptr; }
+	inline operator T const*() const { return _ptr; }
 
 	/// Release the memory location from this pointer without deallocating it
 	inline T* release() {

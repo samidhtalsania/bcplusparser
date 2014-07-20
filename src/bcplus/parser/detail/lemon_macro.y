@@ -238,8 +238,8 @@ base_elem_pkgd ::= IDENTIFIER(id) PAREN_L(pl) arg_lst(args) PAREN_R(pr).
 			} else {	
 				// It's not a macro. Just go ahead and unpack it and re-add it for reading
 				parser->_push_front(pr);
-				TokenList::const_reverse_iterator commas = args->first->rbegin();
-				for (Macro::ArgumentList::const_reverse_iterator it = args->second->rbegin(); it != args->second->rend(); ) {
+				TokenList::reverse_iterator commas = args->first->rbegin();
+				for (Macro::ArgumentList::reverse_iterator it = args->second->rbegin(); it != args->second->rend(); ) {
 					parser->_push_front((*it)->str()->c_str(), (*it)->beginLoc(), true);
 
 					it++;

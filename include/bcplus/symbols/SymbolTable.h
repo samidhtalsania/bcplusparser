@@ -14,6 +14,8 @@
 #include "bcplus/Configuration.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/Resolver.h"
+#include "bcplus/symbols/ConstantSymbol.h"
+#include "bcplus/symbols/SortSymbol.h"
 
 namespace bcplus  {
 namespace symbols {
@@ -41,6 +43,30 @@ public:
 			return pr.second;
 		}
 	};
+
+
+	/// Builtin sort symbols
+	struct BuiltinSort {
+		enum type {
+			BOOLEAN,
+			ADDITIVE,
+			COMPUTED,
+			_LENGTH_
+		};
+	};
+
+	/// Builtin object symbols
+	struct BuiltinObject {
+		enum type {
+			TRUE,
+			FALSE,
+			NONE,
+			UNKNOWN,
+			_LENGTH_
+		};
+	};
+
+
 
 
 
@@ -80,13 +106,14 @@ private:
 	/// A convenient place to store metadata
 	DataMap _metadata;
 
-	/// A pointer to the boolean sort
-	babb::utils::ref_ptr<SortSymbol const> _boolean;
-
-	/// A pointer to the builtin additive sort
-	babb::utils::ref_ptr<SortSymbol const> _addsort;
-
 	babb::utils::ref_ptr<const SymbolMetadataInitializer> _metaInit;
+
+	/// Builtin sorts
+	babb::utils::ref_ptr<SortSymbol> _bsorts[BuiltinSort::_LENGTH_];
+
+	/// Builtin objects
+	babb::utils::ref_ptr<ObjectSymbol> _bobjs[BuiltinObject::_LENGTH_];
+
 
 public:
 
@@ -127,18 +154,16 @@ public:
 	/// @return True if successful, false if the data exists and we didn't override it.
 	bool setData(std::string const& key, ReferencedString const* data, bool override = false);
 	
-	/// Get the builtin boolean sort
-	SortSymbol const* boolsort() const							{ return _boolean; }
-
-	/// Get the builtin additive sort
-	SortSymbol const* addsort() const							{ return _addsort; }
-
+	/// Get the specified builtin sort symbol
+	inline SortSymbol const* bsort(BuiltinSort::type sort) const			{ return _bsorts[sort]; }
+	
+	/// Get the specified builtin object symbol
+	inline ObjectSymbol const* bobj(BuiltinObject::type obj) const			{ return _bobjs[obj]; }
 
 	// Inherited from Resolver
 	virtual Symbol const* resolve(size_t typemask, std::string const& name, size_t arity = 0) const;
 	virtual Symbol* resolve(size_t typemask, std::string const& name, size_t arity = 0);
 	virtual bool create(Symbol* symbol);
-	virtual Symbol* resolveOrCreate(Symbol* symbol);
 
 private:
 	/*******************************************************************************/
@@ -168,10 +193,11 @@ private:
 	/// @param config The configuration to load the definitions from.
 	/// @return True if successful, false if something went wrong.
 	bool loadMacros(Configuration const* config);
+	
+	virtual Symbol* _resolveOrCreate(Symbol* symbol);
 
 
 };
 
 }}
-
 

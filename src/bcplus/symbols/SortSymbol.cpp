@@ -106,7 +106,7 @@ bool SortSymbol::loadDefinition(boost::property_tree::ptree const& node, Resolve
 				// subsort
 				u::ref_ptr<SortSymbol> subsort = new SortSymbol(n.second, err);
 				if (subsort) {
-					u::ref_ptr<SortSymbol> subsort_resolved = (SortSymbol*)resolver->resolveOrCreate(subsort);
+					u::ref_ptr<SortSymbol> subsort_resolved = resolver->resolveOrCreate(subsort);
 					if (!subsort_resolved) {
 						good(false);
 						if (err) *err << "ERROR: An error occurred while scanning the definition of sort \"" << *base() << "\".  SubSort \"" << *(subsort->base()) << "\" is not a declared sort." << std::endl;

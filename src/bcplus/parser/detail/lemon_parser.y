@@ -384,7 +384,7 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 					}																										\
 				}																											\
 				if  (good) {																								\
-					ref_ptr<ConstantSymbol> cs = new ConstantSymbol(ConstantSymbol::Type::ABACTION, id_ptr->str(), parser->symtab()->boolsort(), sorts);\
+					ref_ptr<ConstantSymbol> cs = new ConstantSymbol(ConstantSymbol::Type::ABACTION, id_ptr->str(), parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN), sorts);\
 					/* add the sort to the symbol table */																	\
 					if (!parser->symtab()->create(cs)) {																	\
 						/* It seems there was a problem. */																	\
@@ -517,11 +517,11 @@ term_no_const_lst(new_lst) ::= term_no_const_lst(lst) COMMA term_no_const(t).
 	#define BASIC_TERM(term, id)																							\
 		term = NULL;																										\
 		ref_ptr<const Token> id_ptr = id;																					\
-		Symbol const* sym = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));									\
+		ObjectSymbol const* sym = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));							\
 		if (!sym) {																											\
 			parser->_parse_error("An error occurred creating symbol \"" + *(id->str()) + "/0\".", &id->beginLoc());			\
 			YYERROR;																										\
-		} else term = new Object((ObjectSymbol const*)sym, NULL, id->beginLoc(), id->endLoc());
+		} else term = new Object(sym, NULL, id->beginLoc(), id->endLoc());
 
 	#define TERM_PARENS(term, lparen, sub, rparen)																			\
 		ref_ptr<const Token> lparen_ptr = lparen;																			\
@@ -863,7 +863,7 @@ comparison(c) ::= constant(lhs) GTHAN_EQ term(rhs).									{ c = new Comparison
 
 %include {
 
-	#define ATOMIC_FORMULA(af, constant, valuestring) 													\
+	#define ATOMIC_FORMULA(af, constant, value) 														\
 		af = NULL;																						\
 		ref_ptr<Constant> c_ptr = constant;																\
 																										\
@@ -874,14 +874,11 @@ comparison(c) ::= constant(lhs) GTHAN_EQ term(rhs).									{ c = new Comparison
 				"cannot be used in a bare atomic formula.", &constant->beginLoc());						\
 			YYERROR;																					\
 		} else {																						\
-			ref_ptr<ObjectSymbol> t = (ObjectSymbol*)parser->symtab()->resolveOrCreate(					\
-				new ObjectSymbol(new ReferencedString(valuestring)));									\
-			if (!t) {																					\
-				parser->_parse_error("INTERNAL ERROR: Could not resolve \"" 							\
-					+ Symbol::genName(valuestring,0) + "\".", &constant->beginLoc());					\
-				YYERROR;																				\
-			} else af = new AtomicFormula(constant,														\
-				new Object(t, NULL, constant->beginLoc(), constant->endLoc()), 							\
+			ref_ptr<const ObjectSymbol> t =																\
+				(value ? parser->symtab()->bobj(SymbolTable::BuiltinObject::TRUE) 						\
+					: parser->symtab()->bobj(SymbolTable::BuiltinObject::FALSE));						\
+			af = new AtomicFormula(constant,															\
+					new Object(t, NULL, constant->beginLoc(), constant->endLoc()), 						\
 					constant->beginLoc(), constant->endLoc());											\
 		}
 	
@@ -889,13 +886,13 @@ comparison(c) ::= constant(lhs) GTHAN_EQ term(rhs).									{ c = new Comparison
 
 }
 
-atomic_formula(af) ::= constant(c).										{ ATOMIC_FORMULA(af, c, "true"); }
-atomic_formula(af) ::= TILDE constant(c).								{ ATOMIC_FORMULA(af, c, "false"); }
+atomic_formula(af) ::= constant(c).										{ ATOMIC_FORMULA(af, c, true); }
+atomic_formula(af) ::= TILDE constant(c).								{ ATOMIC_FORMULA(af, c, false); }
 atomic_formula(af) ::= constant(c) EQ term(t). 							{ af = new AtomicFormula(c, t, c->beginLoc(), t->endLoc());	}
 
 atomic_formula_anon(new_af) ::= atomic_formula(af).						{ new_af = af; }
-atomic_formula_anon(af) ::= const_anon(c).								{ ATOMIC_FORMULA(af, c, "true"); }
-atomic_formula_anon(af) ::= TILDE const_anon(c).						{ ATOMIC_FORMULA(af, c, "false"); }
+atomic_formula_anon(af) ::= const_anon(c).								{ ATOMIC_FORMULA(af, c, true); }
+atomic_formula_anon(af) ::= TILDE const_anon(c).						{ ATOMIC_FORMULA(af, c, false); }
 atomic_formula_anon(af) ::= const_anon(c) EQ term(t). 					{ af = new AtomicFormula(c, t, c->beginLoc(), t->endLoc());	}
 
 
@@ -935,8 +932,8 @@ comparison_no_const(c) ::= term_no_const_strong(lhs) GTHAN term_no_const(rhs).		
 comparison_no_const(c) ::= term_no_const_strong(lhs) LTHAN_EQ term_no_const(rhs).				{ c = new ComparisonFormula(ComparisonFormula::Operator::LTHAN_EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
 comparison_no_const(c) ::= term_no_const_strong(lhs) GTHAN_EQ term_no_const(rhs).				{ c = new ComparisonFormula(ComparisonFormula::Operator::GTHAN_EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
 
-atomic_formula_one_const(af) ::= constant_one_const(c).											{ ATOMIC_FORMULA(af, c, "true"); }
-atomic_formula_one_const(af) ::= TILDE constant_one_const(c).									{ ATOMIC_FORMULA(af, c, "false"); }
+atomic_formula_one_const(af) ::= constant_one_const(c).											{ ATOMIC_FORMULA(af, c, true); }
+atomic_formula_one_const(af) ::= TILDE constant_one_const(c).									{ ATOMIC_FORMULA(af, c, false); }
 atomic_formula_one_const(af) ::= constant_one_const(c) EQ term_no_const(t). 					{ af = new AtomicFormula(c, t, c->beginLoc(), t->endLoc());	}
 
 /*************************************************************************************************/
@@ -1118,7 +1115,7 @@ head_formula(f) ::= DASH(d) constant(c).
 			parser->_feature_error(Language::Feature::FORMULA_NOT_DASH_HEAD);
 			YYERROR;
 		} else {
-			ATOMIC_FORMULA(f, c, "false"); 
+			ATOMIC_FORMULA(f, c, false); 
 		}
 	}
 
@@ -1257,62 +1254,40 @@ sort_lst(new_lst) ::= sort_lst(lst) COMMA sort(s).
 
 
 %include {
-	#define DYNAMIC_SORT_SYM(sort, subsort, sym, feature, sortname, objectname)																						\
-		sort = NULL;																																				\
-		ref_ptr<SortSymbol> subsort_ptr = subsort;																													\
-		ref_ptr<const Token> sym_ptr = sym;																															\
+		
+	#define DYNAMIC_SORT_PLUS(new_s, s, op, feature, o)																												\
+		new_s = NULL;																																				\
+		ref_ptr<const Referenced> s_ptr = s, op_ptr = op;																											\
+																																									\
 																																									\
 		if (!parser->lang()->support(feature)) {																													\
-			parser->_feature_error(feature, &sym->beginLoc());																										\
+			parser->_feature_error(feature, &op->beginLoc());																										\
 			YYERROR;																																				\
 		} else {																																					\
-			std::string name = sortname;																															\
-			sort = (SortSymbol*)parser->symtab()->resolveOrCreate(new SortSymbol(new ReferencedString(name)));														\
-			if (!sort) {																																			\
-				parser->_parse_error("An error occurred creating sort \"" + name + "\".", &sym->beginLoc());														\
-				YYERROR;																																			\
-			} else {																																				\
-				sort->addSubSort(subsort);																															\
-																																									\
-				/* Get the additional object and add it */																											\
-				ref_ptr<ObjectSymbol> obj = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(objectname)));					\
-				if (!obj) {																																			\
-					parser->_parse_error("An error occurred creating object symbol \"" + std::string(objectname) + "/0\".", &sym->beginLoc());						\
-					YYERROR;																																		\
-				} else {																																			\
-					sort->add(obj);																																	\
-				}																																					\
-			}																																						\
-		}
-		
-	#define DYNAMIC_SORT_PLUS(new_s, s, op, o)																														\
-		new_s = NULL;																																				\
-		ref_ptr<const Referenced> s_ptr = s, op_ptr = op, o_ptr = o;																								\
-																																									\
-																																									\
-		if (!parser->lang()->support(Language::Feature::SORT_PLUS)) {																								\
-			parser->_feature_error(Language::Feature::SORT_PLUS, &op->beginLoc());																					\
-			YYERROR;																																				\
-		} else {																																					\
-			std::string name = *s->base() + "__" + *o->symbol()->base() + "_" + boost::lexical_cast<std::string>(o->arity()) + "__";								\
-			new_s = (SortSymbol*)parser->symtab()->resolveOrCreate(new SortSymbol(new ReferencedString(name)));														\
+			std::string name = *s->base() + "__" + *o->base() + "_" + boost::lexical_cast<std::string>(o->arity()) + "__";											\
+			new_s = parser->symtab()->resolveOrCreate(new SortSymbol(new ReferencedString(name)));																	\
 			if (!new_s) {																																			\
 				parser->_parse_error("An error occurred creating sort \"" + name + "\".", &op->beginLoc());															\
 				YYERROR;																																			\
 			} else {																																				\
 				new_s->addSubSort(s);																																\
-				new_s->add(o->symbol());																															\
+				new_s->add(o);																																		\
 			}																																						\
 		}																																						
 }
+
 sort(new_s) ::= sort_id_nr(s).					{ new_s = s; }
-sort(new_s) ::= sort_id_nr(s) STAR(sym).		{ DYNAMIC_SORT_SYM(new_s, s, sym, Language::Feature::STAR_SORT, *s->base() + "__plus_none_0", "none"); }
-sort(new_s) ::= sort_id_nr(s) CARROT(sym).		{ DYNAMIC_SORT_SYM(new_s, s, sym, Language::Feature::CARROT_SORT, *s->base() + "__plus_unknown_0__", "unknown"); }
+sort(new_s) ::= sort_id_nr(s) STAR(sym).		{ DYNAMIC_SORT_PLUS(new_s, s, sym, Language::Feature::STAR_SORT, parser->symtab()->bobj(SymbolTable::BuiltinObject::NONE)); }
+sort(new_s) ::= sort_id_nr(s) CARROT(sym).		{ DYNAMIC_SORT_PLUS(new_s, s, sym, Language::Feature::CARROT_SORT, parser->symtab()->bobj(SymbolTable::BuiltinObject::UNKNOWN)); }
 sort(new_s) ::= sort_nr(s) PLUS(op) object_nullary(o).
-												{ DYNAMIC_SORT_PLUS(new_s, s, op, o); }
+												{ u::ref_ptr<const Object> o_ptr = o; DYNAMIC_SORT_PLUS(new_s, s, op, Language::Feature::SORT_PLUS, o->symbol()); }
 sort(new_s) ::= sort_id(s) PLUS(op) object_nullary(o).
-												{ DYNAMIC_SORT_PLUS(new_s, s, op, o); }
-sort(new_s) ::= sort_id(s) PLUS(op) INTEGER(i). { ref_ptr<const Referenced> i_ptr = i; DYNAMIC_SORT_SYM(new_s, s, op, Language::Feature::SORT_PLUS, *s->base() + "__plus_" + *i->str(), (*((std::string const*)i->str()))); }
+												{ u::ref_ptr<const Object> o_ptr = o; DYNAMIC_SORT_PLUS(new_s, s, op, Language::Feature::SORT_PLUS, o->symbol()); }
+sort(new_s) ::= sort_id(s) PLUS(op) INTEGER(i). { 
+												  ref_ptr<const Object> t_ptr;
+												  BASIC_TERM(t_ptr, i);
+												  DYNAMIC_SORT_PLUS(new_s, s, op, Language::Feature::SORT_PLUS, t_ptr->symbol()); 
+												}
 
 
 sort_id_nr(new_s) ::= sort_id(s).				{ new_s = s; }
@@ -1337,7 +1312,7 @@ sort_nr(s) ::= num_range(nr).
 		// Generate the objects that it will have
 		for (int i = nr->min(); i <= nr->max(); i++) {
 			std::string obj_name = boost::lexical_cast<std::string>(i);
-			ObjectSymbol const* sym = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(obj_name)));
+			ObjectSymbol const* sym = parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(obj_name)));
 
 			if (!sym) {
 				s = NULL;
@@ -1348,7 +1323,7 @@ sort_nr(s) ::= num_range(nr).
 		}		
 
 		// dynamically declare the sort
-		s = (SortSymbol*)parser->symtab()->resolveOrCreate(new SortSymbol(new ReferencedString(name), objs));
+		s = parser->symtab()->resolveOrCreate(new SortSymbol(new ReferencedString(name), objs));
 		if (!s) {
 				parser->_parse_error("An error occurred creating symbol \"" + name + "/0\".", &nr->beginLoc());
 				YYERROR;
@@ -1459,10 +1434,10 @@ constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON constant_dcl_type(type).
 		BOOST_FOREACH(IdentifierDecl& decl, *names) {
 			// attempt to declare each symbol
 			// NOTE: additive constants default to the additive sort, not the boolean sort
-			ref_ptr<const SortSymbol> s = (type & ConstantSymbol::Type::M_ADDITIVE ? parser->symtab()->addsort() : parser->symtab()->boolsort());
+			ref_ptr<const SortSymbol> s = (type & ConstantSymbol::Type::M_ADDITIVE ? parser->symtab()->bsort(SymbolTable::BuiltinSort::ADDITIVE) : parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN));
 
 
-			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), parser->symtab()->boolsort(), decl.second);
+			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN), decl.second);
 			bnd->push_back(c);
 			CONSTANT_DECL(c, decl.first->beginLoc());
 		}
@@ -1699,7 +1674,7 @@ attrib_spec(attr) ::= ATTRIBUTE(kw).
 			YYERROR;
 		} else {
 			// grab the boolean sort and provide it
-			attr = parser->symtab()->boolsort();
+			attr = parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN);
 		}
 	}
 
@@ -1788,7 +1763,7 @@ object_spec(obj) ::= IDENTIFIER(id).
 	{
 		ref_ptr<const Token> id_ptr = id;
 		obj = NULL;
-		ref_ptr<const ObjectSymbol> o = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));
+		ref_ptr<const ObjectSymbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));
 		if (!o) {
 			parser->_parse_error("Detected a conflicting definition of \"" + Symbol::genName(*id->str(),0) + "\".", &id->beginLoc());
 			YYERROR;
@@ -1802,7 +1777,7 @@ object_spec(obj) ::= IDENTIFIER(id) PAREN_L sort_lst(lst) PAREN_R.
 		obj = NULL;
 		ref_ptr<ObjectSymbol::SortList> lst_ptr = lst;
 		ref_ptr<const Token> id_ptr = id;
-		ref_ptr<const ObjectSymbol> o = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str(), lst));
+		ref_ptr<const ObjectSymbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str(), lst));
 		if (!o) {
 			parser->_parse_error("Detected a conflicting definition of \"" + Symbol::genName(*id->str(),lst->size()) + "\".", &id->beginLoc());
 			YYERROR;
@@ -1819,7 +1794,7 @@ object_spec(obj) ::= num_range(nr).
 		// iterate over the range and add it to the list
 		for (int i = nr->min(); i <= nr->max(); i++) {
 			std::string name = boost::lexical_cast<std::string>(i);
-			ref_ptr<const ObjectSymbol> o = (ObjectSymbol*)parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(name)));
+			ref_ptr<const ObjectSymbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(name)));
 			if (!o) {
 				parser->_parse_error("INTERNAL ERROR: Could not create object symbol \"" + Symbol::genName(name, 0) + "\".", &nr->beginLoc());
 				YYERROR;
@@ -1983,7 +1958,7 @@ sort_bnd(new_bnd) ::= PAREN_L sort_bnd(bnd) PAREN_R.
 
 sort_dcl_lst(lst) ::= IDENTIFIER(id).
 	{
-		ref_ptr<SortSymbol> s = (SortSymbol*)parser->symtab()->resolveOrCreate(new SortSymbol(id->str()));
+		ref_ptr<SortSymbol> s = parser->symtab()->resolveOrCreate(new SortSymbol(id->str()));
 		if (!s) {
 			lst = NULL;
 			parser->_parse_error("Detected conflicting definition of sort symbol \"" + Symbol::genName(*id->str(),0) + "\".", &id->beginLoc());
@@ -1998,7 +1973,7 @@ sort_dcl_lst(lst) ::= IDENTIFIER(id).
 sort_dcl_lst(new_lst) ::= sort_dcl_lst(lst) COMMA IDENTIFIER(id).
 	{
 		new_lst = lst;
-		ref_ptr<SortSymbol> s = (SortSymbol*)parser->symtab()->resolveOrCreate(new SortSymbol(id->str()));
+		ref_ptr<SortSymbol> s = parser->symtab()->resolveOrCreate(new SortSymbol(id->str()));
 		if (!s) {
 			lst = NULL;
 			parser->_parse_error("Detected conflicting definition of sort symbol \"" + Symbol::genName(*id->str(),0) + "\".", &id->beginLoc());

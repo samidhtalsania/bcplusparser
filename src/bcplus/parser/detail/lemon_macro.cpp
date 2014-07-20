@@ -958,8 +958,8 @@ static void yy_reduce(
 			} else {	
 				// It's not a macro. Just go ahead and unpack it and re-add it for reading
 				parser->_push_front(yymsp[0].minor.yy0);
-				TokenList::const_reverse_iterator commas = yymsp[-1].minor.yy5->first->rbegin();
-				for (Macro::ArgumentList::const_reverse_iterator it = yymsp[-1].minor.yy5->second->rbegin(); it != yymsp[-1].minor.yy5->second->rend(); ) {
+				TokenList::reverse_iterator commas = yymsp[-1].minor.yy5->first->rbegin();
+				for (Macro::ArgumentList::reverse_iterator it = yymsp[-1].minor.yy5->second->rbegin(); it != yymsp[-1].minor.yy5->second->rend(); ) {
 					parser->_push_front((*it)->str()->c_str(), (*it)->beginLoc(), true);
 
 					it++;
