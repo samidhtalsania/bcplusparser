@@ -2106,21 +2106,21 @@ show_elem(elem) ::= atomic_formula_one_const(af).	{ elem = af; }
 /********************************************************************************************************************************/
 
 %include {
-	#define NC_STATEMENT(stmt, kw, feature, class)													\
+	#define NC_STATEMENT(stmt, kw, period, feature, class)											\
 		stmt = NULL;																				\
-		ref_ptr<const Token> kw_ptr = kw;															\
+		ref_ptr<const Token> kw_ptr = kw, p_ptr = period;											\
 																									\
 		if (!parser->lang()->support(feature)) {													\
 			parser->_feature_error(feature, &kw->beginLoc());										\
 			YYERROR;																				\
 		} else {																					\
-			stmt = new class(kw->beginLoc(), kw->endLoc());											\
+			stmt = new class(kw->beginLoc(), period->endLoc());										\
 		}																							
 
 }
 
-stmt_noconcurrency(stmt) ::= NOCONCURRENCY(kw).								{ NC_STATEMENT(stmt, kw, Language::Feature::NOCONCURRENCY, NCStatement); }
-stmt_strong_noconcurrency(stmt) ::= STRONG_NOCONCURRENCY(kw).				{ NC_STATEMENT(stmt, kw, Language::Feature::STRONG_NOCONCURRENCY, StrongNCStatement); }
+stmt_noconcurrency(stmt) ::= NOCONCURRENCY(kw) PERIOD(p).						{ NC_STATEMENT(stmt, kw, p, Language::Feature::NOCONCURRENCY, NCStatement); }
+stmt_strong_noconcurrency(stmt) ::= STRONG_NOCONCURRENCY(kw) PERIOD(p).			{ NC_STATEMENT(stmt, kw, p, Language::Feature::STRONG_NOCONCURRENCY, StrongNCStatement); }
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/
