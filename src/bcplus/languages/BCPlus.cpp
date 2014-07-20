@@ -91,6 +91,7 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::CODE_F2LP_GR:               
 		case Feature::CODE_LUA_CP:                
 		case Feature::CODE_LUA_GR: 
+		case Feature::STRONG_NOCONCURRENCY:       
 			return true;
 
 		case Feature::FORMULA_CONSTANT_ARGS:
@@ -102,7 +103,6 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::LAW_PCAUSED_D:              
 		case Feature::LAW_IMPL:                   
 		case Feature::LAW_OBSERVED:               
-		case Feature::STRONG_NOCONCURRENCY:       
 		default:
 			return false;
 	}
