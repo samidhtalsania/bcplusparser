@@ -2179,6 +2179,10 @@ stmt_query(stmt) ::= COLON_DASH(cd) QUERY(kw) query_lst(data) PERIOD(p).
 		ref_ptr<const Referenced> cd_ptr = cd, kw_ptr = kw, data_l_ptr = data.l, p_ptr = p;
 		ref_ptr<const Referenced> data_maxstep_ptr = data.maxstep, data_label_ptr = data.label;
 
+		ref_ptr<const ReferencedString> label;
+		if (data.label) label = data.label->str();
+		else label = new ReferencedString("0");
+
 		int min = -1, max = -1;
 		if (data.maxstep) {
 			min = data.maxstep->min();
@@ -2192,7 +2196,7 @@ stmt_query(stmt) ::= COLON_DASH(cd) QUERY(kw) query_lst(data) PERIOD(p).
 			bool good = true;
 
 			// resolve the query label
-			ref_ptr<QuerySymbol> sym = new QuerySymbol((data.label ? data.label->str() : new ReferencedString("0")), min, max);
+			ref_ptr<QuerySymbol> sym = new QuerySymbol(label, min, max);
 			if (!parser->symtab()->create(sym)) {
 				parser->_parse_error("Could not create query, the label \"" + *data.label->str() + "\" already exists.", &data.label->beginLoc());
 				good = false;
