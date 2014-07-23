@@ -11,11 +11,11 @@
 
 #include "bcplus/DomainType.h"
 #include "bcplus/symbols/Symbol.h"
+#include "bcplus/symbols/ObjectSymbol.h"
 
 namespace bcplus {
 namespace symbols {
 
-class ObjectSymbol;
 class Resolver;
 
 class SortSymbol : public Symbol {
@@ -105,6 +105,11 @@ public:
 	/// Add an object symbol to the list of objects
 	/// @return True if successful, false if the object was already in the sort.
 	bool add(ObjectSymbol const* obj);
+
+	/// Determines if an object symbol is in the wort
+	/// @return True if the object symbol is in the sort, false otherwise.
+	bool contains(ObjectSymbol const* obj) const				{ return _objects->count(obj) != 0; }
+
 
 	/// Adds a sort symbol as a superset to this one.
 	/// @param super The sort to add as a superset.

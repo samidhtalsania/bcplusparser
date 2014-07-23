@@ -1264,17 +1264,13 @@ sort_lst(new_lst) ::= sort_lst(lst) COMMA sort(s).
 			parser->_feature_error(feature, &op->beginLoc());																										\
 			YYERROR;																																				\
 		} else {																																					\
-			std::string name = *s->base() + "__" + *o->base() + "_" + boost::lexical_cast<std::string>(o->arity()) + "__";											\
-			new_s = parser->symtab()->resolveOrCreate(new SortSymbol(new ReferencedString(name)));																	\
-			if (!new_s) {																																			\
-				parser->_parse_error("An error occurred creating sort \"" + name + "\".", &op->beginLoc());															\
-				YYERROR;																																			\
-			} else {																																				\
-				new_s->addSubSort(s);																																\
-				new_s->add(o);																																		\
-			}																																						\
-		}																																						
+			new_s = parser->symtab()->plus(s, o);																													\
+		}
 }
+
+
+
+
 
 sort(new_s) ::= sort_id_nr(s).					{ new_s = s; }
 sort(new_s) ::= sort_id_nr(s) STAR(sym).		{ DYNAMIC_SORT_PLUS(new_s, s, sym, Language::Feature::STAR_SORT, parser->symtab()->bobj(SymbolTable::BuiltinObject::NONE)); }
@@ -1405,13 +1401,22 @@ constant_bnd_lst(new_lst) ::= constant_bnd_lst(lst) SEMICOLON constant_bnd(bnd).
 
 constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON constant_dcl_type(type) PAREN_L sort(s) PAREN_R.
 	{
-		ref_ptr<const Referenced> names_ptr = names, s_ptr = s;
+		ref_ptr<const SortSymbol> s_ptr = s;
+		ref_ptr<const Referenced> names_ptr = names;
 		bnd = new ConstantDeclaration::ElementList();
 
+		// NOTE: additive constants default to the additive sort, not the boolean sort
+		if (type & ConstantSymbol::Type::M_ADDITIVE) s_ptr = parser->symtab()->bsort(SymbolTable::BuiltinSort::ADDITIVE);
+
+		// external constants should have "unknown" in their sort
+		else if (type & ConstantSymbol::Type::M_EXTERNAL) s_ptr = parser->symtab()->carrot(s);
+
+		// non-boolean abActions should contain "none"
+		else if (type == ConstantSymbol::Type::ABACTION && s_ptr->domainType() != DomainType::BOOLEAN) s_ptr = parser->symtab()->star(s);
 
 		BOOST_FOREACH(IdentifierDecl& decl, *names) {
 			// attempt to declare each symbol
-			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), s, decl.second);
+			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), s_ptr, decl.second);
 			bnd->push_back(c);
 			CONSTANT_DECL(c, decl.first->beginLoc());
 		}
@@ -1433,8 +1438,16 @@ constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON constant_dcl_type(type).
 		bnd = new ConstantDeclaration::ElementList();
 		BOOST_FOREACH(IdentifierDecl& decl, *names) {
 			// attempt to declare each symbol
+			ref_ptr<SortSymbol> s = parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN);
+
 			// NOTE: additive constants default to the additive sort, not the boolean sort
-			ref_ptr<const SortSymbol> s = (type & ConstantSymbol::Type::M_ADDITIVE ? parser->symtab()->bsort(SymbolTable::BuiltinSort::ADDITIVE) : parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN));
+			if (type & ConstantSymbol::Type::M_ADDITIVE) s = parser->symtab()->bsort(SymbolTable::BuiltinSort::ADDITIVE);
+
+			// external constants should have "unknown" in their sort
+			else if (type & ConstantSymbol::Type::M_EXTERNAL) s = parser->symtab()->carrot(s);
+
+			// non-boolean abActions should contain "none"
+			else if (type == ConstantSymbol::Type::ABACTION && s->domainType() != DomainType::BOOLEAN) s = parser->symtab()->star(s);
 
 
 			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN), decl.second);
@@ -1674,7 +1687,7 @@ attrib_spec(attr) ::= ATTRIBUTE(kw).
 			YYERROR;
 		} else {
 			// grab the boolean sort and provide it
-			attr = parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN);
+			attr = parser->symtab()->star(parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN));
 		}
 	}
 
@@ -1686,7 +1699,7 @@ attrib_spec(attr) ::= ATTRIBUTE(kw) PAREN_L sort(s) PAREN_R.
 			parser->_feature_error(Language::Feature::CONST_ATTRIBUTE, &kw->beginLoc());
 			YYERROR;
 		} else {
-			attr = s;
+			attr = parser->symtab()->star(s);
 		}
 	}
 

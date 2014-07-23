@@ -131,6 +131,25 @@ bool SymbolTable::create(Symbol* symbol) {
 	return true;
 }
 
+SortSymbol* SymbolTable::carrot(SortSymbol* parent) {
+	return plus(parent, bobj(BuiltinObject::UNKNOWN));
+}
+
+SortSymbol* SymbolTable::star(SortSymbol* parent) {
+	return plus(parent, bobj(BuiltinObject::NONE));
+}
+
+SortSymbol* SymbolTable::plus(SortSymbol* parent, ObjectSymbol const* obj) {
+	u::ref_ptr<SortSymbol> ret = parent;
+	if (!parent->contains(obj)) {
+		// make a new  sort symbol symbol...
+		ret = resolveOrCreate(new SortSymbol(new ReferencedString(*parent->base() + "__" + *obj->base())));
+		ret->addSubSort(parent);
+		ret->add(obj);
+	}
+	return ret;
+}
+
 Symbol* SymbolTable::_resolveOrCreate(Symbol* symbol) {
 	// reference pointer in order to ensure symbol is properly deallocated if they didn't save a reference to it
 	u::ref_ptr<Symbol> symbol_ptr = symbol;

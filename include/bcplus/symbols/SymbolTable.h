@@ -156,14 +156,29 @@ public:
 	
 	/// Get the specified builtin sort symbol
 	inline SortSymbol const* bsort(BuiltinSort::type sort) const			{ return _bsorts[sort]; }
+	inline SortSymbol* bsort(BuiltinSort::type sort)						{ return _bsorts[sort]; }
 	
 	/// Get the specified builtin object symbol
 	inline ObjectSymbol const* bobj(BuiltinObject::type obj) const			{ return _bobjs[obj]; }
+	inline ObjectSymbol* bobj(BuiltinObject::type obj) 						{ return _bobjs[obj]; }
 
 	// Inherited from Resolver
 	virtual Symbol const* resolve(size_t typemask, std::string const& name, size_t arity = 0) const;
 	virtual Symbol* resolve(size_t typemask, std::string const& name, size_t arity = 0);
 	virtual bool create(Symbol* symbol);
+
+	/// Creates a "carrot" sort from the parent containing "unknown" if the parent doesn't already have it.
+	/// @param parent The parent sort
+	/// @return Either the parent (if parent contains unknown) or a supersort of parent containing unknown.
+	SortSymbol* carrot(SortSymbol* parent);
+
+	/// Creates a "star" sort from the parent containing "none" if the parent doesn't already have it.
+	/// @return Either the parent (if parent contains none) or a supersort of parent containing none.
+	SortSymbol* star(SortSymbol* parent);
+
+	/// Creates a super sort from the parent containing the providing object if the parent doesn't already have it.
+	/// @return Either the parent (if the parent contains obj) or a supersort of parent containing the object.
+	SortSymbol* plus(SortSymbol* parent, ObjectSymbol const* obj);
 
 private:
 	/*******************************************************************************/
