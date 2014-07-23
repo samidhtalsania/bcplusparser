@@ -5323,7 +5323,7 @@ static void yy_reduce(
 			// resolve the query label
 			ref_ptr<QuerySymbol> sym = new QuerySymbol(label, min, max);
 			if (!parser->symtab()->create(sym)) {
-				parser->_parse_error("Could not create query, the label \"" + *yymsp[-1].minor.yy301.label->str() + "\" already exists.", &yymsp[-1].minor.yy301.label->beginLoc());
+				parser->_parse_error("Could not create query, the label \"" + *label + "\" already exists.", (yymsp[-1].minor.yy301.label ? &yymsp[-1].minor.yy301.label->beginLoc() : &yymsp[-2].minor.yy0->beginLoc()));
 				good = false;
 				YYERROR;
 			}

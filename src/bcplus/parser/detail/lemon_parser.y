@@ -2198,7 +2198,7 @@ stmt_query(stmt) ::= COLON_DASH(cd) QUERY(kw) query_lst(data) PERIOD(p).
 			// resolve the query label
 			ref_ptr<QuerySymbol> sym = new QuerySymbol(label, min, max);
 			if (!parser->symtab()->create(sym)) {
-				parser->_parse_error("Could not create query, the label \"" + *data.label->str() + "\" already exists.", &data.label->beginLoc());
+				parser->_parse_error("Could not create query, the label \"" + *label + "\" already exists.", (data.label ? &data.label->beginLoc() : &kw->beginLoc()));
 				good = false;
 				YYERROR;
 			}
