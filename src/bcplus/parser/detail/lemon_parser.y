@@ -1275,11 +1275,9 @@ sort_lst(new_lst) ::= sort_lst(lst) COMMA sort(s).
 sort(new_s) ::= sort_id_nr(s).					{ new_s = s; }
 sort(new_s) ::= sort_id_nr(s) STAR(sym).		{ DYNAMIC_SORT_PLUS(new_s, s, sym, Language::Feature::STAR_SORT, parser->symtab()->bobj(SymbolTable::BuiltinObject::NONE)); }
 sort(new_s) ::= sort_id_nr(s) CARROT(sym).		{ DYNAMIC_SORT_PLUS(new_s, s, sym, Language::Feature::CARROT_SORT, parser->symtab()->bobj(SymbolTable::BuiltinObject::UNKNOWN)); }
-sort(new_s) ::= sort_nr(s) PLUS(op) object_nullary(o).
+sort(new_s) ::= sort(s) PLUS(op) object_nullary(o).
 												{ u::ref_ptr<const Object> o_ptr = o; DYNAMIC_SORT_PLUS(new_s, s, op, Language::Feature::SORT_PLUS, o->symbol()); }
-sort(new_s) ::= sort_id(s) PLUS(op) object_nullary(o).
-												{ u::ref_ptr<const Object> o_ptr = o; DYNAMIC_SORT_PLUS(new_s, s, op, Language::Feature::SORT_PLUS, o->symbol()); }
-sort(new_s) ::= sort_id(s) PLUS(op) INTEGER(i). { 
+sort(new_s) ::= sort(s) PLUS(op) INTEGER(i). { 
 												  ref_ptr<const Object> t_ptr;
 												  BASIC_TERM(t_ptr, i);
 												  DYNAMIC_SORT_PLUS(new_s, s, op, Language::Feature::SORT_PLUS, t_ptr->symbol()); 
