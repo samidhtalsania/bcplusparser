@@ -4390,7 +4390,7 @@ static void yy_reduce(
 												  u::ref_ptr<const ObjectSymbol> obj = parser->symtab()->resolveOrCreate(new ObjectSymbol(yymsp[0].minor.yy0->str()));
 												  if(!obj) {
 													if (parser->lang()->support(Language::Feature::SORT_PLUS)) 
-														parser->_parse_error("Expected a object or undeclared symbol.", &yymsp[0].minor.yy0->beginLoc());
+														parser->_parse_error("\"" + *yymsp[0].minor.yy0->str() + "\" could not be declared as an object as this conflicts with a previous declarations of this identifier.", &yymsp[0].minor.yy0->beginLoc());
 													else 
 														parser->_feature_error(Language::Feature::SORT_PLUS, &yymsp[-1].minor.yy0->beginLoc());
 													YYERROR;

@@ -1284,7 +1284,7 @@ sort(new_s) ::= sort(s) PLUS(op) IDENTIFIER(id).
 												  u::ref_ptr<const ObjectSymbol> obj = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));
 												  if(!obj) {
 													if (parser->lang()->support(Language::Feature::SORT_PLUS)) 
-														parser->_parse_error("Expected a object or undeclared symbol.", &id->beginLoc());
+														parser->_parse_error("\"" + *id->str() + "\" could not be declared as an object as this conflicts with a previous declarations of this identifier.", &id->beginLoc());
 													else 
 														parser->_feature_error(Language::Feature::SORT_PLUS, &op->beginLoc());
 													YYERROR;
