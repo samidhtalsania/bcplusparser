@@ -1277,6 +1277,22 @@ sort(new_s) ::= sort_id_nr(s) STAR(sym).		{ DYNAMIC_SORT_PLUS(new_s, s, sym, Lan
 sort(new_s) ::= sort_id_nr(s) CARROT(sym).		{ DYNAMIC_SORT_PLUS(new_s, s, sym, Language::Feature::CARROT_SORT, parser->symtab()->bobj(SymbolTable::BuiltinObject::UNKNOWN)); }
 sort(new_s) ::= sort(s) PLUS(op) object_nullary(o).
 												{ u::ref_ptr<const Object> o_ptr = o; DYNAMIC_SORT_PLUS(new_s, s, op, Language::Feature::SORT_PLUS, o->symbol()); }
+
+sort(new_s) ::= sort(s) PLUS(op) IDENTIFIER(id).
+												{
+												  u::ref_ptr<const Referenced> s_ptr = s, op_ptr = op, id_ptr = id;
+												  u::ref_ptr<const ObjectSymbol> obj = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));
+												  if(!obj) {
+													if (parser->lang()->support(Language::Feature::SORT_PLUS)) 
+														parser->_parse_error("Expected a object or undeclared symbol.", &id->beginLoc());
+													else 
+														parser->_feature_error(Language::Feature::SORT_PLUS, &op->beginLoc());
+													YYERROR;
+												  } else {
+													DYNAMIC_SORT_PLUS(new_s, s, op, Language::Feature::SORT_PLUS, obj);
+												  }
+												}
+
 sort(new_s) ::= sort(s) PLUS(op) INTEGER(i). { 
 												  ref_ptr<const Object> t_ptr;
 												  BASIC_TERM(t_ptr, i);
