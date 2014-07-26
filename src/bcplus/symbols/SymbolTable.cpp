@@ -28,7 +28,7 @@ namespace bcplus {
 namespace symbols{
 
 SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer const* metaInit)
-	: _config(config), _metaInit(metaInit) {
+	: _config(config), _metaInit(metaInit), _cmask(0) {
 	_good = true;
 	
 	// See if we should load anything from a file
@@ -122,6 +122,12 @@ bool SymbolTable::create(Symbol* symbol) {
 	_symbols[symbol->type()][*(symbol->name())] = symbol;
 	_config->ostream(Verb::TRACE_SYMTAB) << "Success!" << std::endl;
 
+	// If this is a constant, make sure to log the type in our mask...
+	if (symbol->type() == Symbol::Type::CONSTANT) {
+		_cmask |= ((ConstantSymbol const*)symbol)->constType();
+	}
+
+
 	// initialize the metadata
 	if (_metaInit) {
 		_metaInit->initMetadata(symbol);
@@ -197,6 +203,12 @@ Symbol* SymbolTable::_resolveOrCreate(Symbol* symbol) {
 	// Add the symbol
 	_symbols[symbol->type()][*(symbol->name())] = symbol;
 	_config->ostream(Verb::TRACE_SYMTAB) << "Not found.. creating it." << std::endl;
+
+
+	// If this is a constant, make sure to log the type in our mask...
+	if (symbol->type() == Symbol::Type::CONSTANT) {
+		_cmask |= ((ConstantSymbol const*)symbol)->constType();
+	}
 
 	// initialize the meta data
 	if (_metaInit) {

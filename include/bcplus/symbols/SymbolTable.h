@@ -114,6 +114,9 @@ private:
 	/// Builtin objects
 	babb::utils::ref_ptr<ObjectSymbol> _bobjs[BuiltinObject::_LENGTH_];
 
+	/// A mask of constant types that we've encountered
+	size_t _cmask;
+
 
 public:
 
@@ -179,6 +182,10 @@ public:
 	/// Creates a super sort from the parent containing the providing object if the parent doesn't already have it.
 	/// @return Either the parent (if the parent contains obj) or a supersort of parent containing the object.
 	SortSymbol* plus(SortSymbol* parent, ObjectSymbol const* obj);
+
+
+	/// Gets a mask of the constant types that we've encountered so far...
+	inline size_t cmask() const												{ return _cmask; }
 
 private:
 	/*******************************************************************************/
