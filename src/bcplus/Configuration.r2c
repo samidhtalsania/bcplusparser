@@ -125,11 +125,11 @@ int Configuration::parseOption(char const* opt, char const* opt2) {
 												  EXTRACT_NAME_VAL;
 												  option = Option::SYMTAB_INPUT; 
 												  goto re2c_finish; }
-		"--symtab-out""="?						{ 
+		("--symtab-out")"="?					{ 
 												  EXTRACT_NAME_VAL;
 												  option = Option::SYMTAB_OUTPUT;
 												  goto re2c_finish; }
-		"--verb""="?								{ 
+		"--verb""="?							{ 
 												  EXTRACT_NAME_VAL;
 												  option = Option::VERBOSITY;
 												  goto re2c_finish; }
@@ -162,7 +162,7 @@ re2c_finish:
 	switch (option) {
 	case Option::SYMTAB_INPUT:
 		if (fs::native(val2)) {
-			_symtab_in = new ReferencedPath(val);
+			_symtab_in = new ReferencedPath(val2);
 		} else {
 			ret = Status::STAT_BAD_ARG;
 			std::cerr << "ERROR: \"" << val2 << "\" is not a valid file path." << std::endl;
