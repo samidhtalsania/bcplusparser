@@ -77,9 +77,9 @@ ReferencedString const* SymbolTable::getData(std::string const& key) const {
 	else return it->second;
 }
 
-bool SymbolTable::setData(std::string const& key, ReferencedString const* data, bool override) {
+bool SymbolTable::setData(std::string const& key, ReferencedString const* data, bool ovrd) {
 	u::ref_ptr<const ReferencedString> data_ptr = data;
-	if (!override && getData(key)) return false;
+	if (!ovrd && getData(key)) return false;
 	_metadata[key] = data;
 	return true;	
 }

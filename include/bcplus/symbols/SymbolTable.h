@@ -153,9 +153,9 @@ public:
 	/// Set the metadata for the given key.
 	/// @param key The key for the data
 	/// @param data The new data for the key
-	/// @param override Whether to override existing data
+	/// @param ovrd Whether to override existing data
 	/// @return True if successful, false if the data exists and we didn't override it.
-	bool setData(std::string const& key, ReferencedString const* data, bool override = false);
+	bool setData(std::string const& key, ReferencedString const* data, bool ovrd = false);
 	
 	/// Get the specified builtin sort symbol
 	inline SortSymbol const* bsort(BuiltinSort::type sort) const			{ return _bsorts[sort]; }
