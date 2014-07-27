@@ -62,17 +62,17 @@ Symbol::Symbol(Type::type type, boost::property_tree::ptree const& node, std::os
 	bool good = true;
 
 	try {
-		std::string base = node.get("<xmlattr>.name","");
+		std::string base = node.get("<xmlattr>.base","");
 		int arity = node.get("<xmlattr>.arity",0);
 	
 		if (base == "") {
 			good = false;
-			if (err) *err << "Error: Encountered malformed symbol declaration. Expected a 'base' attribute." << std::endl;
+			if (err) *err << "ERROR: Encountered malformed symbol declaration. Expected a 'base' attribute." << std::endl;
 		}
 
 		if (arity < 0) {
 			good = false;
-			if (err) *err << "Error: Encountered malformed symbol declaration. Expected an non-negative integer 'arity' attribute." << std::endl;
+			if (err) *err << "ERROR: Encountered malformed symbol declaration. Expected an non-negative integer 'arity' attribute." << std::endl;
 		}
 	
 		_type = type;
@@ -82,7 +82,7 @@ Symbol::Symbol(Type::type type, boost::property_tree::ptree const& node, std::os
 		_name = new ReferencedString(genName(base, arity));
 	} catch (boost::property_tree::ptree_error const& e) {
 		good = false;
-		if (err) *err << "Error: Encountered malformed symbol declaration. Expected an non-negative integer 'arity' attribute." << std::endl;
+		if (err) *err << "ERROR: Encountered malformed symbol declaration. Expected an non-negative integer 'arity' attribute." << std::endl;
 	}
 
 
