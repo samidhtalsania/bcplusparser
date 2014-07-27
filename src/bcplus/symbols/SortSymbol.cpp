@@ -94,7 +94,7 @@ bool SortSymbol::addSubSort(SortSymbol* sub) {
 
 bool SortSymbol::loadDefinition(boost::property_tree::ptree const& node, Resolver* resolver, std::ostream* err) {
 	// verify symbol name
-	std::string node_name = node.get("<xmlattr>.name", "");
+	std::string node_name = node.get("<xmlattr>.base", "");
 	int node_arity = node.get("<xmlattr>.arity", 0);
 
 	if (node_arity || node_name != *base()) {
