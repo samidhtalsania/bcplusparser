@@ -111,7 +111,7 @@ public:
 	/// Initializes all parameters to defaults.
 	/// @param bin The name of the binary
 	/// @param version The system version.
-	Configuration(char const* bin, char const* version);
+	Configuration(char const* bin = NULL, char const* version = NULL);
 
 	/// Destructor
 	virtual ~Configuration();

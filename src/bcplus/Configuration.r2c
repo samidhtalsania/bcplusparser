@@ -25,8 +25,8 @@ const size_t Configuration::DEFAULT_VERB_LEVEL = Verb::STD;
 Configuration::Configuration(char const* bin, char const* version)
 { 
 	_verb = DEFAULT_VERB_LEVEL;
-	_version = new ReferencedString(version);
-	_bin_name = new ReferencedString(fs::path(bin).filename().native());
+	if (version) _version = new ReferencedString(version);
+	if (bin) _bin_name = new ReferencedString(fs::path(bin).filename().native());
 	_parse_trace = false;
 }
 
@@ -210,15 +210,19 @@ re2c_finish:
 }
 
 std::ostream& Configuration::outputVersion(std::ostream& out) const {
-	out << binaryName() << " version " << *version() << std::endl;
+	if (binaryName()) out << *binaryName() << " ";
+	if (version()) out << "version " << *version() << std::endl;
 	return out;
 }
 
 std::ostream& Configuration::outputHelp(std::ostream& out) const {
-	out << "---------------------------------------------------------------------------------------"<< std::endl
-		<< *binaryName() << " version " << *version() 												<< std::endl
+	out << "---------------------------------------------------------------------------------------"<< std::endl;
+	outputVersion(out) 
 		<< "---------------------------------------------------------------------------------------"<< std::endl
-		<< "Usage: " << *binaryName() << " [<OPTIONS>] [<CONSTANTS>] <INPUT_FILES>" 				<< std::endl
+		<< "Usage: " ;
+		if (binaryName()) out << *binaryName();
+		else out << "<binary>";
+		out << " [<OPTIONS>] [<CONSTANTS>] <INPUT_FILES>" 											<< std::endl
 		<< "---------------------------------------------------------------------------------------"<< std::endl
 		<< "OPTIONS:"																				<< std::endl;
 	outputOptions(out);
