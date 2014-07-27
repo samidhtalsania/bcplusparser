@@ -70,7 +70,7 @@ MacroSymbol::~MacroSymbol() {
 void MacroSymbol::save(boost::property_tree::ptree& node) const {
 	Symbol::save(node);
 
-	node.put("<xmlattr>.text", _text);
+	node.put("<xmlattr>.text", *_text);
 
 	size_t arg = 0;
 	BOOST_FOREACH(ReferencedString const* argval, *_args) {
