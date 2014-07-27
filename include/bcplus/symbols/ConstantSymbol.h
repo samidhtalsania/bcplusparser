@@ -36,7 +36,8 @@ public:
 			INERTIALFLUENT			= 0x0100,
 			RIGID					= 0x0200,
 			SDFLUENT				= 0x0400,
-			SIMPLEFLUENT			= 0x0800
+			SIMPLEFLUENT			= 0x0800,
+			ERR_UNKNOWN				= 0x0000		///< Dummy placeholder for an invalid type
 		};
 
 		enum mask {
@@ -50,6 +51,9 @@ public:
 
 		/// Convert to cstring
 		static char const* cstr(type val);
+
+		/// Convert cstring to enum value
+		static type value(char const* val);
 
 	};
 
