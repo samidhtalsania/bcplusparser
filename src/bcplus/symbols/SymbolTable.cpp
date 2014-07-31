@@ -36,7 +36,7 @@ SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer 
 	_good = _good && loadMacros(config);
 
 	// setup the additive sort
-	_bsorts[BuiltinSort::ADDITIVE] 	= resolveOrCreate(new SortSymbol(new ReferencedString("additive")));
+	_bsorts[BuiltinSort::ADDITIVE] 	= resolveOrCreate(new SortSymbol(new ReferencedString("afValue")));
 	_bsorts[BuiltinSort::BOOLEAN] 	= resolveOrCreate(new SortSymbol(new ReferencedString("boolean")));
 	_bsorts[BuiltinSort::COMPUTED] 	= resolveOrCreate(new SortSymbol(new ReferencedString("computed")));
 
