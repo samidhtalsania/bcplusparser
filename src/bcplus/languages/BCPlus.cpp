@@ -46,6 +46,7 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::FORMULA_NOT_DASH:
 		case Feature::FORMULA_NOT_DASH_HEAD:
 		case Feature::FORMULA_TILDE_STRONG_NEG:
+		case Feature::FORMULA_CONSTANT_ARGS:
 		case Feature::MACRO:
 		case Feature::NUMRANGE_SORT:
 		case Feature::VARIABLE:
@@ -95,7 +96,6 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::STRONG_NOCONCURRENCY:       
 			return true;
 
-		case Feature::FORMULA_CONSTANT_ARGS:
 		case Feature::DECL_MAXAFVALUE:            
 		case Feature::MAXAFVALUE:
 		case Feature::LAW_CAUSED_S:               

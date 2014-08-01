@@ -40,6 +40,7 @@ bool CPlus::support(Feature::type feature) const {
 		case Feature::FORMULA_QUANTIFIER:
 		case Feature::FORMULA_NOT_DASH:
 		case Feature::FORMULA_NOT_DASH_HEAD:
+		case Feature::FORMULA_CONSTANT_ARGS:
 		case Feature::MACRO:
 		case Feature::NUMRANGE_SORT:
 		case Feature::VARIABLE:
@@ -101,7 +102,6 @@ bool CPlus::support(Feature::type feature) const {
 		case Feature::FORMULA_CARDINALITY_HEAD:
 		case Feature::LAW_BASIC_S:                
 		case Feature::LAW_BASIC_D:                
-		case Feature::FORMULA_CONSTANT_ARGS:
 		case Feature::LAW_IMPL:                   
 		case Feature::LAW_OBSERVED:               
 		default:

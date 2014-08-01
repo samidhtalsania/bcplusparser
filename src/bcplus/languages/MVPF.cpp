@@ -51,6 +51,7 @@ bool MVPF::support(Feature::type feature) const {
 		case Feature::FORMULA_CARDINALITY_HEAD:
 		case Feature::FORMULA_QUANTIFIER:
 		case Feature::LAW_IMPL:                   
+		case Feature::FORMULA_CONSTANT_ARGS:
 			return true;
 
 		case Feature::LAW_BASIC_S:                
@@ -95,7 +96,6 @@ bool MVPF::support(Feature::type feature) const {
 		case Feature::CONST_EXTERNALFLUENT:
 		case Feature::FORMULA_NOT_DASH:
 		case Feature::FORMULA_NOT_DASH_HEAD:
-		case Feature::FORMULA_CONSTANT_ARGS:
 		case Feature::DECL_MAXAFVALUE:            
 		case Feature::MAXAFVALUE:
 		case Feature::LAW_CAUSED_S:               
