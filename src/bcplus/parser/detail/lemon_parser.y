@@ -2522,9 +2522,18 @@ stmt_law(stmt) ::= law_observed(law).				{stmt = law;}
 
 
 
-law_basic(law) 			::= head_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).						{ LAW_BASIC_FORM(law, NULL, head, ifbody, ifcons, after, 
-																																														unless, where, p, Language::Feature::LAW_BASIC_S, 
-																																															Language::Feature::LAW_BASIC_D, BasicLaw); }
+law_basic(law) 			::= head_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).	
+	{ 
+		if (ifbody || ifcons || after || unless || where) {
+			LAW_BASIC_FORM(law, NULL, head, ifbody, ifcons, after, 
+				unless, where, p, Language::Feature::LAW_BASIC_S, 
+				Language::Feature::LAW_BASIC_D, BasicLaw); 
+		} else {
+			LAW_BASIC_FORM(law, NULL, head, ifbody, ifcons, after, 
+				unless, where, p, Language::Feature::LAW_BASIC_FACT, 
+				Language::Feature::LAW_BASIC_FACT, BasicLaw); 
+		}
+	}
 
 law_caused(law)			::= CAUSED(kw) head_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).			{ LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, 
 																																														unless, where, p, Language::Feature::LAW_CAUSED_S, 

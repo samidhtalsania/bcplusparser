@@ -38,8 +38,7 @@ bool MVPF::support(Feature::type feature) const {
 		case Feature::QUERY_MAXSTEP:
 		case Feature::QUERY_LABEL:
 		case Feature::CLAUSE_WHERE:               
-		case Feature::LAW_BASIC_S:                
-		case Feature::LAW_BASIC_D:                
+		case Feature::LAW_BASIC_FACT:                
 		case Feature::CODE_ASP_CP:                
 		case Feature::CODE_ASP_GR:                
 		case Feature::CODE_F2LP_CP:               
@@ -54,6 +53,8 @@ bool MVPF::support(Feature::type feature) const {
 		case Feature::LAW_IMPL:                   
 			return true;
 
+		case Feature::LAW_BASIC_S:                
+		case Feature::LAW_BASIC_D:                
 		case Feature::LAW_CAUSES:                 
 		case Feature::LAW_MCAUSE:                 
 		case Feature::LAW_ALWAYS_S:               

@@ -48,6 +48,7 @@ bool BC::support(Feature::type feature) const {
 		case Feature::CLAUSE_WHERE:               
 		case Feature::LAW_BASIC_S:                
 		case Feature::LAW_BASIC_D:                
+		case Feature::LAW_BASIC_FACT:                
 		case Feature::LAW_CAUSES:                 
 		case Feature::LAW_MCAUSE:                 
 		case Feature::LAW_ALWAYS_S:               

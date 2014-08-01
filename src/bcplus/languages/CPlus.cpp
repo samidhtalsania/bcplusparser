@@ -56,6 +56,7 @@ bool CPlus::support(Feature::type feature) const {
 		case Feature::CLAUSE_UNLESS:              
 		case Feature::CLAUSE_WHERE:               
 		case Feature::LAW_CAUSES:                 
+		case Feature::LAW_BASIC_FACT:                
 		case Feature::LAW_INCREMENTS:             
 		case Feature::LAW_DECREMENTS:             
 		case Feature::LAW_MCAUSE:                 

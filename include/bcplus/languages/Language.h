@@ -73,6 +73,8 @@ public:
 
 			LAW_BASIC_S,				///< F if G
 			LAW_BASIC_D,				///< F if G after H
+			LAW_BASIC_FACT,				///< A single fact "c=v"
+
 
 			LAW_CAUSED_S,				///< caused F if G.
 			LAW_CAUSED_D,				///< caused F if G after H
