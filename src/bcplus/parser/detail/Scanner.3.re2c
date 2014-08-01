@@ -502,6 +502,15 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												}
 		<F2LP_CP> .								{												goto yyc_F2LP_CP;					}
 	
+
+		<PRE_ARG> "("							{
+												  ret = T_PAREN_L;
+												  _cond = yycARG;
+												  goto re2c_finish;
+												}
+								
+
+
 		<ARG> NL								{
 												  source->newline();
 												  ln_cmt = false;
@@ -522,11 +531,7 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 
 		<ARG> "("								{ 
 												  if (sgl_quote || dbl_quote || ln_cmt || blk_cmt) goto yyc_ARG;
-												  if (!parens++) {
-												  	ret = T_PAREN_L;						
-													goto re2c_finish;
-												  } 
-
+												  parens++;
 												  goto yyc_ARG;
 												}
 		<ARG> ")"								{
@@ -538,7 +543,7 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 													_cond = yycNORMAL;
 													goto re2c_finish;
 				
-												  } else if (--parens <= 0) {
+												  } else if (--parens < 0) {
 													// first end paren
 													repeat = true;
 													source->cursor()--;

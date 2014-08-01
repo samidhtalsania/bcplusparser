@@ -190,7 +190,7 @@ re2c_start:
 												}
 
 
-		<DBL_STRING, SG_STRING, ASP_GR, ASP_CP, LUA_GR, LUA_CP, F2LP_GR, F2LP_CP, ARG, MACO> . {
+		<DBL_STRING, SG_STRING, ASP_GR, ASP_CP, LUA_GR, LUA_CP, F2LP_GR, F2LP_CP, PRE_ARG, ARG, MACO> . {
 												  goto re2c_notcmt;
 												}
 

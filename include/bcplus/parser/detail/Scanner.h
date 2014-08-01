@@ -45,6 +45,7 @@ private:
 		yycLUA_CP,						///< CCalc style LUA block
 		yycF2LP_GR,						///< Gringo style F2LP block
 		yycF2LP_CP,						///< CCalc style F2LP block
+		yycPRE_ARG,						///< Intermediate state after we parsed an identifier and are about to parse "("
 		yycARG,							///< Inside an unparsed argument
 		yycMACRO,						///< Macro definition string (anything following "->" and preceding ".").
 		yycBLK_COMMENT,					///< Inside a block comment
