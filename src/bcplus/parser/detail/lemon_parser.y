@@ -128,7 +128,6 @@
 %nonassoc WHERE.           // where
 
 %nonassoc FALSE.           // false
-%nonassoc NONE.            // none
 %nonassoc TRUE.            // true
 
 %nonassoc AT.              // @

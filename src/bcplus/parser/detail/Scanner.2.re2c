@@ -109,7 +109,6 @@ Token* Scanner::tokenize_2(ScannerRawSource* source) {
 				<NORMAL> "false"						{ ret = T_FALSE;						goto re2c_finish;					}
 				<NORMAL> "mod"							{ ret = T_MOD;							goto re2c_finish;					}
 				<NORMAL> "neq"							{ ret = T_NEQ;							goto re2c_finish;					}
-				<NORMAL> "none"							{ ret = T_NONE;							goto re2c_finish;					}
 				<NORMAL> "not"							{ ret = T_NOT;							goto re2c_finish;					}
 				<NORMAL> "true"							{ ret = T_TRUE;							goto re2c_finish;					}
 
