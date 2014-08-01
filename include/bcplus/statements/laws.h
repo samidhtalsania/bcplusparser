@@ -39,7 +39,7 @@ typedef detail::BasicLawForm<
 
 typedef detail::BasicLawForm<
 	Statement::Type::LAW_PCAUSED,
-	elements::AtomicFormula,	// possibly caused F
+	elements::Formula,			// possibly caused F
 	elements::Formula,			// if G
 	elements::Formula,			// ifcons G2
 	elements::Formula,			// after H
@@ -126,7 +126,7 @@ typedef detail::ConstraintLawForm<
 
 typedef detail::BasicLawForm<
 	Statement::Type::LAW_DEFAULT,
-	elements::AtomicFormula, 	// default c=v
+	elements::AtomicFormula,	// default c=v
 	elements::Formula,			// if G
 	elements::Formula,			// ifcons G2
 	elements::Formula,			// after H

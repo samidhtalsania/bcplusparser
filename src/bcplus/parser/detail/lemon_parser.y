@@ -1090,11 +1090,13 @@ card_var_lst_inner(new_vars) ::= card_var_lst_inner(vars) COMMA variable(v).
 
 %type       head_formula 					{ Formula* 									}			// A formula in the head of a law.
 %destructor head_formula					{ DEALLOC($$);								}
+%type       atomic_head_formula 			{ AtomicFormula* 							}			// A formula in the head of a law.
+%destructor atomic_head_formula				{ DEALLOC($$);								}
 %type		formula_smpl_card				{ CardinalityFormula*						}			// cardinality formula in the head of a law
 %destructor formula_smpl_card				{ DEALLOC($$);								}
 
 head_formula(f) ::= comparison(c).													{ f = c; }
-head_formula(f) ::= atomic_formula(l).												{ f = l; }
+head_formula(f) ::= atomic_head_formula(l).											{ f = l; }
 head_formula(f) ::= formula_smpl_card(c).
 	{ 
 		f = c;
@@ -1103,9 +1105,10 @@ head_formula(f) ::= formula_smpl_card(c).
 			YYERROR;
 		}
 	}
-head_formula(f) ::= TRUE(e).														{ f = new NullaryFormula(NullaryFormula::Operator::TRUE, e->beginLoc(), e->endLoc()); }
+head_formula(f) ::= TRUE(e).															{ f = new NullaryFormula(NullaryFormula::Operator::TRUE, e->beginLoc(), e->endLoc()); }
 head_formula(f) ::= FALSE(e).														{ f = new NullaryFormula(NullaryFormula::Operator::FALSE, e->beginLoc(), e->endLoc()); }
-head_formula(f) ::= DASH(d) constant(c).												
+
+atomic_head_formula(f) ::= DASH(d) constant(c).												
 	{ 
 		f = NULL;
 		ref_ptr<const Token> d_ptr = d;
@@ -2526,7 +2529,7 @@ law_caused(law)			::= CAUSED(kw) head_formula(head) clause_if(ifbody) clause_ifc
 																																														unless, where, p, Language::Feature::LAW_CAUSED_S, 
 																																															Language::Feature::LAW_CAUSED_D, CausedLaw); }
 
-law_pcaused(law) 		::= POSSIBLY_CAUSED(kw) atomic_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).	{ LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, 
+law_pcaused(law) 		::= POSSIBLY_CAUSED(kw) head_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).	{ LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, 
 																																														unless, where, p, Language::Feature::LAW_PCAUSED_S, 
 																																															Language::Feature::LAW_PCAUSED_D, PossiblyCausedLaw); }
 
@@ -2564,7 +2567,7 @@ law_never(law) 			::= NEVER(kw) formula(body) clause_after(after) clause_unless(
 																																														Language::Feature::LAW_NEVER_S, 
 																																															Language::Feature::LAW_NEVER_D, NeverLaw); }
 
-law_default(law) 		::= DEFAULT(kw) atomic_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).		{ LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, 
+law_default(law) 		::= DEFAULT(kw) atomic_head_formula(head) clause_if(ifbody) clause_ifcons(ifcons) clause_after(after) clause_unless(unless) clause_where(where) PERIOD(p).	{ LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, 
 																																														unless, where, p, Language::Feature::LAW_DEFAULT_S,
 																																															Language::Feature::LAW_DEFAULT_D, DefaultLaw); }
 
@@ -2584,7 +2587,7 @@ law_rigid(law) 			::= RIGID(kw) constant(head) clause_where(where) PERIOD(p).			
 																																														Language::Feature::LAW_RIGID, RigidLaw); }
 
 
-law_observed(law) 		::= OBSERVED(kw) atomic_formula(head) AT term_no_const(t) PERIOD(p).																						
+law_observed(law) 		::= OBSERVED(kw) atomic_head_formula(head) AT term_no_const(t) PERIOD(p).																						
 		{ 
 			law = NULL;
 			ref_ptr<const Token> kw_ptr = kw, p_ptr = p;
