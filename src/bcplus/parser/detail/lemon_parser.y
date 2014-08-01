@@ -1108,6 +1108,8 @@ head_formula(f) ::= formula_smpl_card(c).
 head_formula(f) ::= TRUE(e).															{ f = new NullaryFormula(NullaryFormula::Operator::TRUE, e->beginLoc(), e->endLoc()); }
 head_formula(f) ::= FALSE(e).														{ f = new NullaryFormula(NullaryFormula::Operator::FALSE, e->beginLoc(), e->endLoc()); }
 
+
+atomic_head_formula(f) ::= atomic_formula(af).										{ f = af; }
 atomic_head_formula(f) ::= DASH(d) constant(c).												
 	{ 
 		f = NULL;
