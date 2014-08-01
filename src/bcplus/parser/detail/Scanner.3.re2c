@@ -54,7 +54,6 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 	bool sgl_quote = false;
 	bool ln_cmt = false;
 	bool blk_cmt = false;
-	static bool repeat = false;
 
 	char const* marker = NULL;
 
@@ -192,7 +191,7 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												}
 		<NORMAL> IDENTIFIER/ WS* "("			{ 
 												  ret = T_IDENTIFIER;
-												  _cond = yycARG;
+												  _cond = yycPRE_ARG;
 												  goto re2c_finish;					
 												}
 		<NORMAL> "->"							{ 
@@ -508,6 +507,16 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												  _cond = yycARG;
 												  goto re2c_finish;
 												}
+		<PRE_ARG> ","							{
+												  ret = T_COMMA;
+												  _cond = yycARG;
+												  goto re2c_finish;
+												}
+		<PRE_ARG> ")"							{
+												  ret = T_PAREN_R;
+												  _cond = yycNORMAL;
+												  goto re2c_finish;
+												}
 								
 
 
@@ -536,18 +545,10 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												}
 		<ARG> ")"								{
 												  if (sgl_quote || dbl_quote || ln_cmt || blk_cmt) goto yyc_ARG;
-												  if (repeat) {
-													// 2nd end paren
-													repeat = false;
-												    ret = T_PAREN_R;
-													_cond = yycNORMAL;
-													goto re2c_finish;
-				
-												  } else if (--parens < 0) {
-													// first end paren
-													repeat = true;
+												  if (--parens < 0) {
 													source->cursor()--;
 													ret = T_ARG;
+												    _cond = yycPRE_ARG;
 													goto re2c_finish;
 												  }
 
@@ -555,18 +556,11 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												}
 		<ARG> ","								{
 												  if (sgl_quote || dbl_quote || ln_cmt || blk_cmt) goto yyc_ARG;
-												  if (repeat) {
-													// 2nd comma
-													repeat = false;
-													ret = T_COMMA;
-													goto re2c_finish;
-												  } else {
-													// first comma
-													repeat = true;
-													source->cursor()--;
-													ret = T_ARG;
-													goto re2c_finish;
-												  }								  
+												  source->cursor()--;
+												  ret = T_ARG;
+												  _cond = yycPRE_ARG;
+												  goto re2c_finish;
+																				  
 												}
 		<ARG> ["]								{ 
 												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;		
