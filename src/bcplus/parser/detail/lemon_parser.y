@@ -1861,20 +1861,27 @@ stmt_variable_def(stmt) ::= COLON_DASH(cd) VARIABLES(kw) variable_bnd_lst(l) PER
 			parser->_feature_error(Language::Feature::DECL_VARIABLE, &kw->beginLoc());
 			YYERROR;
 		} else {
-			stmt = new VariableDeclaration(l, cd->beginLoc(), p->endLoc());
+
+			VariableSymbol* v2;
 
 			// Go ahead and add them to the symbol table
-			BOOST_FOREACH(VariableSymbol* v, *l) {
-				if (!parser->symtab()->create(v)) {
+			BOOST_FOREACH(ref_ptr<VariableSymbol>& v, *l) {
+				if (!(v2 = parser->symtab()->resolveOrCreate(v))) {
 					// Check if it's a duplicate
-					VariableSymbol* v2 = (VariableSymbol*)parser->symtab()->resolve(Symbol::Type::VARIABLE, *v->base());
+					v2 = (VariableSymbol*)parser->symtab()->resolve(Symbol::Type::VARIABLE, *v->base());
 					if (!v2 || v2 != v) {
 						parser->_parse_error("Detected conflicting definition of symbol \"" + *v->name() + "\".", &cd->beginLoc());
 					} else {
 						parser->_parse_error("Detected a duplicate definition of symbol \"" + *v->name() + "\".", &cd->beginLoc());
 					}
+				} else {
+					v = v2;
 				}
 			}
+
+			stmt = new VariableDeclaration(l, cd->beginLoc(), p->endLoc());
+
+
 		}
 	}
 
@@ -1897,6 +1904,9 @@ variable_bnd(bnd) ::= variable_lst(vars) DBL_COLON sort_id(s).
 		BOOST_FOREACH(Token const* tok, *vars) {
 			bnd->push_back(new VariableSymbol(tok->str(), s));
 		}
+
+
+
 		delete vars;
 	}
 
