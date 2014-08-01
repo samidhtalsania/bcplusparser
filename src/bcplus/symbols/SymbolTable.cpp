@@ -30,6 +30,15 @@ namespace symbols{
 SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer const* metaInit)
 	: _config(config), _metaInit(metaInit), _cmask(0) {
 	_good = true;
+
+	// setup the maps
+
+	size_t type = 0x0001;
+	while (type <= Symbol::Type::_LARGEST_) {
+		_symbols[(Symbol::Type::type)type];
+		type = type << 1;
+	}
+
 	
 	// See if we should load anything from a file
 	if (config->symtabInput()) _good = load(*(config->symtabInput()));
@@ -54,6 +63,9 @@ SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer 
 	for (size_t i = 0; i < BuiltinObject::_LENGTH_; i++) {
 		if (!_bobjs[i]) _good = false;
 	}
+
+
+
 
 	if (_good) {
 		_bsorts[BuiltinSort::BOOLEAN]->add(_bobjs[BuiltinObject::TRUE]);
