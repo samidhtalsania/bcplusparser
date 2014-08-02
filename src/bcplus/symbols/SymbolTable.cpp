@@ -314,11 +314,11 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 
 							switch (Symbol::Type::val(s.first.c_str())) {
 							case Symbol::Type::SORT:
-								if (pass == 2) {
+								if (pass == 0) {
 									// First pass, just create the symbol
 									sym = new symbols::SortSymbol(s.second, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
-								} else {
+								} else if (pass == 1) {
 									// second pass, load the symbol definition
 									tmp = new symbols::SortSymbol(s.second, &(_config->ostream(Verb::ERROR)));
 									sym = resolveOrCreate(tmp);
@@ -338,7 +338,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 
 							case Symbol::Type::CONSTANT:
-								if (pass == 2) {
+								if (pass == 1) {
 									// second pass, create the symbol
 									sym = new symbols::ConstantSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
@@ -346,7 +346,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 		
 							case Symbol::Type::VARIABLE:
-								if (pass == 2) {
+								if (pass == 1) {
 									// second pass, create the symbol
 									sym = new symbols::VariableSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
@@ -354,7 +354,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 
 							case Symbol::Type::OBJECT:
-								if (pass == 2) {
+								if (pass == 1) {
 									// second pass, create the symbol
 									sym = new symbols::ObjectSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
@@ -362,14 +362,14 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 								break;
 
 							case Symbol::Type::MACRO:
-								if (pass == 2) {
+								if (pass == 1) {
 									sym = new symbols::MacroSymbol(s.second, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
 								}
 								break;
 
 							case Symbol::Type::QUERY:
-								if (pass == 2) {
+								if (pass == 1) {
 									sym = new symbols::QuerySymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
 								}
@@ -380,7 +380,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 
 								// check if it's an attribute
 								if (boost::iequals(s.first, "attribute")) {
-									if (pass == 3) {
+									if (pass == 2) {
 										sym = new symbols::AttributeSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 										add_sym = true; 		
 									}
