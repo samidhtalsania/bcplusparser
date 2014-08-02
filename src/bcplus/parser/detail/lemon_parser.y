@@ -1817,6 +1817,21 @@ object_spec(obj) ::= IDENTIFIER(id) PAREN_L sort_lst(lst) PAREN_R.
 			obj->push_back(o);
 		}
 	}
+
+object_spec(obj) ::= INTEGER(id).
+	{
+		obj = NULL;
+		ref_ptr<const Token> id_ptr = id;
+		ref_ptr<const ObjectSymbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));
+		if (!o) {
+			parser->_parse_error("Detected a conflicting definition of \"" + Symbol::genName(*id->str(),0) + "\".", &id->beginLoc());
+			YYERROR;
+		} else {
+			obj = new ObjectDeclaration::Element::ObjectList();
+			obj->push_back(o);
+		}
+	}
+
 object_spec(obj) ::= num_range(nr). 
 	{
 		obj = new ObjectDeclaration::Element::ObjectList();
