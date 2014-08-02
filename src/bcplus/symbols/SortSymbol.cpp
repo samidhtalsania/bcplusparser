@@ -207,7 +207,7 @@ void SortSymbol::save(boost::property_tree::ptree& node) const {
 
 	BOOST_FOREACH(SortSymbol const* sort, *_subsorts) {
 		boost::property_tree::ptree& tmp = node.add("subsort", "");
-		tmp.put("<xmlattr>.name", *(sort->base()));
+		tmp.put("<xmlattr>.base", *(sort->base()));
 	}
 }
 
