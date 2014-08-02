@@ -1912,7 +1912,7 @@ variable_bnd_lst(new_lst) ::= variable_bnd_lst(lst) SEMICOLON variable_bnd(bnd).
 		delete bnd;
 	}
 
-variable_bnd(bnd) ::= variable_lst(vars) DBL_COLON sort_id(s).
+variable_bnd(bnd) ::= variable_lst(vars) DBL_COLON sort(s).
 	{
 		bnd = new VariableDeclaration::ElementList();
 
