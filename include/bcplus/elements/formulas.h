@@ -5,6 +5,7 @@
 #include "bcplus/elements/detail/BinaryElement.h"
 #include "bcplus/elements/detail/UnaryElement.h"
 #include "bcplus/elements/detail/NullaryElement.h"
+#include "bcplus/elements/detail/Binding.h"
 namespace bcplus {
 namespace elements {
 
@@ -223,9 +224,19 @@ typedef detail::NullaryElement<
 	detail::NullaryFormulaOperator::cstr,
 	detail::NullaryFormulaOperator::domaintype > NullaryFormula;
 
+/**
+ * @brief a binding of the form i:F where i is a step and F is a formula.
+ */
+typedef detail::Binding<
+	Formula,
+	detail::FormulaType::BINDING,
+	Term,
+	Formula> BindingFormula;
+
+
+
 
 }}
 #include "bcplus/elements/AtomicFormula.h"
 #include "bcplus/elements/QuantifierFormula.h"
 #include "bcplus/elements/CardinalityFormula.h"
-#include "bcplus/elements/BindingFormula.h"

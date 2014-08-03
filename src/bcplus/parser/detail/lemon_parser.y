@@ -373,6 +373,7 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 						case Term::Type::OBJECT:																			\
 						case Term::Type::BINARY:																			\
 						case Term::Type::UNARY:																				\
+						case Term::Type::BINDING:																			\
 							parser->_parse_error("Unable to dynamically declare abAction \"" + Symbol::genName(*id_ptr->str(), (args_ptr ? args_ptr->size() : 0))\
 							+ "\". Could not deduce the sort of argument #" + boost::lexical_cast<std::string>(argnum)		\
 							+ " as it isn't a constant or variable. This problem can be fixed by explicitly declaring the abAction" \
@@ -935,40 +936,13 @@ atomic_formula_one_const(af) ::= constant_one_const(c).											{ ATOMIC_FORMU
 atomic_formula_one_const(af) ::= TILDE constant_one_const(c).									{ ATOMIC_FORMULA(af, c, false); }
 atomic_formula_one_const(af) ::= constant_one_const(c) EQ term_no_const(t). 					{ af = new AtomicFormula(c, t, c->beginLoc(), t->endLoc());	}
 
-/*************************************************************************************************/
-/* Formulas with temporal bindings */
-/*************************************************************************************************/
 
-%include {
-	#define BINDING(new_f, lhs, op, rhs)																		\
-		new_f = NULL;																							\
-		ref_ptr<Term> lhs_ptr = lhs;																			\
-		ref_ptr<const Token> op_ptr = op;																		\
-		ref_ptr<Formula> rhs_ptr = rhs;																			\
-																												\
-		if (!parser->lang()->support(Language::Feature::QUERY_BIND_STEP)) {										\
-			parser->_feature_error(Language::Feature::QUERY_BIND_STEP, &op->beginLoc());						\
-			YYERROR;																							\
-		} else {																								\
-			new_f = new BindingFormula(lhs, rhs, lhs->beginLoc(), rhs->endLoc());  								\
-		}
 
-}
 
-%type       formula_temporal				{ Formula*									}
-%destructor formula_temporal				{ DEALLOC($$);								}
 
-formula_temporal(new_f) ::= formula_base(f).															{ new_f = f;				}
-formula_temporal(new_f) ::= PAREN_L formula_temporal(f) PAREN_R.										{ new_f = f; new_f->parens(true); 	}
-formula_temporal(new_f) ::= NOT(op) formula_temporal(f).												{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_KEYWORD); }
-formula_temporal(new_f) ::= DASH(op) formula_temporal(f).												{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_DASH); }
-formula_temporal(new_f) ::= formula_temporal(lhs) AMP formula_temporal(rhs).							{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
-formula_temporal(new_f) ::= formula_temporal(lhs) DBL_PLUS(op) formula_temporal(rhs).					{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
-formula_temporal(new_f) ::= formula_temporal(lhs) PIPE(op) formula_temporal(rhs).						{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
-formula_temporal(new_f) ::= formula_temporal(lhs) EQUIV(op) formula_temporal(rhs).						{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::EQUIV); }
-formula_temporal(new_f) ::= formula_temporal(lhs) IMPL(op) formula_temporal(rhs).						{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::IMPL); }
-formula_temporal(new_f) ::= formula_temporal(lhs) ARROW_RDASH(op) formula_temporal(rhs).				{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::IMPL); }
-formula_temporal(new_f) ::= term_strong(lhs) COLON(op) formula_temporal(rhs).							{ BINDING(new_f, lhs, op, rhs); }
+
+
+
 
 /*************************************************************************************************/
 /* Quantifiers */
@@ -1080,6 +1054,225 @@ card_var_lst_inner(new_vars) ::= card_var_lst_inner(vars) COMMA variable(v).
 		new_vars = vars;
 		new_vars->push_back(v->symbol());
 	}
+
+
+
+/*************************************************************************************************/
+/* Terms with temporal bindings */
+/*************************************************************************************************/
+
+
+%include {
+	#define BINDING(new_f, lhs, op, rhs, class)																	\
+		new_f = NULL;																							\
+		ref_ptr<const Element> lhs_ptr = lhs, rhs_ptr;															\
+		ref_ptr<const Token> op_ptr = op;																		\
+																												\
+		if (!parser->lang()->support(Language::Feature::QUERY_BIND_STEP)) {										\
+			parser->_feature_error(Language::Feature::QUERY_BIND_STEP, &op->beginLoc());						\
+			YYERROR;																							\
+		} else {																								\
+			new_f = new class(lhs, rhs, lhs->beginLoc(), rhs->endLoc());										\
+		}
+
+}
+
+
+%type		term_temporal								{ Term*										}
+%destructor term_temporal								{ DEALLOC($$);								}
+%type		term_temporal_strong						{ Term*										}			// A stronger definition of term_temporal for the LHS of operators in a formula
+																												// in order to disambiguate the grammar.
+%destructor term_temporal_strong						{ DEALLOC($$);								}
+%type		term_temporal_strong_candidate				{ Term*										}			// A term_temporal we think may be a strong term_temporal, depending on what's following it.
+%destructor term_temporal_strong_candidate				{ DEALLOC($$);								}
+																												// in order to disambiguate the grammar.
+%type		constant_temporal							{ Term*										}			// t:c where c is a constant
+%destructor constant_temporal							{ DEALLOC($$);								}
+
+//constant_temporal(t) ::= term_no_const_strong(lhs) COLON(op) constant(rhs).				{ BINDING(t, lhs, op, rhs, BindingTerm); }
+//constant_temporal(t) ::= term_temporal_strong(lhs) COLON(op) constant(rhs).					{ BINDING(t, lhs, op, rhs, BindingTerm); }
+
+//term_temporal(t) ::= base_elem(e).														{ t = e; }
+term_temporal(t) ::= base_elem_no_const(e).													{ t = e; }
+term_temporal(t) ::= INTEGER(i).															{ BASIC_TERM(t, i);	}
+term_temporal(t) ::= STRING_LITERAL(s).														{ BASIC_TERM(t, s); }
+term_temporal(t) ::= PAREN_L(pl) term_temporal(sub) PAREN_R(pr).							{ TERM_PARENS(t, pl, sub, pr); }
+term_temporal(t) ::= TRUE(e).																{ BASIC_TERM(t, e); }
+term_temporal(t) ::= FALSE(e).																{ BASIC_TERM(t, e); }
+term_temporal(t) ::= MAXSTEP(e).															{ NULLARY_TERM(t, e, Language::Feature::MAXSTEP, NullaryTerm::Operator::MAXSTEP); }
+term_temporal(t) ::= MAXADDITIVE(e).														{ NULLARY_TERM(t, e, Language::Feature::MAXADDITIVE, NullaryTerm::Operator::MAXADDITIVE); }
+term_temporal(t) ::= MAXAFVALUE(e).															{ NULLARY_TERM(t, e, Language::Feature::MAXAFVALUE, NullaryTerm::Operator::MAXAFVALUE); }
+term_temporal(t) ::= constant(c).
+	{
+		// error handline for constants so they don't default to undeclared identifiers
+		t = NULL;
+		ref_ptr<const Referenced> c_ptr = c;
+		parser->_parse_error("Encountered unexpected constant symbol.", &c->beginLoc());
+		YYERROR;
+	}
+
+// unary term_temporals
+
+term_temporal(t_new) ::= DASH(d) term_temporal(t). [UMINUS]									{ UNARY_ARITH(t_new, d, t, UnaryTerm::Operator::NEGATIVE); }
+term_temporal(t_new) ::= ABS(a) term_temporal(t).											{ UNARY_ARITH(t_new, a, t, UnaryTerm::Operator::ABS); }
+term_temporal(t_new) ::= term_temporal(lhs) COLON(op) term(rhs).							{ BINDING(t_new, lhs, op, rhs, BindingTerm); }
+
+// binary term_temporals
+
+term_temporal(t) ::= term_temporal(l) DASH(o) term_temporal(r).								{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MINUS); }
+term_temporal(t) ::= term_temporal(l) PLUS(o) term_temporal(r).								{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::PLUS); }
+term_temporal(t) ::= term_temporal(l) STAR(o) term_temporal(r).								{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::TIMES); }
+term_temporal(t) ::= term_temporal(l) INT_DIV(o) term_temporal(r).							{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::DIVIDE); }
+term_temporal(t) ::= term_temporal(l) MOD(o) term_temporal(r).								{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MOD); }
+
+// strong term_temporals
+
+term_temporal_strong(t) ::= base_elem_no_const(e).											{ t = e; }
+term_temporal_strong(t) ::= INTEGER(i).														{ BASIC_TERM(t, i);	}
+term_temporal_strong(t) ::= STRING_LITERAL(s).												{ BASIC_TERM(t, s); }
+term_temporal_strong(t) ::= PAREN_L(pl) term_temporal_strong(sub) PAREN_R(pr).				{ TERM_PARENS(t, pl, sub, pr); }
+term_temporal_strong(t) ::= MAXSTEP(e).														{ NULLARY_TERM(t, e, Language::Feature::MAXSTEP, NullaryTerm::Operator::MAXSTEP); }
+term_temporal_strong(t) ::= MAXADDITIVE(e).													{ NULLARY_TERM(t, e, Language::Feature::MAXADDITIVE, NullaryTerm::Operator::MAXADDITIVE); }
+term_temporal_strong(t) ::= MAXAFVALUE(e).													{ NULLARY_TERM(t, e, Language::Feature::MAXAFVALUE, NullaryTerm::Operator::MAXAFVALUE); }
+term_temporal_strong(t_new) ::= term_temporal_strong(lhs) COLON(op) term_strong(rhs).		{ BINDING(t_new, lhs, op, rhs, BindingTerm); }
+
+// unary strong term_temporals
+
+term_temporal_strong(t_new) ::= DASH(d) term_temporal_strong(t). [UMINUS]					{ UNARY_ARITH(t_new, d, t, UnaryTerm::Operator::NEGATIVE); }
+term_temporal_strong(t_new) ::= ABS(a) term_temporal(t).									{ UNARY_ARITH(t_new, a, t, UnaryTerm::Operator::ABS); }
+
+// unary term_temporals we think may be strong term_temporals
+
+//term_temporal_strong_candidate(t_new) ::= DASH(d) constant_temporal(t). [UMINUS]			{ UNARY_ARITH(t_new, d, t, UnaryTerm::Operator::NEGATIVE); }
+//term_temporal_strong_candidate(t_new) ::= constant_temporal(t). 							{ UNARY_ARITH(t_new, d, t, UnaryTerm::Operator::NEGATIVE); }
+
+// binary strong term_temporals
+
+//term_temporal_strong(t) ::= term_temporal_strong_candidate(l) DASH(o) term_temporal(r).		{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MINUS); }
+//term_temporal_strong(t) ::= term_temporal_strong_candidate(l) PLUS(o) term_temporal(r).		{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::PLUS); }
+//term_temporal_strong(t) ::= term_temporal_strong_candidate(l) STAR(o) term_temporal(r).		{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::TIMES); }
+//term_temporal_strong(t) ::= term_temporal_strong_candidate(l) INT_DIV(o) term_temporal(r).	{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::DIVIDE); }
+//term_temporal_strong(t) ::= term_temporal_strong_candidate(l) MOD(o) term_temporal(r).		{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MOD); }
+//term_temporal_strong(t) ::= constant_temporal(l) DASH(o) term_temporal(r).					{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MINUS); }
+//term_temporal_strong(t) ::= constant_temporal(l) PLUS(o) term_temporal(r).					{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::PLUS); }
+//term_temporal_strong(t) ::= constant_temporal(l) STAR(o) term_temporal(r).					{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::TIMES); }
+//term_temporal_strong(t) ::= constant_temporal(l) INT_DIV(o) term_temporal(r).				{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::DIVIDE); }
+//term_temporal_strong(t) ::= constant_temporal(l) MOD(o) term_temporal(r).					{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MOD); }
+term_temporal_strong(t) ::= term_temporal_strong(l) DASH(o) term_temporal(r).				{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MINUS); }
+term_temporal_strong(t) ::= term_temporal_strong(l) PLUS(o) term_temporal(r).				{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::PLUS); }
+term_temporal_strong(t) ::= term_temporal_strong(l) STAR(o) term_temporal(r).				{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::TIMES); }
+term_temporal_strong(t) ::= term_temporal_strong(l) INT_DIV(o) term_temporal(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::DIVIDE); }
+term_temporal_strong(t) ::= term_temporal_strong(l) MOD(o) term_temporal(r).				{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MOD); }
+
+// terms without constants
+
+
+/*************************************************************************************************/
+/* Formulas with temporal bindings */
+/*************************************************************************************************/
+
+
+%type       formula_temporal				{ Formula*									}
+%destructor formula_temporal				{ DEALLOC($$);								}
+%type       formula_temporal_base			{ Formula*									}		// A single formula element
+%destructor formula_temporal_base			{ DEALLOC($$);								}
+%type       comparison_temporal				{ Formula*									}		// comparison between 2 terms
+%destructor comparison_temporal				{ DEALLOC($$);								}
+%type       formula_temporal_quant			{ QuantifierFormula*						}		// a quantifier formula
+%destructor formula_temporal_quant			{ DEALLOC($$);								}
+%type       formula_temporal_card			{ Formula*									}		// cardinality formula
+%destructor formula_temporal_card			{ DEALLOC($$);								}
+
+
+formula_temporal(new_f) ::= formula_temporal_base(f).													{ new_f = f;				}
+formula_temporal(new_f) ::= PAREN_L formula_temporal(f) PAREN_R.										{ new_f = f; new_f->parens(true); 	}
+formula_temporal(new_f) ::= NOT(op) formula_temporal(f).												{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_KEYWORD); }
+formula_temporal(new_f) ::= DASH(op) formula_temporal(f).												{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_DASH); }
+formula_temporal(new_f) ::= formula_temporal(lhs) AMP formula_temporal(rhs).							{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+formula_temporal(new_f) ::= formula_temporal(lhs) DBL_PLUS(op) formula_temporal(rhs).					{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
+formula_temporal(new_f) ::= formula_temporal(lhs) PIPE(op) formula_temporal(rhs).						{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
+formula_temporal(new_f) ::= formula_temporal(lhs) EQUIV(op) formula_temporal(rhs).						{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::EQUIV); }
+formula_temporal(new_f) ::= formula_temporal(lhs) IMPL(op) formula_temporal(rhs).						{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::IMPL); }
+formula_temporal(new_f) ::= formula_temporal(lhs) ARROW_RDASH(op) formula_temporal(rhs).				{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::IMPL); }
+//formula_temporal(new_f) ::= term_strong(lhs) COLON(op) formula_temporal(rhs).							{ BINDING(new_f, lhs, op, rhs, BindingFormula); }
+//formula_temporal(new_f) ::= term_no_const_strong(lhs) COLON(op) formula(rhs).							{ BINDING(new_f, lhs, op, rhs, BindingFormula); }
+formula_temporal(new_f) ::= term_temporal_strong(lhs) COLON(op) formula(rhs).					{ BINDING(new_f, lhs, op, rhs, BindingFormula); }
+
+
+
+formula_temporal_base(f) ::= comparison_temporal(c).													{ f = c; }
+//formula_temporal_base(f) ::= atomic_formula(l).														{ f = l; }
+formula_temporal_base(f) ::= formula_temporal_quant(q).													{ f = q; }
+formula_temporal_base(f) ::= formula_temporal_card(c).
+	{ 
+		f = c;
+		if (!parser->lang()->support(Language::Feature::FORMULA_CARDINALITY_BODY)) {
+			parser->_feature_error(Language::Feature::FORMULA_CARDINALITY_BODY, &c->beginLoc());
+			YYERROR;
+		}
+	}
+formula_temporal_base(f) ::= TRUE(e).																	{ f = new NullaryFormula(NullaryFormula::Operator::TRUE, e->beginLoc(), e->endLoc()); }
+formula_temporal_base(f) ::= FALSE(e).																	{ f = new NullaryFormula(NullaryFormula::Operator::FALSE, e->beginLoc(), e->endLoc()); }
+
+comparison_temporal(c) ::= term_temporal_strong(lhs) EQ term_temporal(rhs).								{ c = new ComparisonFormula(ComparisonFormula::Operator::EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+comparison_temporal(c) ::= term_temporal_strong(lhs) DBL_EQ term_temporal(rhs).							{ c = new ComparisonFormula(ComparisonFormula::Operator::EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+comparison_temporal(c) ::= term_temporal_strong(lhs) NEQ term_temporal(rhs).							{ c = new ComparisonFormula(ComparisonFormula::Operator::NEQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+comparison_temporal(c) ::= term_temporal_strong(lhs) LTHAN term_temporal(rhs).							{ c = new ComparisonFormula(ComparisonFormula::Operator::LTHAN, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+comparison_temporal(c) ::= term_temporal_strong(lhs) GTHAN term_temporal(rhs).							{ c = new ComparisonFormula(ComparisonFormula::Operator::GTHAN, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+comparison_temporal(c) ::= term_temporal_strong(lhs) LTHAN_EQ term_temporal(rhs).						{ c = new ComparisonFormula(ComparisonFormula::Operator::LTHAN_EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+comparison_temporal(c) ::= term_temporal_strong(lhs) GTHAN_EQ term_temporal(rhs).						{ c = new ComparisonFormula(ComparisonFormula::Operator::GTHAN_EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= term_temporal_strong_candidate(lhs) EQ term_temporal(rhs).					{ c = new ComparisonFormula(ComparisonFormula::Operator::EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= term_temporal_strong_candidate(lhs) DBL_EQ term_temporal(rhs).				{ c = new ComparisonFormula(ComparisonFormula::Operator::EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= term_temporal_strong_candidate(lhs) NEQ term_temporal(rhs).					{ c = new ComparisonFormula(ComparisonFormula::Operator::NEQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= term_temporal_strong_candidate(lhs) LTHAN term_temporal(rhs).				{ c = new ComparisonFormula(ComparisonFormula::Operator::LTHAN, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= term_temporal_strong_candidate(lhs) GTHAN term_temporal(rhs).				{ c = new ComparisonFormula(ComparisonFormula::Operator::GTHAN, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= term_temporal_strong_candidate(lhs) LTHAN_EQ term_temporal(rhs).				{ c = new ComparisonFormula(ComparisonFormula::Operator::LTHAN_EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= term_temporal_strong_candidate(lhs) GTHAN_EQ term_temporal(rhs).				{ c = new ComparisonFormula(ComparisonFormula::Operator::GTHAN_EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= constant_temporal(lhs) DBL_EQ term_temporal(rhs).							{ c = new ComparisonFormula(ComparisonFormula::Operator::EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= constant_temporal(lhs) NEQ term_temporal(rhs).								{ c = new ComparisonFormula(ComparisonFormula::Operator::NEQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= constant_temporal(lhs) LTHAN term_temporal(rhs).								{ c = new ComparisonFormula(ComparisonFormula::Operator::LTHAN, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= constant_temporal(lhs) GTHAN term_temporal(rhs).								{ c = new ComparisonFormula(ComparisonFormula::Operator::GTHAN, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= constant_temporal(lhs) LTHAN_EQ term_temporal(rhs).							{ c = new ComparisonFormula(ComparisonFormula::Operator::LTHAN_EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//comparison_temporal(c) ::= constant_temporal(lhs) GTHAN_EQ term_temporal(rhs).							{ c = new ComparisonFormula(ComparisonFormula::Operator::GTHAN_EQ, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+
+
+
+
+
+
+// ------------------------ Quantifiers
+
+
+formula_temporal_quant(quant) ::= BRACKET_L(bl) quant_lst(lst) PIPE formula_temporal(sub) BRACKET_R(br).
+	{
+		quant=NULL;
+		ref_ptr<const Token> bl_ptr = bl;
+		ref_ptr<QuantifierFormula::QuantifierList> lst_ptr = lst;
+		ref_ptr<Formula> sub_ptr = sub;
+		ref_ptr<const Token> br_ptr = br;
+
+		if (!parser->lang()->support(Language::Feature::FORMULA_QUANTIFIER)) {
+			parser->_feature_error(Language::Feature::FORMULA_QUANTIFIER, &bl->beginLoc());
+			YYERROR;
+		} else quant = new QuantifierFormula(lst, sub, bl->beginLoc(), br->endLoc());
+	}
+
+
+// ------------------------ Cardinality
+
+
+//formula_card(new_card) ::= formula_smpl_card(card). { new_card = card; }
+formula_temporal_card(card) ::= 		  					CBRACKET_L(bl) card_var_lst(vars) formula_temporal(f) 	CBRACKET_R(br).						[PREC_1]	{ CARD_FORMULA(card, NULL, bl, vars, f, br, NULL);  }
+formula_temporal_card(card) ::= term_temporal_strong(min) 	CBRACKET_L(bl) card_var_lst(vars) formula_temporal(f) 	CBRACKET_R(br).						[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, NULL);  }
+formula_temporal_card(card) ::= 							CBRACKET_L(bl) card_var_lst(vars) formula_temporal(f) 	CBRACKET_R(br) term_temporal(max).	[PREC_1]	{ CARD_FORMULA(card, NULL, bl, vars, f, br, max); 	}
+formula_temporal_card(card) ::= term_temporal_strong(min) 	CBRACKET_L(bl) card_var_lst(vars) formula_temporal(f) 	CBRACKET_R(br) term_temporal(max).	[PREC_1]	{ CARD_FORMULA(card, min, bl, vars, f,  br, max); 	}
+formula_temporal_card(card) ::= 							CBRACKET_L(bl) formula_temporal(f) 						CBRACKET_R(br).						[PREC_1]	{ CARD_FORMULA(card, NULL, bl, NULL, f, br, NULL);  }
+formula_temporal_card(card) ::= term_temporal_strong(min) 	CBRACKET_L(bl) formula_temporal(f)						CBRACKET_R(br).						[PREC_1]	{ CARD_FORMULA(card, min, bl, NULL, f,  br, NULL);  }
+formula_temporal_card(card) ::= 							CBRACKET_L(bl) formula_temporal(f)			 			CBRACKET_R(br) term_temporal(max).	[PREC_1]	{ CARD_FORMULA(card, NULL, bl, NULL, f, br, max); 	}
+formula_temporal_card(card) ::= term_temporal_strong(min) 	CBRACKET_L(bl) formula_temporal(f) 						CBRACKET_R(br) term_temporal(max).	[PREC_1]	{ CARD_FORMULA(card, min, bl, NULL, f,  br, max); 	}
+
+
+
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/

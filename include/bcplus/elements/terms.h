@@ -9,6 +9,7 @@
 #include "bcplus/elements/detail/NullaryElement.h"
 #include "bcplus/elements/detail/IdentifierElement.h"
 #include "bcplus/elements/detail/AnonymousElement.h"
+#include "bcplus/elements/detail/Binding.h"
 
 namespace bcplus {
 namespace elements {
@@ -25,7 +26,8 @@ struct TermType {
 		CONSTANT,
 		LUA,
 		ANON_VAR,
-		NULLARY
+		NULLARY,
+		BINDING
 	};
 };
 
@@ -212,6 +214,14 @@ typedef detail::NullaryElement<
 	detail::NullaryTermOperator::cstr,
 	detail::NullaryTermOperator::domaintype > NullaryTerm;
 
+
+/**
+ * @brief A step binding of the form i:T where T is a term.
+ */
+typedef detail::Binding<
+	Term,
+	detail::TermType::BINDING,
+	Term, Term > BindingTerm;
 
 
 }}

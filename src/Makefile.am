@@ -54,7 +54,6 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/elements/QuantifierFormula.cpp \
 	bcplus/elements/Macro.cpp \
 	bcplus/elements/CardinalityFormula.cpp \
-	bcplus/elements/BindingFormula.cpp \
 	bcplus/languages/Language.cpp \
 	bcplus/languages/BCPlus.cpp \
 	bcplus/languages/CPlus.cpp \
