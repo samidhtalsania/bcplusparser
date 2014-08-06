@@ -33,21 +33,6 @@ void NumberRangeSymbol::save(boost::property_tree::ptree& node) const {
 	Symbol::save(node);
 }
 
-elements::Term* NumberRangeSymbol::min() {
-	return (elements::Term*)_min.get();
-}
-
-elements::Term const* NumberRangeSymbol::min() const {
-	return (elements::Term const*)_min.get();
-}
-
-elements::Term* NumberRangeSymbol::max() {
-	return (elements::Term*)_max.get();
-}
-
-elements::Term const* NumberRangeSymbol::max() const {
-	return (elements::Term const*)_max.get();
-}
 
 }}
 
