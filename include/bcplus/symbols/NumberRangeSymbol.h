@@ -48,10 +48,10 @@ public:
 	/************************************************************/
 
 	/// Get the value of the token
-	inline elements::Term const* min() const;
-	inline elements::Term const* max() const;
-	inline elements::Term* min();
-	inline elements::Term* max();
+	inline elements::Term const* min() const					{ return _min; }
+	inline elements::Term const* max() const					{ return _max; }
+	inline elements::Term* min()								{ return _min; {
+	inline elements::Term* max()								{ return _max; }
 	
 
 	// inherited
