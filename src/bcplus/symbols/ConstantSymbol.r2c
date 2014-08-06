@@ -6,7 +6,7 @@
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/detail/BaseSymbol.h"
 #include "bcplus/symbols/ConstantSymbol.h"
-
+#include "bcplus/symbols/SortSymbol.h"
 
 
 namespace bcplus {

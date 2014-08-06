@@ -32,7 +32,8 @@ public:
 			OBJECT		= 0x0008,
 			MACRO		= 0x0010,
 			QUERY		= 0x0020,
-			_LARGEST_	= 0x0020,			///< placeholder for the largest type value	
+			RANGE		= 0x0040,
+			_LARGEST_	= 0x0040,			///< placeholder for the largest type value	
 			ERR_INVALID_SYMBOL = 0x1000		///< placeholder for invalid value
 		};
 
@@ -148,9 +149,6 @@ public:
 
 	/// Determine the domain type of this symbol.
 	virtual DomainType::type domainType() const = 0;
-
-	/// Output the definition of this symbol
-	virtual void outputDefinition(std::ostream& out) const = 0;
 
 protected:
 

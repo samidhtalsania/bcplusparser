@@ -19,20 +19,5 @@ ObjectBinding::~ObjectBinding() {
 	// Intentionally left blank
 }
 
-void ObjectBinding::outputDefinition(std::ostream& out) const {
-	for (const_iterator it = begin(); it != end(); ) {
-		(*it)->outputDefinition(out);
-
-		it++;
-		if (it != end()) {
-			out << ", ";
-		}
-	}
-
-	out << " :: ";
-	sort()->outputDefinition(out);
-}
-
-
 }}}
 

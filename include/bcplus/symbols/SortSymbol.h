@@ -16,6 +16,7 @@
 namespace bcplus {
 namespace symbols {
 
+class NumberRangeSymbol;
 class Resolver;
 
 class SortSymbol : public Symbol {
@@ -26,6 +27,9 @@ public:
 
 	/// List of object symbols in this sort
 	typedef ReferencedSet<babb::utils::ref_ptr<const ObjectSymbol> >::type ObjectList;
+
+	/// List of range symbols in this sort
+	typedef ReferencedSet<babb::utils::ref_ptr<const Symbol> >::type RangeList;
 
 	/// Object list iterators
 	typedef ObjectList::iterator iterator;
@@ -40,6 +44,10 @@ private:
 	/*************************************************************************************/
 	/// The sort's objects
 	babb::utils::ref_ptr<ObjectList> _objects;
+
+	/// The sort's ranges
+	babb::utils::ref_ptr<RangeList> _ranges;
+
 
 	/// The sort's supersorts
 	babb::utils::ref_ptr<SortList> _supersorts;
@@ -59,7 +67,9 @@ public:
 	/// Basic constructor
 	/// @param base The name of the sort
 	/// @param objects The objects within the sort
-	SortSymbol(ReferencedString const* name, ObjectList* objects = NULL, SortList* subsorts = NULL);
+	/// @param subsorts A list of sorts that this sort fully encompasses
+	/// @param ranges A list of numeric ranges contained within this sort.
+	SortSymbol(ReferencedString const* name, ObjectList* objects = NULL, SortList* subsorts = NULL, RangeList* ranges = NULL);
 
 	/// Loads the sort from the property tree node
 	/// @param node The node to load the symbol from
@@ -80,6 +90,12 @@ public:
 
 	/// Gets an iterator for the end of the object list
 	inline const_iterator end() const							{ return _objects->end(); }
+
+	/// Gets an iterator for the begginning of the range list
+ 	inline typename RangeList::const_iterator beginRanges() const { return _ranges->begin(); }
+
+	/// Gets an iterator for the end of the range list
+	inline typename RangeList::const_iterator endRanges() const { return _ranges->end(); }
 
 	/// Gets the number of elements in the sort
 	inline size_t size() const									{ return _objects->size(); }
@@ -102,13 +118,15 @@ public:
 	/// Get the number of registered subsorts
 	inline size_t numSubSorts() const							{ return _subsorts->size(); }
 
-	/// Add an object symbol to the list of objects
+	/// Add an object or range symbol to the list of objects
 	/// @return True if successful, false if the object was already in the sort.
 	bool add(ObjectSymbol const* obj);
-
-	/// Determines if an object symbol is in the wort
+	bool add(NumberRangeSymbol const* obj);
+	
+	/// Determines if an object or range symbol is in the wort
 	/// @return True if the object symbol is in the sort, false otherwise.
 	bool contains(ObjectSymbol const* obj) const				{ return _objects->count(obj) != 0; }
+	bool contains(NumberRangeSymbol const* r) const				{ return _ranges->count((Symbol const*)r) != 0; }
 
 
 	/// Adds a sort symbol as a superset to this one.

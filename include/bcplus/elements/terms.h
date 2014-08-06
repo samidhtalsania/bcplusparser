@@ -10,27 +10,11 @@
 #include "bcplus/elements/detail/IdentifierElement.h"
 #include "bcplus/elements/detail/AnonymousElement.h"
 #include "bcplus/elements/detail/Binding.h"
-
+#include "bcplus/elements/detail/TermType.h"
 namespace bcplus {
 namespace elements {
 
 namespace detail {
-
-/// Container for the types of terms that we can have.
-struct TermType {
-	enum type {
-		BINARY,
-		UNARY,
-		OBJECT,
-		VARIABLE,
-		CONSTANT,
-		LUA,
-		ANON_VAR,
-		NULLARY,
-		BINDING
-	};
-};
-
 
 /// Container describing the binary operators for terms
 struct BinaryTermOperator {

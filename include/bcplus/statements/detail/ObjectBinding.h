@@ -17,7 +17,7 @@ public:
 	/***********************************************************************/
 	/* Public Types */
 	/***********************************************************************/
-	typedef ReferencedList<babb::utils::ref_ptr<const symbols::ObjectSymbol> >::type ObjectList;
+	typedef ReferencedList<babb::utils::ref_ptr<const symbols::Symbol> >::type ObjectList;
 	typedef ObjectList::iterator iterator;
 	typedef ObjectList::const_iterator const_iterator;
 	
@@ -59,12 +59,9 @@ public:
 	iterator end() 												{ return _objects->end(); }
 	const_iterator end() const									{ return _objects->end(); }
 
-	// output the definition of this binding
-	void outputDefinition(std::ostream& out) const;
-
 	/// Add an object to the binding
-	inline void push_back(symbols::ObjectSymbol const* obj)		{ _objects->push_back(obj); }
-	inline void push_front(symbols::ObjectSymbol const* obj)	{ _objects->push_front(obj); }
+	inline void push_back(symbols::Symbol const* obj)		{ _objects->push_back(obj); }
+	inline void push_front(symbols::Symbol const* obj)	{ _objects->push_front(obj); }
 
 };
 

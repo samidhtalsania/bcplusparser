@@ -19,7 +19,7 @@ BUILT_SOURCES = \
 	bcplus/parser/detail/Scanner.1.cpp \
 	bcplus/parser/detail/Scanner.2.cpp \
 	bcplus/parser/detail/lemon_parser.cpp \
-	bcplus/parser/detail/lemon_macro.cpp
+	bcplus/parser/detail/lemon_macro.cpp 
 
 #cplus2asp_SOURCES = \
 #	Configuration.cpp \
@@ -69,6 +69,7 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/symbols/QuerySymbol.cpp \
 	bcplus/symbols/detail/BaseSymbol.cpp  \
 	bcplus/symbols/SymbolTable.cpp \
+	bcplus/symbols/NumberRangeSymbol.cpp \
 	bcplus/statements/Statement.cpp \
 	bcplus/statements/QueryStatement.cpp \
 	bcplus/statements/detail/ObjectBinding.cpp \
@@ -86,5 +87,6 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/parser/detail/ScannerBufferSource.cpp \
 	bcplus/parser/detail/ScannerFileSource.cpp \
 	bcplus/parser/detail/Number.cpp \
-	bcplus/parser/detail/NumberRange.cpp
+	bcplus/parser/detail/NumberRange.cpp \
+	bcplus/parser/detail/NumberRangeEval.cpp
 

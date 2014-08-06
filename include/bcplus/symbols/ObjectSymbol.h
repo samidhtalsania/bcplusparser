@@ -20,6 +20,12 @@ class Resolver;
 class ObjectSymbol : public detail::BaseSymbol {
 
 private:
+public:
+	/*************************************************************************************/
+	/* Public Types */
+	/*************************************************************************************/
+
+private:
 	/*************************************************************************************/
 	/* Private Members */
 	/*************************************************************************************/
@@ -33,6 +39,7 @@ private:
 	bool _bool;
 
 public:
+
 	/// Basic constructor
 	/// @param base The name of this object
 	/// @param args The sorts for each of the arguments for this object.
@@ -48,13 +55,13 @@ public:
 	virtual ~ObjectSymbol();
 
 	/// Gets the integer represented by this object, if any.
-	int const* integer() const;
+	inline int const* integer() const						{ return ((_dt == DomainType::INTEGRAL) ? &_int : NULL); }
 
 	/// Gets the boolean value represented by this object, if any.
-	bool const* boolean() const;	
+	inline bool const* boolean() const						{ return ((_dt == DomainType::BOOLEAN) ? &_bool : NULL); }
 
 	// inherited
-	DomainType::type domainType() const;
+	inline DomainType::type domainType() const				{ return _dt; }
 
 private:
 

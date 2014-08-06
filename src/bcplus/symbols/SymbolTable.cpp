@@ -19,6 +19,7 @@
 #include "bcplus/symbols/MacroSymbol.h"
 #include "bcplus/symbols/QuerySymbol.h"
 #include "bcplus/symbols/SymbolTable.h"
+#include "bcplus/symbols/NumberRangeSymbol.h"
 
 namespace u = babb::utils;
 namespace fs = boost::filesystem;
@@ -109,19 +110,20 @@ Symbol const* SymbolTable::resolve(size_t typemask, std::string const& name, siz
 bool SymbolTable::create(Symbol* symbol) {
 
 	// check for uniqueness
-	// sorts and queries are distinguished from other symbols
+	// sorts, queries, and ranges are distinguished from other symbols
 	_config->ostream(Verb::TRACE_SYMTAB) << "TRACE: Creating \"" << *symbol->name() << "\" of type \"" << symbol->typeString() << "\"... ";
 
 	size_t mask;
 	switch (symbol->type()) {
 	case Symbol::Type::SORT:
-		mask = Symbol::Type::SORT;
+	case Symbol::Type::RANGE:
+		mask = Symbol::Type::SORT | Symbol::Type::RANGE;
 		break;
 	case Symbol::Type::QUERY:
 		mask = Symbol::Type::QUERY;
 		break;
 	default:
-		mask = ~(Symbol::Type::SORT | Symbol::Type::QUERY);
+		mask = ~(Symbol::Type::SORT | Symbol::Type::QUERY | Symbol::Type::RANGE);
 		break;
 	}
 
@@ -178,13 +180,14 @@ Symbol* SymbolTable::_resolveOrCreate(Symbol* symbol) {
 	size_t mask;
 	switch (symbol->type()) {
 	case Symbol::Type::SORT:
-		mask = Symbol::Type::SORT;
+	case Symbol::Type::RANGE:
+		mask = Symbol::Type::SORT | Symbol::Type::RANGE;
 		break;
 	case Symbol::Type::QUERY:
 		mask = Symbol::Type::QUERY;
 		break;
 	default:
-		mask = ~(Symbol::Type::SORT | Symbol::Type::QUERY);
+		mask = ~(Symbol::Type::SORT | Symbol::Type::QUERY | Symbol::Type::RANGE);
 		break;
 	}
 
@@ -336,6 +339,13 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 									}
 								}
 								break;
+							
+							case Symbol::Type::RANGE:
+								if (pass == 1) {
+									// second pass, create the symbol
+									sym = new symbols::NumberRangeSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
+									add_sym = true;
+								}
 
 							case Symbol::Type::CONSTANT:
 								if (pass == 1) {

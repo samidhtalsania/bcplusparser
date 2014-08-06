@@ -15,6 +15,7 @@ namespace u = babb::utils;
 namespace bcplus {
 namespace symbols {
 
+
 ObjectSymbol::ObjectSymbol(ReferencedString const* b, SortList const* args) 
 	: BaseSymbol(Symbol::Type::OBJECT, b, args) {
 	initDomainType();
@@ -29,9 +30,6 @@ ObjectSymbol::~ObjectSymbol() {
 	// Intentionally left blank
 }
 
-DomainType::type ObjectSymbol::domainType() const {
-	return _dt;
-}
 
 void ObjectSymbol::initDomainType() {
 	if (arity()) _dt = DomainType::OTHER;

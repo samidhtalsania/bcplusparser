@@ -16,6 +16,7 @@
 #include "bcplus/parser/detail/Scanner.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/SymbolTable.h"
+#include "bcplus/symbols/NumberRangeSymbol.h"
 
 namespace u = babb::utils;
 namespace fs = boost::filesystem;
@@ -35,7 +36,7 @@ namespace parser {
 
 
 BCParser::BCParser(Configuration const* config, languages::Language const* lang, symbols::SymbolTable* symtab)
-	: _config(config), _lang(lang) {
+	: _config(config), _lang(lang), _rangeCount(0) {
 	if (symtab) _symtab = symtab;
 	else _symtab = new symbols::SymbolTable(config);
 	_scanner = new detail::MacroParser(config, lang, _symtab);
@@ -239,5 +240,38 @@ void BCParser::_handle_stmt(statements::Statement* stmt) {
 
 	_stmt = stmt;
 }
+
+symbols::SortSymbol* BCParser::_newRange(elements::Term* min, elements::Term* max) {
+	u::ref_ptr<elements::Term> minptr = min, maxptr = max;
+
+	// create a new number range object
+	u::ref_ptr<const symbols::NumberRangeSymbol> rsym = _newRangeSymbol(min,max);
+	if (!rsym) return NULL;
+
+	// create a new sort
+	u::ref_ptr<symbols::SortSymbol> s = new symbols::SortSymbol(new ReferencedString("_rsort_" + boost::lexical_cast<std::string>(_rangeCount)));
+	if (!symtab()->create(s)) {
+		return NULL;
+	}
+
+
+	// add the range
+	s->add(rsym);
+	
+	return s.release();
+}
+
+symbols::NumberRangeSymbol* BCParser::_newRangeSymbol(elements::Term* min, elements::Term* max) {
+	u::ref_ptr<elements::Term> minptr = min, maxptr = max;
+
+	// create a new number range object
+	u::ref_ptr<symbols::NumberRangeSymbol> rsym = symtab()->resolveOrCreate(
+		new symbols::NumberRangeSymbol(
+			new ReferencedString("_range_" + boost::lexical_cast<std::string>(++_rangeCount)),
+			min, max));
+
+	return rsym.release();
+}
+
 
 }}

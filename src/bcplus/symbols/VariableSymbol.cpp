@@ -3,7 +3,7 @@
 #include "bcplus/symbols/Resolver.h"
 #include "bcplus/symbols/Symbol.h"
 #include "bcplus/symbols/VariableSymbol.h"
-
+#include "bcplus/symbols/SortSymbol.h"
 
 namespace bcplus {
 namespace symbols{

@@ -17,7 +17,9 @@
 #include "bcplus/statements/Statement.h"
 #include "bcplus/symbols/SymbolTable.h"
 #include "bcplus/elements/Element.h"
-
+#include "bcplus/elements/terms.h"
+#include "bcplus/symbols/SortSymbol.h"
+#include "bcplus/symbols/NumberRangeSymbol.h"
 
 namespace bcplus {
 namespace parser {
@@ -72,6 +74,10 @@ private:
 
 	/// The last token we passed to lemon (or NULL)
 	babb::utils::weak_ptr<const Token> _last_token;
+
+	/// The number of dynamic ranges that we've encountered.
+	size_t _rangeCount;
+
 
 public:
 	/***********************************************************************************/
@@ -134,6 +140,15 @@ public:
 	void _parse_error(std::string const& err, Location const* loc = NULL);
 
 	void _handle_stmt(statements::Statement* stmt);	
+
+	/// INTERNAL FUNCTION
+	/// Creates a new sort containing a range provided by the min and max terms
+	symbols::SortSymbol* _newRange(elements::Term* min, elements::Term* max);
+
+	/// Creates a new symbol containing a range provided by the min and max terms
+	symbols::NumberRangeSymbol* _newRangeSymbol(elements::Term* min, elements::Term* max);
+
+
 
 private:
 	/// Makes a comment statement if there are comments waiting in the macro parser's buffer

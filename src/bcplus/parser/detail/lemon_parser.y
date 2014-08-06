@@ -12,6 +12,7 @@
 			#include "bcplus/parser/detail/lemon_parser.h"
 			#include "bcplus/parser/detail/Number.h"
 			#include "bcplus/parser/detail/NumberRange.h"
+			#include "bcplus/parser/detail/NumberRangeEval.h"
 			#include "bcplus/statements/Statement.h"
 			#include "bcplus/statements/declarations.h"
 			#include "bcplus/statements/QueryStatement.h"
@@ -24,6 +25,7 @@
 			#include "bcplus/symbols/MacroSymbol.h"
 			#include "bcplus/symbols/ConstantSymbol.h"
 			#include "bcplus/symbols/AttributeSymbol.h"
+			#include "bcplus/symbols/NumberRangeSymbol.h"
 
 			#define UNUSED void*
 
@@ -705,59 +707,103 @@ term_no_const(t) ::= term_no_const(l) MOD(o) term_no_const(r).	{ BINARY_ARITH(t,
 /*************************************************************************************************/
 %type		num_range						{ NumberRange*								}		// A range between two numbers
 %destructor num_range						{ DEALLOC($$);								}
-%type		term_numeric					{ Number*									}		// A term which contains only integers
-%destructor term_numeric					{ DEALLOC($$);								}
+%type		num_range_eval					{ NumberRangeEval*							}		// A range between two numbers
+%destructor num_range_eval					{ DEALLOC($$);								}
+%type		term_integral					{ Term*										}			// A definition of term_integrals which only allows integral constants...
+%destructor term_integral					{ DEALLOC($$);								}
+%type		term_int_eval					{ Number*									}			// A definition of term_int_evals which only allows integral constants...
+%destructor term_int_eval					{ /* Initially left Blank */				}
 
 
-num_range(nr) ::= term_numeric(l) DBL_PERIOD(s) term_numeric(r). {
+
+term_integral(t) ::= INTEGER(i).										{ BASIC_TERM(t, i);	}
+term_integral(t) ::= PAREN_L(pl) term_integral(sub) PAREN_R(pr).		{ TERM_PARENS(t, pl, sub, pr); }
+term_integral(t) ::= TRUE(e).											{ BASIC_TERM(t, e); }
+term_integral(t) ::= FALSE(e).											{ BASIC_TERM(t, e); }
+term_integral(t) ::= MAXSTEP(e).										{ NULLARY_TERM(t, e, Language::Feature::MAXSTEP, NullaryTerm::Operator::MAXSTEP); }
+term_integral(t) ::= MAXADDITIVE(e).									{ NULLARY_TERM(t, e, Language::Feature::MAXADDITIVE, NullaryTerm::Operator::MAXADDITIVE); }
+term_integral(t) ::= MAXAFVALUE(e).										{ NULLARY_TERM(t, e, Language::Feature::MAXAFVALUE, NullaryTerm::Operator::MAXAFVALUE); }
+
+// unary term_integrals
+
+term_integral(t_new) ::= DASH(d) term_integral(t). [UMINUS]				{ UNARY_ARITH(t_new, d, t, UnaryTerm::Operator::NEGATIVE); }
+term_integral(t_new) ::= ABS(a) term_integral(t).						{ UNARY_ARITH(t_new, a, t, UnaryTerm::Operator::ABS); }
+
+// binary term_integrals
+
+term_integral(t) ::= term_integral(l) DASH(o) term_integral(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MINUS); }
+term_integral(t) ::= term_integral(l) PLUS(o) term_integral(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::PLUS); }
+term_integral(t) ::= term_integral(l) STAR(o) term_integral(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::TIMES); }
+term_integral(t) ::= term_integral(l) INT_DIV(o) term_integral(r).		{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::DIVIDE); }
+term_integral(t) ::= term_integral(l) MOD(o) term_integral(r).			{ BINARY_ARITH(t, l, o, r, BinaryTerm::Operator::MOD); }
+
+
+num_range(nr) ::= term_integral(l) DBL_PERIOD(s) term_integral(r). {
 	ref_ptr<const Referenced> l_ptr = l, r_ptr = r, s_ptr = s;
+	nr = NULL;
 
-	nr = new NumberRange(l->val(), r->val(), l->beginLoc(), r->endLoc());
+	if (l->domainType() != DomainType::INTEGRAL) {
+		parser->_parse_error("Number ranges cannot have non-numeric operands.", &s->beginLoc());
+		YYERROR;
+	}
+	
+	if (r->domainType() != DomainType::INTEGRAL) {
+		parser->_parse_error("Number ranges cannot have non-numeric operands.", &r->beginLoc());
+		YYERROR;
+	}
 
+	nr = new NumberRange(l, r, l->beginLoc(), r->endLoc());
 }
 
 
-term_numeric(t) ::= INTEGER(i). {
+num_range_eval(nr) ::= term_int_eval(l) DBL_PERIOD(s) term_int_eval(r). {
+	ref_ptr<const Referenced> l_ptr = l, r_ptr = r, s_ptr = s;
+	nr = new NumberRangeEval(l->val(), r->val(), l->beginLoc(), r->endLoc());
+}
+
+
+term_int_eval(t) ::= INTEGER(i). {
 	ref_ptr<const Referenced> i_ptr = i;
 
 	t = 0;
 	try {
 		t = new Number(boost::lexical_cast<int>(*i->str()), i->beginLoc());
-
 	} catch (boost::bad_lexical_cast const& e) {
-		parser->_parse_error("INTERNAL ERROR: Failed to parse integer \"" + *i->str() + "\".", &i->beginLoc());
+	parser->_parse_error("INTERNAL ERROR: Failed to parse integer \"" + *i->str() + "\".", &i->beginLoc());
 		YYERROR;
 	}
 }
 
-term_numeric(t) ::= PAREN_L(pl) term_numeric(sub) PAREN_R(pr). { 
+term_int_eval(t) ::= PAREN_L(pl) term_int_eval(sub) PAREN_R(pr). {
 	ref_ptr<const Referenced> pl_ptr = pl, pr_ptr = pr;
-	t = sub;  
+	t = sub;
 	t->beginLoc(pl->beginLoc());
 	t->endLoc(pr->endLoc());
 }
 
 %include {
-	#define NUM_UOP(t_new, t, val)																				\
-		ref_ptr<const Referenced> t_ptr = t;																			\
+	#define NUM_UOP(t_new, t, val) \
+		ref_ptr<const Referenced> t_ptr = t; \
 		t_new = new Number(val, t->beginLoc(), t->endLoc());
 
-	
-	#define NUM_BOP(t_new, l, r, val)																			\
-		ref_ptr<const Referenced> l_ptr = l, r_ptr = r;																\
+
+	#define NUM_BOP(t_new, l, r, val) \
+		ref_ptr<const Referenced> l_ptr = l, r_ptr = r; \
 		t_new = new Number(val, l->beginLoc(), r->endLoc());
 
 }
 
 
-term_numeric(t_new) ::= DASH term_numeric(t). [UMINUS]					{ NUM_UOP(t_new, t, -1 * t->val()); }
-term_numeric(t_new) ::= ABS  term_numeric(t).							{ NUM_UOP(t_new, t, t->val() < 0 ? - t->val() : t->val()); }
+term_int_eval(t_new) ::= DASH term_int_eval(t). [UMINUS] { NUM_UOP(t_new, t, -1 * t->val()); }
+term_int_eval(t_new) ::= ABS term_int_eval(t). { NUM_UOP(t_new, t, t->val() < 0 ? - t->val() : t->val()); }
 
-term_numeric(t) ::= term_numeric(l) DASH term_numeric(r).				{ NUM_BOP(t, l, r, l->val() - r->val()); }
-term_numeric(t) ::= term_numeric(l) PLUS term_numeric(r).				{ NUM_BOP(t, l, r, l->val() + r->val()); }
-term_numeric(t) ::= term_numeric(l) STAR term_numeric(r).				{ NUM_BOP(t, l, r, l->val() * r->val()); }
-term_numeric(t) ::= term_numeric(l) INT_DIV term_numeric(r).			{ NUM_BOP(t, l, r, l->val() / r->val()); }
-term_numeric(t) ::= term_numeric(l) MOD term_numeric(r).				{ NUM_BOP(t, l, r, l->val() % r->val()); }
+term_int_eval(t) ::= term_int_eval(l) DASH term_int_eval(r). { NUM_BOP(t, l, r, l->val() - r->val()); }
+term_int_eval(t) ::= term_int_eval(l) PLUS term_int_eval(r). { NUM_BOP(t, l, r, l->val() + r->val()); }
+term_int_eval(t) ::= term_int_eval(l) STAR term_int_eval(r). { NUM_BOP(t, l, r, l->val() * r->val()); }
+term_int_eval(t) ::= term_int_eval(l) INT_DIV term_int_eval(r). { NUM_BOP(t, l, r, l->val() / r->val()); }
+term_int_eval(t) ::= term_int_eval(l) MOD term_int_eval(r). { NUM_BOP(t, l, r, l->val() % r->val()); }
+
+
 
 
 /********************************************************************************************************************************/
@@ -1107,7 +1153,7 @@ term_temporal(t) ::= constant(c).
 		// error handline for constants so they don't default to undeclared identifiers
 		t = NULL;
 		ref_ptr<const Referenced> c_ptr = c;
-		parser->_parse_error("Encountered unexpected constant symbol.", &c->beginLoc());
+		parser->_parse_error("All constant symbols must be bound to a step using the i:F notation.", &c->beginLoc());
 		YYERROR;
 	}
 
@@ -1196,12 +1242,21 @@ formula_temporal(new_f) ::= formula_temporal(lhs) IMPL(op) formula_temporal(rhs)
 formula_temporal(new_f) ::= formula_temporal(lhs) ARROW_RDASH(op) formula_temporal(rhs).				{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::IMPL); }
 //formula_temporal(new_f) ::= term_strong(lhs) COLON(op) formula_temporal(rhs).							{ BINDING(new_f, lhs, op, rhs, BindingFormula); }
 //formula_temporal(new_f) ::= term_no_const_strong(lhs) COLON(op) formula(rhs).							{ BINDING(new_f, lhs, op, rhs, BindingFormula); }
-formula_temporal(new_f) ::= term_temporal_strong(lhs) COLON(op) formula(rhs).					{ BINDING(new_f, lhs, op, rhs, BindingFormula); }
+formula_temporal(new_f) ::= term_temporal_strong(lhs) COLON(op) formula(rhs).							{ BINDING(new_f, lhs, op, rhs, BindingFormula); }
 
 
 
 formula_temporal_base(f) ::= comparison_temporal(c).													{ f = c; }
-//formula_temporal_base(f) ::= atomic_formula(l).														{ f = l; }
+formula_temporal_base(f) ::= atomic_formula(l).
+	{
+		// error handline for more useful error messages
+		f = NULL;
+		ref_ptr<const Referenced> l_ptr = l;
+		parser->_parse_error("All constant symbols must be bound to a step using the i:F notation.", &l->beginLoc());
+		YYERROR;
+	}
+
+
 formula_temporal_base(f) ::= formula_temporal_quant(q).													{ f = q; }
 formula_temporal_base(f) ::= formula_temporal_card(c).
 	{ 
@@ -1511,30 +1566,11 @@ sort_nr(s) ::= num_range(nr).
 			YYERROR;
 		}
 
-		// X..Y becomes __sort_X_Y__
-		std::string name = "__sort_" + boost::lexical_cast<std::string>(nr->min()) + "__" + boost::lexical_cast<std::string>(nr->max()) + "__";
-
-		ref_ptr<SortSymbol::ObjectList> objs = new SortSymbol::ObjectList();
-
-		// Generate the objects that it will have
-		for (int i = nr->min(); i <= nr->max(); i++) {
-			std::string obj_name = boost::lexical_cast<std::string>(i);
-			ObjectSymbol const* sym = parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(obj_name)));
-
-			if (!sym) {
-				s = NULL;
-				parser->_parse_error("An error occurred creating symbol \"" + obj_name + "/0\".", &nr->beginLoc());
-				YYERROR;
-			}
-			objs->insert(sym);
-		}		
-
-		// dynamically declare the sort
-		s = parser->symtab()->resolveOrCreate(new SortSymbol(new ReferencedString(name), objs));
-		if (!s) {
-				parser->_parse_error("An error occurred creating symbol \"" + name + "/0\".", &nr->beginLoc());
-				YYERROR;
-		} 
+		// X..Y becomes __rsort_N_
+		if(!(s = parser->_newRange(nr->min(), nr->max()))) {
+			parser->_parse_error("INTERNAL ERROR: An error occurred while instantiating the dynamic sort declaration.", &nr->beginLoc());
+			YYERROR;
+		}
 	}
 
 sort_id(s) ::= IDENTIFIER(id).
@@ -1946,8 +1982,18 @@ stmt_object_def(stmt) ::= COLON_DASH(cd) OBJECTS(kw) object_bnd_lst(l) PERIOD(p)
 
 			// Go ahead and add them to the symbol table
 			BOOST_FOREACH(ObjectDeclaration::Element* bnd, *l) {
-				BOOST_FOREACH(ObjectSymbol const* o, *bnd) {
-						bnd->sort()->add(o);
+				BOOST_FOREACH(Symbol const* o, *bnd) {
+					switch (o->type()) {
+					case Symbol::Type::OBJECT:
+						bnd->sort()->add((ObjectSymbol const*)o);
+						break;
+					case Symbol::Type::RANGE:
+						bnd->sort()->add((NumberRangeSymbol const*)o);
+						break;
+					default:
+						// will not happen
+						break;
+					}
 				}
 			}
 		}
@@ -1987,7 +2033,7 @@ object_spec(obj) ::= IDENTIFIER(id).
 	{
 		ref_ptr<const Token> id_ptr = id;
 		obj = NULL;
-		ref_ptr<const ObjectSymbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));
+		ref_ptr<const Symbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str()));
 		if (!o) {
 			parser->_parse_error("Detected a conflicting definition of \"" + Symbol::genName(*id->str(),0) + "\".", &id->beginLoc());
 			YYERROR;
@@ -2001,13 +2047,13 @@ object_spec(obj) ::= IDENTIFIER(id) PAREN_L sort_lst(lst) PAREN_R.
 		obj = NULL;
 		ref_ptr<ObjectSymbol::SortList> lst_ptr = lst;
 		ref_ptr<const Token> id_ptr = id;
-		ref_ptr<const ObjectSymbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str(), lst));
+		ref_ptr<ObjectSymbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(id->str(), lst));
 		if (!o) {
 			parser->_parse_error("Detected a conflicting definition of \"" + Symbol::genName(*id->str(),lst->size()) + "\".", &id->beginLoc());
 			YYERROR;
 		} else {
 			obj = new  ObjectDeclaration::Element::ObjectList();
-			obj->push_back(o);
+			obj->push_back(o.get());
 		}
 	}
 
@@ -2021,7 +2067,7 @@ object_spec(obj) ::= INTEGER(id).
 			YYERROR;
 		} else {
 			obj = new ObjectDeclaration::Element::ObjectList();
-			obj->push_back(o);
+			obj->push_back(o.get());
 		}
 	}
 
@@ -2031,15 +2077,12 @@ object_spec(obj) ::= num_range(nr).
 		ref_ptr<const Referenced> nr_ptr = nr;
 
 		// iterate over the range and add it to the list
-		for (int i = nr->min(); i <= nr->max(); i++) {
-			std::string name = boost::lexical_cast<std::string>(i);
-			ref_ptr<const ObjectSymbol> o = parser->symtab()->resolveOrCreate(new ObjectSymbol(new ReferencedString(name)));
-			if (!o) {
-				parser->_parse_error("INTERNAL ERROR: Could not create object symbol \"" + Symbol::genName(name, 0) + "\".", &nr->beginLoc());
-				YYERROR;
-			} else {
-				obj->push_back(o);
-			}
+		ref_ptr<const Symbol> o = parser->symtab()->resolveOrCreate(parser->_newRangeSymbol( nr->min(), nr->max()));
+		if (!o) {
+			parser->_parse_error("INTERNAL ERROR: Could not create object symbol.", &nr->beginLoc());
+			YYERROR;
+		} else {
+			obj->push_back(o.get());
 		}
 	}
 
@@ -2370,8 +2413,8 @@ stmt_strong_noconcurrency(stmt) ::= STRONG_NOCONCURRENCY(kw) PERIOD(p).			{ NC_S
 		}
 }
 
-stmt_maxafvalue(stmt) ::= COLON_DASH(cd) MAXAFVALUE(kw) EQ term_numeric(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXAFVALUE, MaxAFValueStatement); }
-stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ term_numeric(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXADDITIVE, MaxAdditiveStatement); }
+stmt_maxafvalue(stmt) ::= COLON_DASH(cd) MAXAFVALUE(kw) EQ term_int_eval(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXAFVALUE, MaxAFValueStatement); }
+stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ term_int_eval(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXADDITIVE, MaxAdditiveStatement); }
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/
@@ -2382,7 +2425,7 @@ stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ term_numeric(i) PER
 %include {
 	struct QueryData {
 		QueryStatement::FormulaList* l;
-		NumberRange const* maxstep;
+		NumberRangeEval* maxstep;
 		Token const* label;
 	};
 
@@ -2390,7 +2433,7 @@ stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ term_numeric(i) PER
 
 %type       query_lst				{ QueryData													}
 %destructor query_lst				{ DEALLOC($$.l); DEALLOC($$.maxstep); DEALLOC($$.label);	}
-%type       query_maxstep_decl		{ NumberRange const*										}
+%type       query_maxstep_decl		{ NumberRangeEval*											}
 %destructor query_maxstep_decl		{ DEALLOC($$);												}
 %type       query_label_decl		{ Token const*												}
 %destructor query_label_Decl		{ DEALLOC($$);												}					
@@ -2513,7 +2556,7 @@ query_maxstep_decl(decl) ::= MAXSTEP(kw) DBL_COLON INTEGER(i).			{
 		int max = -1;
 		try {
 			max = boost::lexical_cast<int>(*i->str());
-			decl = new NumberRange(-1, max, i->beginLoc(), i->endLoc());
+			decl = new NumberRangeEval(-1, max, i->beginLoc(), i->endLoc());
 		} catch (boost::bad_lexical_cast const& e) {
 			parser->_parse_error("INTERNAL ERROR: An error occurred extracting an integer from \"" + *i->str() + "\".", &i->beginLoc());
 			YYERROR;
@@ -2521,7 +2564,7 @@ query_maxstep_decl(decl) ::= MAXSTEP(kw) DBL_COLON INTEGER(i).			{
 	}
 }
 
-query_maxstep_decl(decl) ::= MAXSTEP(kw) DBL_COLON num_range(nr). {
+query_maxstep_decl(decl) ::= MAXSTEP(kw) DBL_COLON num_range_eval(nr). {
 	decl = NULL;
 	ref_ptr<const Referenced> kw_ptr = kw, nr_ptr = nr;
 

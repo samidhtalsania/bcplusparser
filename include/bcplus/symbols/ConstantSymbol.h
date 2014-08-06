@@ -9,12 +9,12 @@
 
 #include "bcplus/DomainType.h"
 #include "bcplus/symbols/Symbol.h"
-#include "bcplus/symbols/SortSymbol.h"
 #include "bcplus/symbols/detail/BaseSymbol.h"
 
 namespace bcplus {
 namespace symbols {
 
+class SortSymbol;
 class Resolver;
 
 class ConstantSymbol : public detail::BaseSymbol {
