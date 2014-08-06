@@ -25,7 +25,7 @@ private:
 	/************************************************************/
 
 	/// The token's minimum and maximum values
-	babb::utils::ref_ptr<babb::utils::Referenced> _min, _max;
+	babb::utils::ref_ptr<elements::Term> _min, _max;
 
 public:
 	/************************************************************/
