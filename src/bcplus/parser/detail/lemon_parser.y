@@ -2362,6 +2362,11 @@ show_lst(new_lst) ::= show_lst(lst) COMMA show_elem(elem).
 		new_lst = lst;
 		new_lst->push_back(elem);
 	}
+show_lst(new_lst) ::= show_lst(lst) SEMICOLON show_elem(elem).
+	{
+		new_lst = lst;
+		new_lst->push_back(elem);
+	}
 
 show_elem(elem) ::= atomic_formula_one_const(af).	{ elem = af; }
 
@@ -2414,7 +2419,9 @@ stmt_strong_noconcurrency(stmt) ::= STRONG_NOCONCURRENCY(kw) PERIOD(p).			{ NC_S
 }
 
 stmt_maxafvalue(stmt) ::= COLON_DASH(cd) MAXAFVALUE(kw) EQ term_int_eval(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXAFVALUE, MaxAFValueStatement); }
+stmt_maxafvalue(stmt) ::= COLON_DASH(cd) MAXAFVALUE(kw) DBL_COLON term_int_eval(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXAFVALUE, MaxAFValueStatement); }
 stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) EQ term_int_eval(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXADDITIVE, MaxAdditiveStatement); }
+stmt_maxadditive(stmt) ::= COLON_DASH(cd) MAXADDITIVE(kw) DBL_COLON term_int_eval(i) PERIOD(p).	{ VALUE_DECL(stmt, cd, kw, i, p, Language::Feature::DECL_MAXADDITIVE, MaxAdditiveStatement); }
 
 /********************************************************************************************************************************/
 /*************************************************************************************************/
