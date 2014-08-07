@@ -22,6 +22,7 @@ char const* Symbol::Type::cstr(type v) {
         case OBJECT: 			 return "object";
         case MACRO:    			 return "macro";
         case QUERY:    			 return "query";
+		case RANGE:              return "range";
 		case ERR_INVALID_SYMBOL: return "<invalid>";
 		default:				 return "<BAD_SYMBOL_TYPE>";
 	}
@@ -43,6 +44,7 @@ Symbol::Type::type Symbol::Type::val(char const* c) {
 		'object'			{ return OBJECT; }
 		'macro'				{ return MACRO; }
 		'query'				{ return QUERY; }
+		'range'				{ return RANGE; }
 		.					{ return ERR_INVALID_SYMBOL; }
 	*/
 }
