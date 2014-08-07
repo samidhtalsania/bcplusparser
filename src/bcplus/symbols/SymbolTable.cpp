@@ -417,39 +417,40 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 							}
 						}
 					} else if (boost::iequals(symbols.first, "metadata")) {
-						std::string name, value;
-						BOOST_FOREACH(pt::ptree::value_type& s, symbols.second) {
-							bool goodentry = true;
-							if (!boost::iequals(s.first, "value")) {
-								_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected key \"" << symbols.first << "\" while scanning the metadata information in symbol table file \"" << path.native() << "\". Expected \"value\"." << std::endl;
-								good = false;
-								continue;
-							} 
-							try {
-								name = s.second.get<std::string>("<xmlattr>.key");
-							} catch (boost::property_tree::ptree_error const& e) {
-								_config->ostream(Verb::ERROR) << "ERROR: Encountered a malformed metadata entry while scanning symbol table file \"" << path.native() << "\". The entry is missing its \"key\" attribute." << std::endl;
-								good = false;
-								goodentry = false;
-							}
-
-							try {
-								value = s.second.get<std::string>("<xmlattr>.value");
-							} catch (boost::property_tree::ptree_error const& e) {
-								if (goodentry)
-									_config->ostream(Verb::ERROR) << "ERROR: Encountered a malformed metadata entry while scanning symbol table file \"" << path.native() << "\". The entry is missing its \"value\" attribute." << std::endl;
-								else
-									_config->ostream(Verb::ERROR) << "ERROR: Metadata entry \"" << name << "\" is malformed in symbol table file \"" << path.native() << "\". The entry is missing its \"value\" attribute." << std::endl;
-		
-								good = false;
-								goodentry = false;
-							}
+						if (pass == 0) {
+							std::string name, value;
+							BOOST_FOREACH(pt::ptree::value_type& s, symbols.second) {
+								bool goodentry = true;
+								if (!boost::iequals(s.first, "value")) {
+									_config->ostream(Verb::ERROR) << "ERROR: Encountered unexpected key \"" << symbols.first << "\" while scanning the metadata information in symbol table file \"" << path.native() << "\". Expected \"value\"." << std::endl;
+									good = false;
+									continue;
+								} 
+								try {
+									name = s.second.get<std::string>("<xmlattr>.key");
+								} catch (boost::property_tree::ptree_error const& e) {
+									_config->ostream(Verb::ERROR) << "ERROR: Encountered a malformed metadata entry while scanning symbol table file \"" << path.native() << "\". The entry is missing its \"key\" attribute." << std::endl;
+									good = false;
+									goodentry = false;
+								}
+	
+								try {
+									value = s.second.get<std::string>("<xmlattr>.value");
+								} catch (boost::property_tree::ptree_error const& e) {
+									if (goodentry)
+										_config->ostream(Verb::ERROR) << "ERROR: Encountered a malformed metadata entry while scanning symbol table file \"" << path.native() << "\". The entry is missing its \"value\" attribute." << std::endl;
+									else
+										_config->ostream(Verb::ERROR) << "ERROR: Metadata entry \"" << name << "\" is malformed in symbol table file \"" << path.native() << "\". The entry is missing its \"value\" attribute." << std::endl;
+			
+									good = false;
+									goodentry = false;
+								}
 						
-							if (goodentry && !setData(name, new ReferencedString(value))) {
-								_config->ostream(Verb::ERROR) << "ERROR: Encountered a redefinition of metadata entry \"" << name  << "\" in symbol table file \"" << path.native() << "\"." << std::endl;
-								good = false;
+								if (goodentry && !setData(name, new ReferencedString(value))) {
+									_config->ostream(Verb::ERROR) << "ERROR: Encountered a redefinition of metadata entry \"" << name  << "\" in symbol table file \"" << path.native() << "\"." << std::endl;
+									good = false;
+								}
 							}
-
 						}
 
 					} else {
