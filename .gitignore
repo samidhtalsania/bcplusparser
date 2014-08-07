@@ -3,6 +3,8 @@
 *.lo
 *.o
 
+bcplusparser
+
 # Compiled Dynamic libraries
 *.so
 *.dylib
