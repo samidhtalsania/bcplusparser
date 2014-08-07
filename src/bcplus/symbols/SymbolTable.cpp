@@ -346,6 +346,7 @@ bool SymbolTable::load(boost::filesystem::path const& path) {
 									sym = new symbols::NumberRangeSymbol(s.second, this, &(_config->ostream(Verb::ERROR)));
 									add_sym = true;
 								}
+								break;
 
 							case Symbol::Type::CONSTANT:
 								if (pass == 1) {
