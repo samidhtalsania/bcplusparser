@@ -680,6 +680,9 @@ term_no_const(t) ::= STRING_LITERAL(s).							{ BASIC_TERM(t, s); }
 term_no_const(t) ::= PAREN_L(pl) term_no_const(sub) PAREN_R(pr).{ TERM_PARENS(t, pl, sub, pr); }
 term_no_const(t) ::= TRUE(e).									{ BASIC_TERM(t, e); }
 term_no_const(t) ::= FALSE(e).									{ BASIC_TERM(t, e); }
+term_no_const(t) ::= MAXSTEP(e).												{ NULLARY_TERM(t, e, Language::Feature::MAXSTEP, NullaryTerm::Operator::MAXSTEP); }
+term_no_const(t) ::= MAXADDITIVE(e).											{ NULLARY_TERM(t, e, Language::Feature::MAXADDITIVE, NullaryTerm::Operator::MAXADDITIVE); }
+term_no_const(t) ::= MAXAFVALUE(e).											{ NULLARY_TERM(t, e, Language::Feature::MAXAFVALUE, NullaryTerm::Operator::MAXAFVALUE); }
 term_no_const(t) ::= constant(c).
 	{
 		// error handline for constants so they don't default to undeclared identifiers
