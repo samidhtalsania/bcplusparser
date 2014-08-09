@@ -374,7 +374,7 @@
 				parser->_parse_error("Detected a duplicate definition of symbol \"" + *c->name() + "\".", &loc);			\
 			}																												\
 		}
-#line 2383 "bcplus/parser/detail/lemon_parser.y"
+#line 2386 "bcplus/parser/detail/lemon_parser.y"
 
 	#define NC_STATEMENT(stmt, kw, period, feature, class)											\
 		stmt = NULL;																				\
@@ -387,7 +387,7 @@
 			stmt = new class(kw->beginLoc(), period->endLoc());										\
 		}																							
 
-#line 2406 "bcplus/parser/detail/lemon_parser.y"
+#line 2409 "bcplus/parser/detail/lemon_parser.y"
 
 	#define VALUE_DECL(stmt, cd, kw, val_obj, p, feature, class)									\
 		stmt = NULL;																				\
@@ -404,7 +404,7 @@
 				stmt = new class(value, cd->beginLoc(), p->endLoc());								\
 			}																						\
 		}
-#line 2435 "bcplus/parser/detail/lemon_parser.y"
+#line 2438 "bcplus/parser/detail/lemon_parser.y"
 
 	struct QueryData {
 		QueryStatement::FormulaList* l;
@@ -412,7 +412,7 @@
 		Token const* label;
 	};
 
-#line 2542 "bcplus/parser/detail/lemon_parser.y"
+#line 2545 "bcplus/parser/detail/lemon_parser.y"
 
 	#define QUERY_DECL(decl, kw, val, feature)																\
 		decl = NULL;																						\
@@ -425,7 +425,7 @@
 			decl = val_ptr.release();																		\
 		}
 
-#line 2614 "bcplus/parser/detail/lemon_parser.y"
+#line 2617 "bcplus/parser/detail/lemon_parser.y"
 
 	#define CLAUSE(elem, kw, f, feature) 														\
 		ref_ptr<const Token> kw_ptr = kw;														\
@@ -434,7 +434,7 @@
 			parser->_feature_error(feature, &kw->beginLoc());									\
 			YYERROR;																			\
 		}
-#line 2700 "bcplus/parser/detail/lemon_parser.y"
+#line 2703 "bcplus/parser/detail/lemon_parser.y"
 
 	#define LAW_BASIC_FORM(law, kw, head, ifbody, ifcons, after, unless, where, p, static, dynamic, class)											\
 		law = NULL;																																	\
@@ -527,7 +527,7 @@
 		}
 		
 
-#line 2893 "bcplus/parser/detail/lemon_parser.y"
+#line 2896 "bcplus/parser/detail/lemon_parser.y"
 
 	#define CODE_BLK(stmt, code, feature, type) 												\
 		ref_ptr<const Token> code_ptr = code;													\
@@ -2850,14 +2850,14 @@ static void yy_destructor(
       break;
     case 215: /* object_bnd_lst */
 {
-#line 1964 "bcplus/parser/detail/lemon_parser.y"
+#line 1967 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy102));									
 #line 2856 "bcplus/parser/detail/lemon_parser.c"
 }
       break;
     case 216: /* object_bnd */
 {
-#line 1966 "bcplus/parser/detail/lemon_parser.y"
+#line 1969 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy294));									
 #line 2863 "bcplus/parser/detail/lemon_parser.c"
 }
@@ -2865,7 +2865,7 @@ static void yy_destructor(
     case 217: /* object_lst */
     case 218: /* object_spec */
 {
-#line 1968 "bcplus/parser/detail/lemon_parser.y"
+#line 1971 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy425));									
 #line 2871 "bcplus/parser/detail/lemon_parser.c"
 }
@@ -2873,14 +2873,14 @@ static void yy_destructor(
     case 219: /* variable_bnd_lst */
     case 220: /* variable_bnd */
 {
-#line 2100 "bcplus/parser/detail/lemon_parser.y"
+#line 2103 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy410));									
 #line 2879 "bcplus/parser/detail/lemon_parser.c"
 }
       break;
     case 221: /* variable_lst */
 {
-#line 2104 "bcplus/parser/detail/lemon_parser.y"
+#line 2107 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy52));									
 #line 2886 "bcplus/parser/detail/lemon_parser.c"
 }
@@ -2889,14 +2889,14 @@ static void yy_destructor(
     case 223: /* sort_bnd */
     case 224: /* sort_dcl_lst */
 {
-#line 2187 "bcplus/parser/detail/lemon_parser.y"
+#line 2190 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy196));									
 #line 2895 "bcplus/parser/detail/lemon_parser.c"
 }
       break;
     case 225: /* show_lst */
 {
-#line 2291 "bcplus/parser/detail/lemon_parser.y"
+#line 2294 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy123));									
 #line 2902 "bcplus/parser/detail/lemon_parser.c"
 }
@@ -2904,28 +2904,28 @@ static void yy_destructor(
     case 226: /* show_elem */
     case 234: /* clause_unless */
 {
-#line 2293 "bcplus/parser/detail/lemon_parser.y"
+#line 2296 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy423));									
 #line 2910 "bcplus/parser/detail/lemon_parser.c"
 }
       break;
     case 227: /* query_lst */
 {
-#line 2445 "bcplus/parser/detail/lemon_parser.y"
+#line 2448 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy489).l); DEALLOC((yypminor->yy489).maxstep); DEALLOC((yypminor->yy489).label);	
 #line 2917 "bcplus/parser/detail/lemon_parser.c"
 }
       break;
     case 228: /* query_maxstep_decl */
 {
-#line 2447 "bcplus/parser/detail/lemon_parser.y"
+#line 2450 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy29));												
 #line 2924 "bcplus/parser/detail/lemon_parser.c"
 }
       break;
     case 230: /* query_label_Decl */
 {
-#line 2449 "bcplus/parser/detail/lemon_parser.y"
+#line 2452 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy0));												
 #line 2931 "bcplus/parser/detail/lemon_parser.c"
 }
@@ -2935,7 +2935,7 @@ static void yy_destructor(
     case 233: /* clause_ifcons */
     case 235: /* clause_where */
 {
-#line 2603 "bcplus/parser/detail/lemon_parser.y"
+#line 2606 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy17));									
 #line 2941 "bcplus/parser/detail/lemon_parser.c"
 }
@@ -2959,7 +2959,7 @@ static void yy_destructor(
     case 252: /* law_rigid */
     case 253: /* law_observed */
 {
-#line 2644 "bcplus/parser/detail/lemon_parser.y"
+#line 2647 "bcplus/parser/detail/lemon_parser.y"
  DEALLOC((yypminor->yy484));									
 #line 2965 "bcplus/parser/detail/lemon_parser.c"
 }
@@ -4958,13 +4958,16 @@ static void yy_reduce(
 			ref_ptr<SortSymbol> s = parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN);
 
 			// NOTE: additive constants default to the additive sort, not the boolean sort
-			if (yymsp[0].minor.yy265 & ConstantSymbol::Type::M_ADDITIVE) s = parser->symtab()->bsort(SymbolTable::BuiltinSort::ADDITIVE);
+			if (yymsp[0].minor.yy265 & ConstantSymbol::Type::M_ADDITIVE && s->domainType() == DomainType::BOOLEAN ) 
+				s = parser->symtab()->bsort(SymbolTable::BuiltinSort::ADDITIVE);
 
 			// external constants should have "unknown" in their sort
-			else if (yymsp[0].minor.yy265 & ConstantSymbol::Type::M_EXTERNAL) s = parser->symtab()->carrot(s);
+			else if (yymsp[0].minor.yy265 & ConstantSymbol::Type::M_EXTERNAL) 
+				s = parser->symtab()->carrot(s);
 
 			// non-boolean abActions should contain "none"
-			else if (yymsp[0].minor.yy265 == ConstantSymbol::Type::ABACTION && s->domainType() != DomainType::BOOLEAN) s = parser->symtab()->star(s);
+			else if (yymsp[0].minor.yy265 == ConstantSymbol::Type::ABACTION && s->domainType() != DomainType::BOOLEAN) 
+				s = parser->symtab()->star(s);
 
 
 			ref_ptr<ConstantSymbol> c = new ConstantSymbol(yymsp[0].minor.yy265, decl.first->str(), parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN), decl.second);
@@ -4973,10 +4976,10 @@ static void yy_reduce(
 		}
 	  yy_destructor(yypParser,76,&yymsp[-1].minor);
 }
-#line 4977 "bcplus/parser/detail/lemon_parser.c"
+#line 4980 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 330: /* constant_bnd ::= constant_dcl_lst DBL_COLON attrib_spec OF IDENTIFIER */
-#line 1709 "bcplus/parser/detail/lemon_parser.y"
+#line 1712 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy409 = NULL;
 		ref_ptr<const Referenced> names_ptr = yymsp[-4].minor.yy226, s_ptr = yymsp[-2].minor.yy60, id_ptr = yymsp[0].minor.yy0;
@@ -5002,10 +5005,10 @@ static void yy_reduce(
 	  yy_destructor(yypParser,76,&yymsp[-3].minor);
   yy_destructor(yypParser,55,&yymsp[-1].minor);
 }
-#line 5006 "bcplus/parser/detail/lemon_parser.c"
+#line 5009 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 331: /* constant_bnd ::= constant_dcl_lst DBL_COLON attrib_spec OF IDENTIFIER PAREN_L sort_lst PAREN_R */
-#line 1733 "bcplus/parser/detail/lemon_parser.y"
+#line 1736 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy409 = NULL;
 		ref_ptr<const Referenced> names_ptr = yymsp[-7].minor.yy226, s_ptr = yymsp[-5].minor.yy60, id_ptr = yymsp[-3].minor.yy0, lst_ptr = yymsp[-1].minor.yy195;
@@ -5083,37 +5086,37 @@ static void yy_reduce(
   yy_destructor(yypParser,71,&yymsp[-2].minor);
   yy_destructor(yypParser,72,&yymsp[0].minor);
 }
-#line 5087 "bcplus/parser/detail/lemon_parser.c"
+#line 5090 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 332: /* constant_dcl_lst ::= IDENTIFIER */
-#line 1809 "bcplus/parser/detail/lemon_parser.y"
+#line 1812 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy226 = new IdentifierDeclList();
 		yygotominor.yy226->push_back(IdentifierDecl(yymsp[0].minor.yy0, NULL));
 	}
-#line 5095 "bcplus/parser/detail/lemon_parser.c"
+#line 5098 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 333: /* constant_dcl_lst ::= IDENTIFIER PAREN_L sort_lst PAREN_R */
-#line 1814 "bcplus/parser/detail/lemon_parser.y"
+#line 1817 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy226 = new IdentifierDeclList();
 		yygotominor.yy226->push_back(IdentifierDecl(yymsp[-3].minor.yy0, yymsp[-1].minor.yy195));
 	  yy_destructor(yypParser,71,&yymsp[-2].minor);
   yy_destructor(yypParser,72,&yymsp[0].minor);
 }
-#line 5105 "bcplus/parser/detail/lemon_parser.c"
+#line 5108 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 334: /* constant_dcl_lst ::= constant_dcl_lst COMMA IDENTIFIER */
-#line 1819 "bcplus/parser/detail/lemon_parser.y"
+#line 1822 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy226 = yymsp[-2].minor.yy226;
 		yygotominor.yy226->push_back(IdentifierDecl(yymsp[0].minor.yy0, NULL));
 	  yy_destructor(yypParser,102,&yymsp[-1].minor);
 }
-#line 5114 "bcplus/parser/detail/lemon_parser.c"
+#line 5117 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 335: /* constant_dcl_lst ::= constant_dcl_lst COMMA IDENTIFIER PAREN_L sort_lst PAREN_R */
-#line 1824 "bcplus/parser/detail/lemon_parser.y"
+#line 1827 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy226 = yymsp[-5].minor.yy226;
 		yygotominor.yy226->push_back(IdentifierDecl(yymsp[-3].minor.yy0, yymsp[-1].minor.yy195));
@@ -5121,10 +5124,10 @@ static void yy_reduce(
   yy_destructor(yypParser,71,&yymsp[-2].minor);
   yy_destructor(yypParser,72,&yymsp[0].minor);
 }
-#line 5125 "bcplus/parser/detail/lemon_parser.c"
+#line 5128 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 336: /* constant_dcl_type ::= ABACTION */
-#line 1831 "bcplus/parser/detail/lemon_parser.y"
+#line 1834 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::ABACTION;
@@ -5133,10 +5136,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5137 "bcplus/parser/detail/lemon_parser.c"
+#line 5140 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 337: /* constant_dcl_type ::= ACTION */
-#line 1840 "bcplus/parser/detail/lemon_parser.y"
+#line 1843 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::ACTION;
@@ -5145,10 +5148,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5149 "bcplus/parser/detail/lemon_parser.c"
+#line 5152 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 338: /* constant_dcl_type ::= ADDITIVEACTION */
-#line 1849 "bcplus/parser/detail/lemon_parser.y"
+#line 1852 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::ADDITIVEACTION;
@@ -5157,10 +5160,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5161 "bcplus/parser/detail/lemon_parser.c"
+#line 5164 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 339: /* constant_dcl_type ::= ADDITIVEFLUENT */
-#line 1858 "bcplus/parser/detail/lemon_parser.y"
+#line 1861 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::ADDITIVEFLUENT;
@@ -5169,10 +5172,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5173 "bcplus/parser/detail/lemon_parser.c"
+#line 5176 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 340: /* constant_dcl_type ::= EXTERNALACTION */
-#line 1867 "bcplus/parser/detail/lemon_parser.y"
+#line 1870 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::EXTERNALACTION;
@@ -5181,10 +5184,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5185 "bcplus/parser/detail/lemon_parser.c"
+#line 5188 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 341: /* constant_dcl_type ::= EXTERNALFLUENT */
-#line 1876 "bcplus/parser/detail/lemon_parser.y"
+#line 1879 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::EXTERNALFLUENT;
@@ -5193,10 +5196,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5197 "bcplus/parser/detail/lemon_parser.c"
+#line 5200 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 342: /* constant_dcl_type ::= EXOGENOUSACTION */
-#line 1885 "bcplus/parser/detail/lemon_parser.y"
+#line 1888 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::EXOGENOUSACTION;
@@ -5205,10 +5208,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5209 "bcplus/parser/detail/lemon_parser.c"
+#line 5212 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 343: /* constant_dcl_type ::= INERTIALFLUENT */
-#line 1894 "bcplus/parser/detail/lemon_parser.y"
+#line 1897 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::INERTIALFLUENT;
@@ -5217,10 +5220,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5221 "bcplus/parser/detail/lemon_parser.c"
+#line 5224 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 344: /* constant_dcl_type ::= RIGID */
-#line 1903 "bcplus/parser/detail/lemon_parser.y"
+#line 1906 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::RIGID;
@@ -5229,10 +5232,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5233 "bcplus/parser/detail/lemon_parser.c"
+#line 5236 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 345: /* constant_dcl_type ::= SIMPLEFLUENT */
-#line 1912 "bcplus/parser/detail/lemon_parser.y"
+#line 1915 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::SIMPLEFLUENT;
@@ -5241,10 +5244,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5245 "bcplus/parser/detail/lemon_parser.c"
+#line 5248 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 346: /* constant_dcl_type ::= SDFLUENT */
-#line 1922 "bcplus/parser/detail/lemon_parser.y"
+#line 1925 "bcplus/parser/detail/lemon_parser.y"
 { 
 		ref_ptr<const Token> tok_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy265 = ConstantSymbol::Type::SDFLUENT;
@@ -5253,10 +5256,10 @@ static void yy_reduce(
 			YYERROR;
 		}
 	}
-#line 5257 "bcplus/parser/detail/lemon_parser.c"
+#line 5260 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 347: /* attrib_spec ::= ATTRIBUTE */
-#line 1932 "bcplus/parser/detail/lemon_parser.y"
+#line 1935 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy60 = NULL;
 		ref_ptr<const Referenced> kw_ptr = yymsp[0].minor.yy0;
@@ -5268,10 +5271,10 @@ static void yy_reduce(
 			yygotominor.yy60 = parser->symtab()->star(parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN));
 		}
 	}
-#line 5272 "bcplus/parser/detail/lemon_parser.c"
+#line 5275 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 348: /* attrib_spec ::= ATTRIBUTE PAREN_L sort PAREN_R */
-#line 1945 "bcplus/parser/detail/lemon_parser.y"
+#line 1948 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy60 = NULL;
 		ref_ptr<const Referenced> kw_ptr = yymsp[-3].minor.yy0, s_ptr = yymsp[-1].minor.yy93;
@@ -5284,10 +5287,10 @@ static void yy_reduce(
 	  yy_destructor(yypParser,71,&yymsp[-2].minor);
   yy_destructor(yypParser,72,&yymsp[0].minor);
 }
-#line 5288 "bcplus/parser/detail/lemon_parser.c"
+#line 5291 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 349: /* stmt_object_def ::= COLON_DASH OBJECTS object_bnd_lst PERIOD */
-#line 1973 "bcplus/parser/detail/lemon_parser.y"
+#line 1976 "bcplus/parser/detail/lemon_parser.y"
 {
 		ref_ptr<const Token> cd_ptr = yymsp[-3].minor.yy0;
 		ref_ptr<const Token> p_ptr = yymsp[0].minor.yy0;
@@ -5319,52 +5322,52 @@ static void yy_reduce(
 			}
 		}
 	}
-#line 5323 "bcplus/parser/detail/lemon_parser.c"
+#line 5326 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 350: /* object_bnd_lst ::= object_bnd */
-#line 2006 "bcplus/parser/detail/lemon_parser.y"
+#line 2009 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy102 = new ObjectDeclaration::ElementList();
 		yygotominor.yy102->push_back(yymsp[0].minor.yy294);
 	}
-#line 5331 "bcplus/parser/detail/lemon_parser.c"
+#line 5334 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 351: /* object_bnd_lst ::= object_bnd_lst SEMICOLON object_bnd */
-#line 2012 "bcplus/parser/detail/lemon_parser.y"
+#line 2015 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy102 = yymsp[-2].minor.yy102;
 		yygotominor.yy102->push_back(yymsp[0].minor.yy294);
 	  yy_destructor(yypParser,93,&yymsp[-1].minor);
 }
-#line 5340 "bcplus/parser/detail/lemon_parser.c"
+#line 5343 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 352: /* object_bnd ::= object_lst DBL_COLON sort_id */
-#line 2018 "bcplus/parser/detail/lemon_parser.y"
+#line 2021 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy294 = new ObjectDeclaration::Element(yymsp[0].minor.yy93, yymsp[-2].minor.yy425);
 	  yy_destructor(yypParser,76,&yymsp[-1].minor);
 }
-#line 5348 "bcplus/parser/detail/lemon_parser.c"
+#line 5351 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 353: /* object_lst ::= object_spec */
-#line 2023 "bcplus/parser/detail/lemon_parser.y"
+#line 2026 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy425 = yymsp[0].minor.yy425;
 	}
-#line 5355 "bcplus/parser/detail/lemon_parser.c"
+#line 5358 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 354: /* object_lst ::= object_lst COMMA object_spec */
-#line 2027 "bcplus/parser/detail/lemon_parser.y"
+#line 2030 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy425 = yymsp[-2].minor.yy425;
 		yygotominor.yy425->splice(yygotominor.yy425->end(), *yymsp[0].minor.yy425);
 		delete yymsp[0].minor.yy425;
 	  yy_destructor(yypParser,102,&yymsp[-1].minor);
 }
-#line 5365 "bcplus/parser/detail/lemon_parser.c"
+#line 5368 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 355: /* object_spec ::= IDENTIFIER */
-#line 2036 "bcplus/parser/detail/lemon_parser.y"
+#line 2039 "bcplus/parser/detail/lemon_parser.y"
 {
 		ref_ptr<const Token> id_ptr = yymsp[0].minor.yy0;
 		yygotominor.yy425 = NULL;
@@ -5377,10 +5380,10 @@ static void yy_reduce(
 			yygotominor.yy425->push_back(o);
 		}
 	}
-#line 5381 "bcplus/parser/detail/lemon_parser.c"
+#line 5384 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 356: /* object_spec ::= IDENTIFIER PAREN_L sort_lst PAREN_R */
-#line 2049 "bcplus/parser/detail/lemon_parser.y"
+#line 2052 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy425 = NULL;
 		ref_ptr<ObjectSymbol::SortList> lst_ptr = yymsp[-1].minor.yy195;
@@ -5396,10 +5399,10 @@ static void yy_reduce(
 	  yy_destructor(yypParser,71,&yymsp[-2].minor);
   yy_destructor(yypParser,72,&yymsp[0].minor);
 }
-#line 5400 "bcplus/parser/detail/lemon_parser.c"
+#line 5403 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 357: /* object_spec ::= INTEGER */
-#line 2064 "bcplus/parser/detail/lemon_parser.y"
+#line 2067 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy425 = NULL;
 		ref_ptr<const Token> id_ptr = yymsp[0].minor.yy0;
@@ -5412,10 +5415,10 @@ static void yy_reduce(
 			yygotominor.yy425->push_back(o.get());
 		}
 	}
-#line 5416 "bcplus/parser/detail/lemon_parser.c"
+#line 5419 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 358: /* object_spec ::= num_range */
-#line 2078 "bcplus/parser/detail/lemon_parser.y"
+#line 2081 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy425 = new ObjectDeclaration::Element::ObjectList();
 		ref_ptr<const Referenced> nr_ptr = yymsp[0].minor.yy345;
@@ -5429,10 +5432,10 @@ static void yy_reduce(
 			yygotominor.yy425->push_back(o.get());
 		}
 	}
-#line 5433 "bcplus/parser/detail/lemon_parser.c"
+#line 5436 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 359: /* stmt_variable_def ::= COLON_DASH VARIABLES variable_bnd_lst PERIOD */
-#line 2107 "bcplus/parser/detail/lemon_parser.y"
+#line 2110 "bcplus/parser/detail/lemon_parser.y"
 {
 		ref_ptr<const Token> cd_ptr = yymsp[-3].minor.yy0;
 		ref_ptr<const Token> p_ptr = yymsp[0].minor.yy0;
@@ -5467,27 +5470,27 @@ static void yy_reduce(
 
 		}
 	}
-#line 5471 "bcplus/parser/detail/lemon_parser.c"
+#line 5474 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 360: /* variable_bnd_lst ::= variable_bnd */
-#line 2143 "bcplus/parser/detail/lemon_parser.y"
+#line 2146 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy410 = yymsp[0].minor.yy410;
 	}
-#line 5478 "bcplus/parser/detail/lemon_parser.c"
+#line 5481 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 361: /* variable_bnd_lst ::= variable_bnd_lst SEMICOLON variable_bnd */
-#line 2148 "bcplus/parser/detail/lemon_parser.y"
+#line 2151 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy410 = yymsp[-2].minor.yy410;
 		yygotominor.yy410->splice(yygotominor.yy410->end(), *yymsp[0].minor.yy410);
 		delete yymsp[0].minor.yy410;
 	  yy_destructor(yypParser,93,&yymsp[-1].minor);
 }
-#line 5488 "bcplus/parser/detail/lemon_parser.c"
+#line 5491 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 362: /* variable_bnd ::= variable_lst DBL_COLON sort */
-#line 2155 "bcplus/parser/detail/lemon_parser.y"
+#line 2158 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy410 = new VariableDeclaration::ElementList();
 
@@ -5500,27 +5503,27 @@ static void yy_reduce(
 		delete yymsp[-2].minor.yy52;
 	  yy_destructor(yypParser,76,&yymsp[-1].minor);
 }
-#line 5504 "bcplus/parser/detail/lemon_parser.c"
+#line 5507 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 363: /* variable_lst ::= IDENTIFIER */
-#line 2168 "bcplus/parser/detail/lemon_parser.y"
+#line 2171 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy52 = new TokenList();
 		yygotominor.yy52->push_back(yymsp[0].minor.yy0);
 	}
-#line 5512 "bcplus/parser/detail/lemon_parser.c"
+#line 5515 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 364: /* variable_lst ::= variable_lst COMMA IDENTIFIER */
-#line 2173 "bcplus/parser/detail/lemon_parser.y"
+#line 2176 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy52 = yymsp[-2].minor.yy52;
 		yygotominor.yy52->push_back(yymsp[0].minor.yy0);
 	  yy_destructor(yypParser,102,&yymsp[-1].minor);
 }
-#line 5521 "bcplus/parser/detail/lemon_parser.c"
+#line 5524 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 365: /* stmt_sort_def ::= COLON_DASH SORTS sort_bnd_lst PERIOD */
-#line 2194 "bcplus/parser/detail/lemon_parser.y"
+#line 2197 "bcplus/parser/detail/lemon_parser.y"
 {
 		ref_ptr<const Token> cd_ptr = yymsp[-3].minor.yy0;
 		ref_ptr<const Token> p_ptr = yymsp[0].minor.yy0;
@@ -5535,28 +5538,28 @@ static void yy_reduce(
 			yygotominor.yy61 = new SortDeclaration(yymsp[-1].minor.yy196, yymsp[-3].minor.yy0->beginLoc(), yymsp[0].minor.yy0->endLoc());
 		}
 	}
-#line 5539 "bcplus/parser/detail/lemon_parser.c"
+#line 5542 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 366: /* sort_bnd_lst ::= sort_bnd */
       case 368: /* sort_bnd ::= sort_dcl_lst */ yytestcase(yyruleno==368);
-#line 2210 "bcplus/parser/detail/lemon_parser.y"
+#line 2213 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy196 = yymsp[0].minor.yy196;
 	}
-#line 5547 "bcplus/parser/detail/lemon_parser.c"
+#line 5550 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 367: /* sort_bnd_lst ::= sort_bnd_lst SEMICOLON sort_bnd */
-#line 2215 "bcplus/parser/detail/lemon_parser.y"
+#line 2218 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy196 = yymsp[-2].minor.yy196;
 		yygotominor.yy196->splice(yygotominor.yy196->end(), *yymsp[0].minor.yy196);
 		delete yymsp[0].minor.yy196;
 	  yy_destructor(yypParser,93,&yymsp[-1].minor);
 }
-#line 5557 "bcplus/parser/detail/lemon_parser.c"
+#line 5560 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 369: /* sort_bnd ::= sort_bnd DBL_LTHAN sort_bnd */
-#line 2227 "bcplus/parser/detail/lemon_parser.y"
+#line 2230 "bcplus/parser/detail/lemon_parser.y"
 {
 		BOOST_FOREACH(SortSymbol* sym, *yymsp[-2].minor.yy196) {
 			BOOST_FOREACH(SortSymbol* sym2, *yymsp[0].minor.yy196) {
@@ -5569,10 +5572,10 @@ static void yy_reduce(
 
 	  yy_destructor(yypParser,100,&yymsp[-1].minor);
 }
-#line 5573 "bcplus/parser/detail/lemon_parser.c"
+#line 5576 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 370: /* sort_bnd ::= sort_bnd DBL_GTHAN sort_bnd */
-#line 2239 "bcplus/parser/detail/lemon_parser.y"
+#line 2242 "bcplus/parser/detail/lemon_parser.y"
 {
 		BOOST_FOREACH(SortSymbol* sym, *yymsp[-2].minor.yy196) {
 			BOOST_FOREACH(SortSymbol* sym2, *yymsp[0].minor.yy196) {
@@ -5584,19 +5587,19 @@ static void yy_reduce(
 		delete yymsp[0].minor.yy196;
 	  yy_destructor(yypParser,99,&yymsp[-1].minor);
 }
-#line 5588 "bcplus/parser/detail/lemon_parser.c"
+#line 5591 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 371: /* sort_bnd ::= PAREN_L sort_bnd PAREN_R */
-#line 2250 "bcplus/parser/detail/lemon_parser.y"
+#line 2253 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy196 = yymsp[-1].minor.yy196;
 	  yy_destructor(yypParser,71,&yymsp[-2].minor);
   yy_destructor(yypParser,72,&yymsp[0].minor);
 }
-#line 5597 "bcplus/parser/detail/lemon_parser.c"
+#line 5600 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 372: /* sort_dcl_lst ::= IDENTIFIER */
-#line 2255 "bcplus/parser/detail/lemon_parser.y"
+#line 2258 "bcplus/parser/detail/lemon_parser.y"
 {
 		ref_ptr<SortSymbol> s = parser->symtab()->resolveOrCreate(new SortSymbol(yymsp[0].minor.yy0->str()));
 		if (!s) {
@@ -5610,10 +5613,10 @@ static void yy_reduce(
 
 		delete yymsp[0].minor.yy0;
 	}
-#line 5614 "bcplus/parser/detail/lemon_parser.c"
+#line 5617 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 373: /* sort_dcl_lst ::= sort_dcl_lst COMMA IDENTIFIER */
-#line 2269 "bcplus/parser/detail/lemon_parser.y"
+#line 2272 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy196 = yymsp[-2].minor.yy196;
 		ref_ptr<SortSymbol> s = parser->symtab()->resolveOrCreate(new SortSymbol(yymsp[0].minor.yy0->str()));
@@ -5629,10 +5632,10 @@ static void yy_reduce(
 
 	  yy_destructor(yypParser,102,&yymsp[-1].minor);
 }
-#line 5633 "bcplus/parser/detail/lemon_parser.c"
+#line 5636 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 374: /* stmt_show ::= COLON_DASH SHOW show_lst PERIOD */
-#line 2296 "bcplus/parser/detail/lemon_parser.y"
+#line 2299 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy484 = NULL;
 		ref_ptr<const Token> cd_ptr = yymsp[-3].minor.yy0, kw_ptr = yymsp[-2].minor.yy0, p_ptr = yymsp[0].minor.yy0;
@@ -5645,10 +5648,10 @@ static void yy_reduce(
 			yygotominor.yy484 = new ShowStatement(yymsp[-1].minor.yy123, yymsp[-3].minor.yy0->beginLoc(), yymsp[0].minor.yy0->endLoc());
 		}
 	}
-#line 5649 "bcplus/parser/detail/lemon_parser.c"
+#line 5652 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 375: /* stmt_show ::= COLON_DASH SHOW ALL PERIOD */
-#line 2310 "bcplus/parser/detail/lemon_parser.y"
+#line 2313 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy484 = NULL;
 		ref_ptr<const Token> cd_ptr = yymsp[-3].minor.yy0, kw_ptr = yymsp[-2].minor.yy0, p_ptr = yymsp[0].minor.yy0, all_ptr = yymsp[-1].minor.yy0;
@@ -5663,10 +5666,10 @@ static void yy_reduce(
 			yygotominor.yy484 = new ShowAllStatement(yymsp[-3].minor.yy0->beginLoc(), yymsp[0].minor.yy0->endLoc());
 		}
 	}
-#line 5667 "bcplus/parser/detail/lemon_parser.c"
+#line 5670 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 376: /* stmt_hide ::= COLON_DASH HIDE show_lst PERIOD */
-#line 2327 "bcplus/parser/detail/lemon_parser.y"
+#line 2330 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy484 = NULL;
 		ref_ptr<const Token> cd_ptr = yymsp[-3].minor.yy0, kw_ptr = yymsp[-2].minor.yy0, p_ptr = yymsp[0].minor.yy0;
@@ -5679,10 +5682,10 @@ static void yy_reduce(
 			yygotominor.yy484 = new HideStatement(yymsp[-1].minor.yy123, yymsp[-3].minor.yy0->beginLoc(), yymsp[0].minor.yy0->endLoc());
 		}
 	}
-#line 5683 "bcplus/parser/detail/lemon_parser.c"
+#line 5686 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 377: /* stmt_hide ::= COLON_DASH HIDE ALL PERIOD */
-#line 2341 "bcplus/parser/detail/lemon_parser.y"
+#line 2344 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy484 = NULL;
 		ref_ptr<const Token> cd_ptr = yymsp[-3].minor.yy0, kw_ptr = yymsp[-2].minor.yy0, p_ptr = yymsp[0].minor.yy0, all_ptr = yymsp[-1].minor.yy0;
@@ -5697,70 +5700,70 @@ static void yy_reduce(
 			yygotominor.yy484 = new HideAllStatement(yymsp[-3].minor.yy0->beginLoc(), yymsp[0].minor.yy0->endLoc());
 		}
 	}
-#line 5701 "bcplus/parser/detail/lemon_parser.c"
+#line 5704 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 378: /* show_lst ::= show_elem */
-#line 2359 "bcplus/parser/detail/lemon_parser.y"
+#line 2362 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy123 = new ShowStatement::ElementList();
 		yygotominor.yy123->push_back(yymsp[0].minor.yy423);
 	}
-#line 5709 "bcplus/parser/detail/lemon_parser.c"
+#line 5712 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 379: /* show_lst ::= show_lst COMMA show_elem */
-#line 2364 "bcplus/parser/detail/lemon_parser.y"
+#line 2367 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy123 = yymsp[-2].minor.yy123;
 		yygotominor.yy123->push_back(yymsp[0].minor.yy423);
 	  yy_destructor(yypParser,102,&yymsp[-1].minor);
 }
-#line 5718 "bcplus/parser/detail/lemon_parser.c"
+#line 5721 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 380: /* show_lst ::= show_lst SEMICOLON show_elem */
-#line 2369 "bcplus/parser/detail/lemon_parser.y"
+#line 2372 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy123 = yymsp[-2].minor.yy123;
 		yygotominor.yy123->push_back(yymsp[0].minor.yy423);
 	  yy_destructor(yypParser,93,&yymsp[-1].minor);
 }
-#line 5727 "bcplus/parser/detail/lemon_parser.c"
+#line 5730 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 382: /* stmt_noconcurrency ::= NOCONCURRENCY PERIOD */
-#line 2397 "bcplus/parser/detail/lemon_parser.y"
+#line 2400 "bcplus/parser/detail/lemon_parser.y"
 { NC_STATEMENT(yygotominor.yy485, yymsp[-1].minor.yy0, yymsp[0].minor.yy0, Language::Feature::NOCONCURRENCY, NCStatement); }
-#line 5732 "bcplus/parser/detail/lemon_parser.c"
+#line 5735 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 383: /* stmt_strong_noconcurrency ::= STRONG_NOCONCURRENCY PERIOD */
-#line 2398 "bcplus/parser/detail/lemon_parser.y"
+#line 2401 "bcplus/parser/detail/lemon_parser.y"
 { NC_STATEMENT(yygotominor.yy446, yymsp[-1].minor.yy0, yymsp[0].minor.yy0, Language::Feature::STRONG_NOCONCURRENCY, StrongNCStatement); }
-#line 5737 "bcplus/parser/detail/lemon_parser.c"
+#line 5740 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 384: /* stmt_maxafvalue ::= COLON_DASH MAXAFVALUE EQ term_int_eval PERIOD */
-#line 2424 "bcplus/parser/detail/lemon_parser.y"
+#line 2427 "bcplus/parser/detail/lemon_parser.y"
 { VALUE_DECL(yygotominor.yy484, yymsp[-4].minor.yy0, yymsp[-3].minor.yy0, yymsp[-1].minor.yy396, yymsp[0].minor.yy0, Language::Feature::DECL_MAXAFVALUE, MaxAFValueStatement);   yy_destructor(yypParser,81,&yymsp[-2].minor);
 }
-#line 5743 "bcplus/parser/detail/lemon_parser.c"
+#line 5746 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 385: /* stmt_maxafvalue ::= COLON_DASH MAXAFVALUE DBL_COLON term_int_eval PERIOD */
-#line 2425 "bcplus/parser/detail/lemon_parser.y"
+#line 2428 "bcplus/parser/detail/lemon_parser.y"
 { VALUE_DECL(yygotominor.yy484, yymsp[-4].minor.yy0, yymsp[-3].minor.yy0, yymsp[-1].minor.yy396, yymsp[0].minor.yy0, Language::Feature::DECL_MAXAFVALUE, MaxAFValueStatement);   yy_destructor(yypParser,76,&yymsp[-2].minor);
 }
-#line 5749 "bcplus/parser/detail/lemon_parser.c"
+#line 5752 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 386: /* stmt_maxadditive ::= COLON_DASH MAXADDITIVE EQ term_int_eval PERIOD */
-#line 2426 "bcplus/parser/detail/lemon_parser.y"
+#line 2429 "bcplus/parser/detail/lemon_parser.y"
 { VALUE_DECL(yygotominor.yy484, yymsp[-4].minor.yy0, yymsp[-3].minor.yy0, yymsp[-1].minor.yy396, yymsp[0].minor.yy0, Language::Feature::DECL_MAXADDITIVE, MaxAdditiveStatement);   yy_destructor(yypParser,81,&yymsp[-2].minor);
 }
-#line 5755 "bcplus/parser/detail/lemon_parser.c"
+#line 5758 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 387: /* stmt_maxadditive ::= COLON_DASH MAXADDITIVE DBL_COLON term_int_eval PERIOD */
-#line 2427 "bcplus/parser/detail/lemon_parser.y"
+#line 2430 "bcplus/parser/detail/lemon_parser.y"
 { VALUE_DECL(yygotominor.yy484, yymsp[-4].minor.yy0, yymsp[-3].minor.yy0, yymsp[-1].minor.yy396, yymsp[0].minor.yy0, Language::Feature::DECL_MAXADDITIVE, MaxAdditiveStatement);   yy_destructor(yypParser,76,&yymsp[-2].minor);
 }
-#line 5761 "bcplus/parser/detail/lemon_parser.c"
+#line 5764 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 388: /* stmt_query ::= COLON_DASH QUERY query_lst PERIOD */
-#line 2452 "bcplus/parser/detail/lemon_parser.y"
+#line 2455 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy466 = NULL;
 		ref_ptr<const Referenced> cd_ptr = yymsp[-3].minor.yy0, kw_ptr = yymsp[-2].minor.yy0, data_l_ptr = yymsp[-1].minor.yy489.l, p_ptr = yymsp[0].minor.yy0;
@@ -5794,10 +5797,10 @@ static void yy_reduce(
 			if (good) yygotominor.yy466 = new QueryStatement(sym, yymsp[-1].minor.yy489.l, yymsp[-3].minor.yy0->beginLoc(), yymsp[0].minor.yy0->endLoc());
 		}
 	}
-#line 5798 "bcplus/parser/detail/lemon_parser.c"
+#line 5801 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 389: /* query_lst ::= formula_temporal */
-#line 2488 "bcplus/parser/detail/lemon_parser.y"
+#line 2491 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy489.l = new QueryStatement::FormulaList();
 		yygotominor.yy489.maxstep = NULL;
@@ -5805,37 +5808,37 @@ static void yy_reduce(
 
 		yygotominor.yy489.l->push_back(yymsp[0].minor.yy17);
 	}
-#line 5809 "bcplus/parser/detail/lemon_parser.c"
+#line 5812 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 390: /* query_lst ::= query_maxstep_decl */
-#line 2497 "bcplus/parser/detail/lemon_parser.y"
+#line 2500 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy489.l = new QueryStatement::FormulaList();
 		yygotominor.yy489.maxstep = yymsp[0].minor.yy29;
 		yygotominor.yy489.label = NULL;
 	}
-#line 5818 "bcplus/parser/detail/lemon_parser.c"
+#line 5821 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 391: /* query_lst ::= query_label_decl */
-#line 2504 "bcplus/parser/detail/lemon_parser.y"
+#line 2507 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy489.l = new QueryStatement::FormulaList();
 		yygotominor.yy489.maxstep = NULL;
 		yygotominor.yy489.label = yymsp[0].minor.yy79;
 	}
-#line 5827 "bcplus/parser/detail/lemon_parser.c"
+#line 5830 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 392: /* query_lst ::= query_lst SEMICOLON formula_temporal */
-#line 2511 "bcplus/parser/detail/lemon_parser.y"
+#line 2514 "bcplus/parser/detail/lemon_parser.y"
 { 
 		yygotominor.yy489 = yymsp[-2].minor.yy489;
 		yymsp[-2].minor.yy489.l->push_back(yymsp[0].minor.yy17);
 	  yy_destructor(yypParser,93,&yymsp[-1].minor);
 }
-#line 5836 "bcplus/parser/detail/lemon_parser.c"
+#line 5839 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 393: /* query_lst ::= query_lst SEMICOLON query_maxstep_decl */
-#line 2517 "bcplus/parser/detail/lemon_parser.y"
+#line 2520 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy489 = yymsp[-2].minor.yy489;
 
@@ -5848,10 +5851,10 @@ static void yy_reduce(
 		}
 	  yy_destructor(yypParser,93,&yymsp[-1].minor);
 }
-#line 5852 "bcplus/parser/detail/lemon_parser.c"
+#line 5855 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 394: /* query_lst ::= query_lst SEMICOLON query_label_decl */
-#line 2530 "bcplus/parser/detail/lemon_parser.y"
+#line 2533 "bcplus/parser/detail/lemon_parser.y"
 {
 		yygotominor.yy489 = yymsp[-2].minor.yy489;
 		if (yygotominor.yy489.label) {
@@ -5864,10 +5867,10 @@ static void yy_reduce(
 		}
 	  yy_destructor(yypParser,93,&yymsp[-1].minor);
 }
-#line 5868 "bcplus/parser/detail/lemon_parser.c"
+#line 5871 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 395: /* query_maxstep_decl ::= MAXSTEP DBL_COLON INTEGER */
-#line 2556 "bcplus/parser/detail/lemon_parser.y"
+#line 2559 "bcplus/parser/detail/lemon_parser.y"
 { 
 	yygotominor.yy29 = NULL;
 	ref_ptr<const Referenced> kw_ptr = yymsp[-2].minor.yy0, i_ptr = yymsp[0].minor.yy0;
@@ -5889,10 +5892,10 @@ static void yy_reduce(
 	}
   yy_destructor(yypParser,76,&yymsp[-1].minor);
 }
-#line 5893 "bcplus/parser/detail/lemon_parser.c"
+#line 5896 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 396: /* query_maxstep_decl ::= MAXSTEP DBL_COLON num_range_eval */
-#line 2577 "bcplus/parser/detail/lemon_parser.y"
+#line 2580 "bcplus/parser/detail/lemon_parser.y"
 {
 	yygotominor.yy29 = NULL;
 	ref_ptr<const Referenced> kw_ptr = yymsp[-2].minor.yy0, nr_ptr = yymsp[0].minor.yy29;
@@ -5906,52 +5909,52 @@ static void yy_reduce(
 	}
   yy_destructor(yypParser,76,&yymsp[-1].minor);
 }
-#line 5910 "bcplus/parser/detail/lemon_parser.c"
+#line 5913 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 397: /* query_label_decl ::= LABEL DBL_COLON INTEGER */
       case 398: /* query_label_decl ::= LABEL DBL_COLON IDENTIFIER */ yytestcase(yyruleno==398);
-#line 2591 "bcplus/parser/detail/lemon_parser.y"
+#line 2594 "bcplus/parser/detail/lemon_parser.y"
 { QUERY_DECL(yygotominor.yy79, yymsp[-2].minor.yy0, yymsp[0].minor.yy0, Language::Feature::QUERY_LABEL);   yy_destructor(yypParser,76,&yymsp[-1].minor);
 }
-#line 5917 "bcplus/parser/detail/lemon_parser.c"
+#line 5920 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 399: /* clause_if ::= IF formula */
-#line 2626 "bcplus/parser/detail/lemon_parser.y"
+#line 2629 "bcplus/parser/detail/lemon_parser.y"
 { CLAUSE(yygotominor.yy17, yymsp[-1].minor.yy0, yymsp[0].minor.yy17, Language::Feature::CLAUSE_IF); 		}
-#line 5922 "bcplus/parser/detail/lemon_parser.c"
+#line 5925 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 400: /* clause_if ::= */
       case 402: /* clause_after ::= */ yytestcase(yyruleno==402);
       case 404: /* clause_ifcons ::= */ yytestcase(yyruleno==404);
       case 408: /* clause_where ::= */ yytestcase(yyruleno==408);
-#line 2627 "bcplus/parser/detail/lemon_parser.y"
+#line 2630 "bcplus/parser/detail/lemon_parser.y"
 { yygotominor.yy17 = NULL; }
-#line 5930 "bcplus/parser/detail/lemon_parser.c"
+#line 5933 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 401: /* clause_after ::= AFTER formula */
-#line 2628 "bcplus/parser/detail/lemon_parser.y"
+#line 2631 "bcplus/parser/detail/lemon_parser.y"
 { CLAUSE(yygotominor.yy17, yymsp[-1].minor.yy0, yymsp[0].minor.yy17, Language::Feature::CLAUSE_AFTER);	}
-#line 5935 "bcplus/parser/detail/lemon_parser.c"
+#line 5938 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 403: /* clause_ifcons ::= IFCONS formula */
-#line 2630 "bcplus/parser/detail/lemon_parser.y"
+#line 2633 "bcplus/parser/detail/lemon_parser.y"
 { CLAUSE(yygotominor.yy17, yymsp[-1].minor.yy0, yymsp[0].minor.yy17, Language::Feature::CLAUSE_IFCONS); 	}
-#line 5940 "bcplus/parser/detail/lemon_parser.c"
+#line 5943 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 405: /* clause_unless ::= UNLESS atomic_formula_anon */
-#line 2632 "bcplus/parser/detail/lemon_parser.y"
+#line 2635 "bcplus/parser/detail/lemon_parser.y"
 { CLAUSE(yygotominor.yy423, yymsp[-1].minor.yy0, yymsp[0].minor.yy423, Language::Feature::CLAUSE_UNLESS); 	}
-#line 5945 "bcplus/parser/detail/lemon_parser.c"
+#line 5948 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 406: /* clause_unless ::= */
-#line 2633 "bcplus/parser/detail/lemon_parser.y"
+#line 2636 "bcplus/parser/detail/lemon_parser.y"
 { yygotominor.yy423 = NULL; }
-#line 5950 "bcplus/parser/detail/lemon_parser.c"
+#line 5953 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 407: /* clause_where ::= WHERE formula_no_const */
-#line 2634 "bcplus/parser/detail/lemon_parser.y"
+#line 2637 "bcplus/parser/detail/lemon_parser.y"
 { CLAUSE(yygotominor.yy17, yymsp[-1].minor.yy0, yymsp[0].minor.yy17, Language::Feature::CLAUSE_WHERE); 	}
-#line 5955 "bcplus/parser/detail/lemon_parser.c"
+#line 5958 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 409: /* stmt_law ::= law_basic */
       case 410: /* stmt_law ::= law_caused */ yytestcase(yyruleno==410);
@@ -5971,12 +5974,12 @@ static void yy_reduce(
       case 424: /* stmt_law ::= law_nonexecutable */ yytestcase(yyruleno==424);
       case 425: /* stmt_law ::= law_rigid */ yytestcase(yyruleno==425);
       case 426: /* stmt_law ::= law_observed */ yytestcase(yyruleno==426);
-#line 2680 "bcplus/parser/detail/lemon_parser.y"
+#line 2683 "bcplus/parser/detail/lemon_parser.y"
 {yygotominor.yy484 = yymsp[0].minor.yy484;}
-#line 5977 "bcplus/parser/detail/lemon_parser.c"
+#line 5980 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 427: /* law_basic ::= head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD */
-#line 2797 "bcplus/parser/detail/lemon_parser.y"
+#line 2800 "bcplus/parser/detail/lemon_parser.y"
 { 
 		if (yymsp[-5].minor.yy17 || yymsp[-4].minor.yy17 || yymsp[-3].minor.yy17 || yymsp[-2].minor.yy423 || yymsp[-1].minor.yy17) {
 			LAW_BASIC_FORM(yygotominor.yy484, NULL, yymsp[-6].minor.yy17, yymsp[-5].minor.yy17, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, 
@@ -5988,117 +5991,117 @@ static void yy_reduce(
 				Language::Feature::LAW_BASIC_FACT, BasicLaw); 
 		}
 	}
-#line 5992 "bcplus/parser/detail/lemon_parser.c"
+#line 5995 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 428: /* law_caused ::= CAUSED head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD */
-#line 2809 "bcplus/parser/detail/lemon_parser.y"
+#line 2812 "bcplus/parser/detail/lemon_parser.y"
 { LAW_BASIC_FORM(yygotominor.yy484, yymsp[-7].minor.yy0, yymsp[-6].minor.yy17, yymsp[-5].minor.yy17, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, 
 																																														yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0, Language::Feature::LAW_CAUSED_S, 
 																																															Language::Feature::LAW_CAUSED_D, CausedLaw); }
-#line 5999 "bcplus/parser/detail/lemon_parser.c"
+#line 6002 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 429: /* law_pcaused ::= POSSIBLY_CAUSED head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD */
-#line 2813 "bcplus/parser/detail/lemon_parser.y"
+#line 2816 "bcplus/parser/detail/lemon_parser.y"
 { LAW_BASIC_FORM(yygotominor.yy484, yymsp[-7].minor.yy0, yymsp[-6].minor.yy17, yymsp[-5].minor.yy17, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, 
 																																														yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0, Language::Feature::LAW_PCAUSED_S, 
 																																															Language::Feature::LAW_PCAUSED_D, PossiblyCausedLaw); }
-#line 6006 "bcplus/parser/detail/lemon_parser.c"
+#line 6009 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 430: /* law_impl ::= head_formula ARROW_LDASH formula clause_where PERIOD */
-#line 2817 "bcplus/parser/detail/lemon_parser.y"
+#line 2820 "bcplus/parser/detail/lemon_parser.y"
 { LAW_IMPL_FORM(yygotominor.yy484, yymsp[-4].minor.yy17, yymsp[-3].minor.yy0, yymsp[-2].minor.yy17, yymsp[-1].minor.yy17, yymsp[0].minor.yy0, 
 																																														Language::Feature::LAW_IMPL, ImplicationLaw); }
-#line 6012 "bcplus/parser/detail/lemon_parser.c"
+#line 6015 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 431: /* law_causes ::= atomic_formula CAUSES head_formula clause_if clause_unless clause_where PERIOD */
-#line 2820 "bcplus/parser/detail/lemon_parser.y"
+#line 2823 "bcplus/parser/detail/lemon_parser.y"
 { LAW_DYNAMIC_FORM(yygotominor.yy484, yymsp[-6].minor.yy423, yymsp[-5].minor.yy0, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_CAUSES, CausesLaw); }
-#line 6018 "bcplus/parser/detail/lemon_parser.c"
+#line 6021 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 432: /* law_increments ::= atomic_formula INCREMENTS constant BY term clause_if clause_unless clause_where PERIOD */
-#line 2824 "bcplus/parser/detail/lemon_parser.y"
+#line 2827 "bcplus/parser/detail/lemon_parser.y"
 { LAW_INCREMENTAL_FORM(yygotominor.yy484, yymsp[-8].minor.yy423, yymsp[-7].minor.yy0, yymsp[-6].minor.yy225, yymsp[-4].minor.yy299, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_INCREMENTS, IncrementsLaw);   yy_destructor(yypParser,31,&yymsp[-5].minor);
 }
-#line 6025 "bcplus/parser/detail/lemon_parser.c"
+#line 6028 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 433: /* law_decrements ::= atomic_formula DECREMENTS constant BY term clause_if clause_unless clause_where PERIOD */
-#line 2827 "bcplus/parser/detail/lemon_parser.y"
+#line 2830 "bcplus/parser/detail/lemon_parser.y"
 { LAW_INCREMENTAL_FORM(yygotominor.yy484, yymsp[-8].minor.yy423, yymsp[-7].minor.yy0, yymsp[-6].minor.yy225, yymsp[-4].minor.yy299, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_DECREMENTS, DecrementsLaw);   yy_destructor(yypParser,31,&yymsp[-5].minor);
 }
-#line 6032 "bcplus/parser/detail/lemon_parser.c"
+#line 6035 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 434: /* law_mcause ::= atomic_formula MAY_CAUSE head_formula clause_if clause_unless clause_where PERIOD */
-#line 2831 "bcplus/parser/detail/lemon_parser.y"
+#line 2834 "bcplus/parser/detail/lemon_parser.y"
 { LAW_DYNAMIC_FORM(yygotominor.yy484, yymsp[-6].minor.yy423, yymsp[-5].minor.yy0, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_MCAUSE, MayCauseLaw); }
-#line 6038 "bcplus/parser/detail/lemon_parser.c"
+#line 6041 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 435: /* law_always ::= ALWAYS formula clause_after clause_unless clause_where PERIOD */
-#line 2835 "bcplus/parser/detail/lemon_parser.y"
+#line 2838 "bcplus/parser/detail/lemon_parser.y"
 { LAW_CONSTRAINT_FORM(yygotominor.yy484, yymsp[-5].minor.yy0, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_ALWAYS_S, 
 																																															Language::Feature::LAW_ALWAYS_D, AlwaysLaw); }
-#line 6045 "bcplus/parser/detail/lemon_parser.c"
+#line 6048 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 436: /* law_constraint ::= CONSTRAINT formula clause_after clause_unless clause_where PERIOD */
-#line 2839 "bcplus/parser/detail/lemon_parser.y"
+#line 2842 "bcplus/parser/detail/lemon_parser.y"
 { LAW_CONSTRAINT_FORM(yygotominor.yy484, yymsp[-5].minor.yy0, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_CONSTRAINT_S, 
 																																															Language::Feature::LAW_CONSTRAINT_D, ConstraintLaw); }
-#line 6052 "bcplus/parser/detail/lemon_parser.c"
+#line 6055 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 437: /* law_impossible ::= IMPOSSIBLE formula clause_after clause_unless clause_where PERIOD */
-#line 2843 "bcplus/parser/detail/lemon_parser.y"
+#line 2846 "bcplus/parser/detail/lemon_parser.y"
 { LAW_CONSTRAINT_FORM(yygotominor.yy484, yymsp[-5].minor.yy0, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_IMPOSSIBLE_S, 
 																																															Language::Feature::LAW_IMPOSSIBLE_D, ImpossibleLaw); }
-#line 6059 "bcplus/parser/detail/lemon_parser.c"
+#line 6062 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 438: /* law_never ::= NEVER formula clause_after clause_unless clause_where PERIOD */
-#line 2847 "bcplus/parser/detail/lemon_parser.y"
+#line 2850 "bcplus/parser/detail/lemon_parser.y"
 { LAW_CONSTRAINT_FORM(yygotominor.yy484, yymsp[-5].minor.yy0, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_NEVER_S, 
 																																															Language::Feature::LAW_NEVER_D, NeverLaw); }
-#line 6066 "bcplus/parser/detail/lemon_parser.c"
+#line 6069 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 439: /* law_default ::= DEFAULT atomic_head_formula clause_if clause_ifcons clause_after clause_unless clause_where PERIOD */
-#line 2851 "bcplus/parser/detail/lemon_parser.y"
+#line 2854 "bcplus/parser/detail/lemon_parser.y"
 { LAW_BASIC_FORM(yygotominor.yy484, yymsp[-7].minor.yy0, yymsp[-6].minor.yy423, yymsp[-5].minor.yy17, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, 
 																																														yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0, Language::Feature::LAW_DEFAULT_S,
 																																															Language::Feature::LAW_DEFAULT_D, DefaultLaw); }
-#line 6073 "bcplus/parser/detail/lemon_parser.c"
+#line 6076 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 440: /* law_exogenous ::= EXOGENOUS constant clause_if clause_ifcons clause_after clause_unless clause_where PERIOD */
-#line 2855 "bcplus/parser/detail/lemon_parser.y"
+#line 2858 "bcplus/parser/detail/lemon_parser.y"
 { LAW_BASIC_FORM(yygotominor.yy484, yymsp[-7].minor.yy0, yymsp[-6].minor.yy225, yymsp[-5].minor.yy17, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, 
 																																														yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0, Language::Feature::LAW_EXOGENOUS_S,
 																																															Language::Feature::LAW_EXOGENOUS_D, ExogenousLaw); }
-#line 6080 "bcplus/parser/detail/lemon_parser.c"
+#line 6083 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 441: /* law_inertial ::= INERTIAL constant clause_if clause_ifcons clause_after clause_unless clause_where PERIOD */
-#line 2859 "bcplus/parser/detail/lemon_parser.y"
+#line 2862 "bcplus/parser/detail/lemon_parser.y"
 { LAW_BASIC_FORM(yygotominor.yy484, yymsp[-7].minor.yy0, yymsp[-6].minor.yy225, yymsp[-5].minor.yy17, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, 
 																																														yymsp[-2].minor.yy423, yymsp[-1].minor.yy17, yymsp[0].minor.yy0, Language::Feature::LAW_INERTIAL_S,
 																																															Language::Feature::LAW_INERTIAL_D, InertialLaw); }
-#line 6087 "bcplus/parser/detail/lemon_parser.c"
+#line 6090 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 442: /* law_nonexecutable ::= NONEXECUTABLE formula clause_if clause_unless clause_where PERIOD */
-#line 2863 "bcplus/parser/detail/lemon_parser.y"
+#line 2866 "bcplus/parser/detail/lemon_parser.y"
 { LAW_DYNAMIC_CONSTRAINT_FORM(yygotominor.yy484, yymsp[-5].minor.yy0, yymsp[-4].minor.yy17, yymsp[-3].minor.yy17, yymsp[-2].minor.yy423, yymsp[-1].minor.yy17,
 																																														yymsp[0].minor.yy0, Language::Feature::LAW_NONEXECUTABLE, NonexecutableLaw); }
-#line 6093 "bcplus/parser/detail/lemon_parser.c"
+#line 6096 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 443: /* law_rigid ::= RIGID constant clause_where PERIOD */
-#line 2867 "bcplus/parser/detail/lemon_parser.y"
+#line 2870 "bcplus/parser/detail/lemon_parser.y"
 { LAW_SIMPLE_FORM(yygotominor.yy484, yymsp[-3].minor.yy0, yymsp[-2].minor.yy225, yymsp[-1].minor.yy17, yymsp[0].minor.yy0,
 																																														Language::Feature::LAW_RIGID, RigidLaw); }
-#line 6099 "bcplus/parser/detail/lemon_parser.c"
+#line 6102 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 444: /* law_observed ::= OBSERVED atomic_head_formula AT term_no_const PERIOD */
-#line 2872 "bcplus/parser/detail/lemon_parser.y"
+#line 2875 "bcplus/parser/detail/lemon_parser.y"
 { 
 			yygotominor.yy484 = NULL;
 			ref_ptr<const Token> kw_ptr = yymsp[-4].minor.yy0, p_ptr = yymsp[0].minor.yy0;
@@ -6114,37 +6117,37 @@ static void yy_reduce(
 			}
 		  yy_destructor(yypParser,65,&yymsp[-2].minor);
 }
-#line 6118 "bcplus/parser/detail/lemon_parser.c"
+#line 6121 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 445: /* stmt_code_blk ::= ASP_GR */
-#line 2906 "bcplus/parser/detail/lemon_parser.y"
+#line 2909 "bcplus/parser/detail/lemon_parser.y"
 { CODE_BLK(yygotominor.yy484, yymsp[0].minor.yy0, Language::Feature::CODE_ASP_GR, ASPBlock);	}
-#line 6123 "bcplus/parser/detail/lemon_parser.c"
+#line 6126 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 446: /* stmt_code_blk ::= ASP_CP */
-#line 2907 "bcplus/parser/detail/lemon_parser.y"
+#line 2910 "bcplus/parser/detail/lemon_parser.y"
 { CODE_BLK(yygotominor.yy484, yymsp[0].minor.yy0, Language::Feature::CODE_ASP_CP, ASPBlock);	}
-#line 6128 "bcplus/parser/detail/lemon_parser.c"
+#line 6131 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 447: /* stmt_code_blk ::= F2LP_GR */
-#line 2908 "bcplus/parser/detail/lemon_parser.y"
+#line 2911 "bcplus/parser/detail/lemon_parser.y"
 { CODE_BLK(yygotominor.yy484, yymsp[0].minor.yy0, Language::Feature::CODE_F2LP_GR, F2LPBlock);	}
-#line 6133 "bcplus/parser/detail/lemon_parser.c"
+#line 6136 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 448: /* stmt_code_blk ::= F2LP_CP */
-#line 2909 "bcplus/parser/detail/lemon_parser.y"
+#line 2912 "bcplus/parser/detail/lemon_parser.y"
 { CODE_BLK(yygotominor.yy484, yymsp[0].minor.yy0, Language::Feature::CODE_F2LP_CP, F2LPBlock); }
-#line 6138 "bcplus/parser/detail/lemon_parser.c"
+#line 6141 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 449: /* stmt_code_blk ::= LUA_GR */
-#line 2910 "bcplus/parser/detail/lemon_parser.y"
+#line 2913 "bcplus/parser/detail/lemon_parser.y"
 { CODE_BLK(yygotominor.yy484, yymsp[0].minor.yy0, Language::Feature::CODE_LUA_GR, LUABlock);   }
-#line 6143 "bcplus/parser/detail/lemon_parser.c"
+#line 6146 "bcplus/parser/detail/lemon_parser.c"
         break;
       case 450: /* stmt_code_blk ::= LUA_CP */
-#line 2911 "bcplus/parser/detail/lemon_parser.y"
+#line 2914 "bcplus/parser/detail/lemon_parser.y"
 { CODE_BLK(yygotominor.yy484, yymsp[0].minor.yy0, Language::Feature::CODE_LUA_CP, LUABlock);   }
-#line 6148 "bcplus/parser/detail/lemon_parser.c"
+#line 6151 "bcplus/parser/detail/lemon_parser.c"
         break;
       default:
       /* (1) statement_lst ::= */ yytestcase(yyruleno==1);
@@ -6210,7 +6213,7 @@ static void yy_syntax_error(
 #define TOKEN (yyminor.yy0)
 #line 200 "bcplus/parser/detail/lemon_parser.y"
  parser->_parse_error("Syntax error.");	
-#line 6214 "bcplus/parser/detail/lemon_parser.c"
+#line 6217 "bcplus/parser/detail/lemon_parser.c"
   lemon_parserARG_STORE; /* Suppress warning about unused %extra_argument variable */
 }
 

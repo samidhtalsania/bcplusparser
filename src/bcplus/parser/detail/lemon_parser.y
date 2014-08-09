@@ -1691,13 +1691,16 @@ constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON constant_dcl_type(type).
 			ref_ptr<SortSymbol> s = parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN);
 
 			// NOTE: additive constants default to the additive sort, not the boolean sort
-			if (type & ConstantSymbol::Type::M_ADDITIVE) s = parser->symtab()->bsort(SymbolTable::BuiltinSort::ADDITIVE);
+			if (type & ConstantSymbol::Type::M_ADDITIVE && s->domainType() == DomainType::BOOLEAN ) 
+				s = parser->symtab()->bsort(SymbolTable::BuiltinSort::ADDITIVE);
 
 			// external constants should have "unknown" in their sort
-			else if (type & ConstantSymbol::Type::M_EXTERNAL) s = parser->symtab()->carrot(s);
+			else if (type & ConstantSymbol::Type::M_EXTERNAL) 
+				s = parser->symtab()->carrot(s);
 
 			// non-boolean abActions should contain "none"
-			else if (type == ConstantSymbol::Type::ABACTION && s->domainType() != DomainType::BOOLEAN) s = parser->symtab()->star(s);
+			else if (type == ConstantSymbol::Type::ABACTION && s->domainType() != DomainType::BOOLEAN) 
+				s = parser->symtab()->star(s);
 
 
 			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN), decl.second);

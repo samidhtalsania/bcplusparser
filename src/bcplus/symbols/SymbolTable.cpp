@@ -21,6 +21,8 @@
 #include "bcplus/symbols/SymbolTable.h"
 #include "bcplus/symbols/NumberRangeSymbol.h"
 
+#include "bcplus/elements/terms.h"
+
 namespace u = babb::utils;
 namespace fs = boost::filesystem;
 namespace pt = boost::property_tree;
@@ -45,10 +47,11 @@ SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer 
 	if (config->symtabInput()) _good = load(*(config->symtabInput()));
 	_good = _good && loadMacros(config);
 
-	// setup the additive sort
 	_bsorts[BuiltinSort::ADDITIVE] 	= resolveOrCreate(new SortSymbol(new ReferencedString("afValue")));
 	_bsorts[BuiltinSort::BOOLEAN] 	= resolveOrCreate(new SortSymbol(new ReferencedString("boolean")));
 	_bsorts[BuiltinSort::COMPUTED] 	= resolveOrCreate(new SortSymbol(new ReferencedString("computed")));
+
+
 
 	// setup the boolean sort
 	_bobjs[BuiltinObject::TRUE] 	= resolveOrCreate(new ObjectSymbol(new ReferencedString("true")));
@@ -69,6 +72,12 @@ SymbolTable::SymbolTable(Configuration const* config, SymbolMetadataInitializer 
 
 
 	if (_good) {
+		_bsorts[BuiltinSort::ADDITIVE]->add(resolveOrCreate(
+			new NumberRangeSymbol(
+				new ReferencedString("_afValue_range"),
+				new elements::UnaryTerm(elements::UnaryTerm::Operator::NEGATIVE,
+					new elements::NullaryTerm(elements::NullaryTerm::Operator::MAXADDITIVE)),
+				new elements::NullaryTerm(elements::NullaryTerm::Operator::MAXADDITIVE))));
 		_bsorts[BuiltinSort::BOOLEAN]->add(_bobjs[BuiltinObject::TRUE]);
 		_bsorts[BuiltinSort::BOOLEAN]->add(_bobjs[BuiltinObject::FALSE]);
 	} else {
