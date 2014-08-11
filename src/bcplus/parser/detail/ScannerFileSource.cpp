@@ -66,6 +66,7 @@ ScannerFileSource::Status::type ScannerFileSource::status() const {
 
 void ScannerFileSource::fill(size_t n) {
 	char const* first = (token() < marker()) ? token() : marker();
+	first = (first < ctxmarker() ? first : ctxmarker());
 
 	size_t remaining = limit() - first;
 	size_t req_sz = remaining + n;
@@ -85,6 +86,7 @@ void ScannerFileSource::fill(size_t n) {
 	}	
 
 	size_t marker_offset = (size_t)(marker() - first);
+	size_t ctxmarker_offset = (size_t)(ctxmarker() - first);
 	size_t token_offset = (size_t)(token() - first);
 	size_t cursor_offset = (size_t)(cursor() - first);
 	size_t newline_offset = (size_t)(_newline - first);
@@ -92,6 +94,7 @@ void ScannerFileSource::fill(size_t n) {
 
 	cursor() = _buffer + cursor_offset;
 	marker() = _buffer + marker_offset;
+	ctxmarker() = _buffer + ctxmarker_offset;
 	token() = _buffer + token_offset;
 	_newline = _buffer + newline_offset;
 

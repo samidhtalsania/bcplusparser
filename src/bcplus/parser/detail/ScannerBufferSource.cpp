@@ -20,6 +20,7 @@ ScannerBufferSource::ScannerBufferSource(Configuration const* config, char const
 	cursor() = _buffer;
 	token() = _buffer;
 	marker() = _buffer;
+	ctxmarker() = _buffer;
 	limit() = _buffer + _buffer_sz;
 	_newline = _buffer - loc.col();
 }
@@ -55,6 +56,7 @@ void ScannerBufferSource::fill(size_t n) {
 
 
 	char const* first = (token() < marker()) ? token() : marker();
+	first = (first < ctxmarker() ? first : ctxmarker());
 
     size_t remaining = limit() - first;
     size_t req_sz = remaining + n;
@@ -74,6 +76,7 @@ void ScannerBufferSource::fill(size_t n) {
     }
 
     size_t marker_offset = (size_t)(marker() - first);
+    size_t ctxmarker_offset = (size_t)(ctxmarker() - first);
     size_t token_offset = (size_t)(token() - first);
     size_t cursor_offset = (size_t)(cursor() - first);
 	size_t newline_offset = (size_t)(_newline - first);
@@ -81,6 +84,7 @@ void ScannerBufferSource::fill(size_t n) {
     cursor() = _buffer + cursor_offset;
     marker() = _buffer + marker_offset;
     token() = _buffer + token_offset;
+	ctxmarker() = _buffer + ctxmarker_offset;
 	_newline = _buffer + newline_offset;
 
     // Fill the remainder of the buffer

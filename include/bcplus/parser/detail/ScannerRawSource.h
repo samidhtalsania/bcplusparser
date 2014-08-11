@@ -47,6 +47,7 @@ private:
 	char const* _limit;
 	char const* _token;
 	char const* _marker;
+	char const* _ctxmarker;
 
 public:
 	/***********************************************************/
@@ -82,6 +83,11 @@ public:
 	inline char const*& marker() 				{ return _marker; }
 	inline char const* const& marker() const	{ return _marker; }
 	inline void marker(char const* m)			{ _marker = m; }
+	
+	inline char const*& ctxmarker() 			{ return _ctxmarker; }
+	inline char const* const& ctxmarker() const	{ return _ctxmarker; }
+	inline void ctxmarker(char const* m)		{ _ctxmarker = m; }
+
 
 	/// Determines if the source is ready to read from
 	inline bool good() const					{ return status() == Status::OK; }
