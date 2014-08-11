@@ -1349,7 +1349,15 @@ head_formula(f) ::= head_formula(l) AMP head_formula(r).
 	{
 		f = new BinaryFormula(BinaryFormula::Operator::AND, l, r, l->beginLoc(), r->endLoc());
 	}
-
+head_formula(f) ::= PAREN_L(lp) head_formula(subf) PAREN_R(rp).
+	{
+		ref_ptr<const Referenced> lp_ptr = lp, rp_ptr = rp;
+		f = subf;
+		f->parens(true);																									\
+		f->beginLoc(lp->beginLoc());																					\
+		f->endLoc(rp->endLoc());
+		
+	}
 head_formula(f) ::= comparison(c).													{ f = c; }
 head_formula(f) ::= atomic_head_formula(l).											{ f = l; }
 head_formula(f) ::= formula_smpl_card(c).
