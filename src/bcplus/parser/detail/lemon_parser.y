@@ -1345,6 +1345,11 @@ formula_temporal_card(card) ::= term_temporal_strong(min) 	CBRACKET_L(bl) formul
 %type		formula_smpl_card				{ CardinalityFormula*						}			// cardinality formula in the head of a law
 %destructor formula_smpl_card				{ DEALLOC($$);								}
 
+head_formula(f) ::= head_formula(l) AMP head_formula(r).
+	{
+		f = new BinaryFormula(BinaryFormula::Operator::AND, l, r, l->beginLoc(), r->endLoc());
+	}
+
 head_formula(f) ::= comparison(c).													{ f = c; }
 head_formula(f) ::= atomic_head_formula(l).											{ f = l; }
 head_formula(f) ::= formula_smpl_card(c).
