@@ -19,6 +19,9 @@ char const* Language::Feature::descr(type feature) {
 		case DECL_MAXADDITIVE:           		return "maxAdditive declarations";
 		case DECL_QUERY:                  		return "queries";
 
+		case MAXSTEP:							return "\"maxstep\" terms";
+		case MAXADDITIVE:						return "\"maxAdditive\" terms";
+		case MAXAFVALUE:						return "\"maxAFValue\" terms";
 
 
 		case CONST_ABACTION:					return "\"abAction\" constants";
