@@ -41,7 +41,7 @@ DomainType::type AnonymousElement_bare<BaseType, type>::domainType() const {
 template <typename BaseType, int type, typename ArgType>
 AnonymousElement<BaseType, type, ArgType>::AnonymousElement(ReferencedString const* base, ArgumentList const* args, Location const& begin, Location const& end, bool parens) 
 	: AnonymousElement_bare<BaseType, type>(base, begin, end, parens), _args(args) {
-	/* Intentionally left blank */
+	if (!args) _args = new ArgumentList();
 }
 
 template <typename BaseType, int type, typename ArgType>
