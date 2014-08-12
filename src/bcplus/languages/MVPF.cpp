@@ -23,7 +23,6 @@ bool MVPF::support(Feature::type feature) const {
 		case Feature::DECL_SHOW:                  
 		case Feature::DECL_SHOW_ALL:
 		case Feature::DECL_HIDE:
-		case Feature::DECL_QUERY:
 		case Feature::CONST_RIGID:
 		case Feature::FORMULA_NOT_KEYWORD:
 		case Feature::FORMULA_TILDE_STRONG_NEG:
@@ -33,10 +32,6 @@ bool MVPF::support(Feature::type feature) const {
 		case Feature::STAR_SORT:
 		case Feature::CARROT_SORT:
 		case Feature::SORT_PLUS:
-		case Feature::MAXSTEP:
-		case Feature::QUERY_BIND_STEP:
-		case Feature::QUERY_MAXSTEP:
-		case Feature::QUERY_LABEL:
 		case Feature::CLAUSE_WHERE:               
 		case Feature::LAW_BASIC_FACT:                
 		case Feature::CODE_ASP_CP:                
@@ -54,6 +49,11 @@ bool MVPF::support(Feature::type feature) const {
 		case Feature::FORMULA_CONSTANT_ARGS:
 			return true;
 
+		case Feature::DECL_QUERY:
+		case Feature::QUERY_BIND_STEP:
+		case Feature::QUERY_MAXSTEP:
+		case Feature::QUERY_LABEL:
+		case Feature::MAXSTEP:
 		case Feature::LAW_BASIC_S:                
 		case Feature::LAW_BASIC_D:                
 		case Feature::LAW_CAUSES:                 

@@ -2729,14 +2729,16 @@ stmt_law(stmt) ::= law_observed(law).				{stmt = law;}
 
 	#define LAW_IMPL_FORM(law, head, kw, body, where, p, feature, class)																			\
 		law = NULL;																																	\
-		ref_ptr<Element> head_ptr = head, body_ptr = body, where_ptr = where;																	\
+		ref_ptr<Element> body_ptr = body, where_ptr = where;																						\
+		ref_ptr<Formula> head_ptr = head;																											\
 		ref_ptr<const Token> kw_ptr = kw, p_ptr = p;																								\
 																																					\
+		if (!head) head_ptr = new NullaryFormula(NullaryFormula::Operator::FALSE, kw->beginLoc(), kw->beginLoc());									\
 		if (!parser->lang()->support(feature)) {																									\
 			parser->_feature_error(feature, &kw->beginLoc());																						\
 			YYERROR;																																\
 		} else {																																	\
-			law = new class(head, body, where, head->beginLoc(), p->endLoc());																		\
+			law = new class(head_ptr, body, where, head_ptr->beginLoc(), p->endLoc());																\
 		}
 
 
@@ -2831,6 +2833,9 @@ law_pcaused(law) 		::= POSSIBLY_CAUSED(kw) head_formula(head) clause_if(ifbody) 
 																																															Language::Feature::LAW_PCAUSED_D, PossiblyCausedLaw); }
 
 law_impl(law)			::= head_formula(head) ARROW_LDASH(kw) formula(body) clause_where(where) PERIOD(p).																			{ LAW_IMPL_FORM(law, head, kw, body, where, p, 
+																																														Language::Feature::LAW_IMPL, ImplicationLaw); }
+
+law_impl(law)			::= ARROW_LDASH(kw) formula(body) clause_where(where) PERIOD(p).																							{ LAW_IMPL_FORM(law, NULL, kw, body, where, p, 
 																																														Language::Feature::LAW_IMPL, ImplicationLaw); }
 
 law_causes(law)			::= atomic_formula(body) CAUSES(kw) head_formula(head) clause_if(ifbody) clause_unless(unless) clause_where(where) PERIOD(p).								{ LAW_DYNAMIC_FORM(law, body, kw, head, ifbody, unless, where, p,
