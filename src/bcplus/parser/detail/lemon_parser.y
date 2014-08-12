@@ -468,6 +468,7 @@ variable(o) ::= VARIABLE_ID(id).
 	}
 lua(l) ::= AT_IDENTIFIER(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).			{ BASE_LUA_ELEM(l, id, pl, args, pr); }
 lua(l) ::= AT_IDENTIFIER(id).													{ BASE_LUA_ELEM(l, id, NULL, NULL, NULL); }
+lua(l) ::= AT_IDENTIFIER(id) PAREN_L(pl) PAREN_R(pr).							{ BASE_LUA_ELEM(l, id, pl, NULL, pr); }
 undeclared(u) ::= IDENTIFIER(id) PAREN_L term_lst(args) PAREN_R.				{ UNDECLARED(u, id, args); }
 undeclared(u) ::= IDENTIFIER(id).												{ UNDECLARED(u, id, NULL); }
 
