@@ -57,6 +57,7 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/elements/CardinalityFormula.cpp \
 	bcplus/languages/Language.cpp \
 	bcplus/languages/BCPlus.cpp \
+	bcplus/languages/OBCPlus.cpp \
 	bcplus/languages/CPlus.cpp \
 	bcplus/languages/BC.cpp \
 	bcplus/languages/MVPF.cpp \
