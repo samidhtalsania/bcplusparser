@@ -1,6 +1,7 @@
 include $(top_srcdir)/src/Makefile.rls
 
 
+
 lib_LIBRARIES = ../libbcplusparser.a
 bin_PROGRAMS = ../bcplusparser
 
@@ -75,6 +76,7 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/statements/detail/ObjectBinding.cpp \
 	bcplus/parser/Token.cpp \
 	bcplus/parser/BCParser.cpp \
+	bcplus/parser/Number.cpp \
 	bcplus/parser/detail/lemon_parser.cpp \
 	bcplus/parser/detail/MacroParser.cpp \
 	bcplus/parser/detail/lemon_macro.cpp \
@@ -86,7 +88,6 @@ ___libbcplusparser_a_SOURCES =\
 	bcplus/parser/detail/ScannerRawSource.cpp \
 	bcplus/parser/detail/ScannerBufferSource.cpp \
 	bcplus/parser/detail/ScannerFileSource.cpp \
-	bcplus/parser/detail/Number.cpp \
 	bcplus/parser/detail/NumberRange.cpp \
 	bcplus/parser/detail/NumberRangeEval.cpp
 

@@ -4,6 +4,7 @@
 *.o
 
 bcplusparser
+/lemon/lemon
 
 # Compiled Dynamic libraries
 *.so
