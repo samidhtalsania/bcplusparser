@@ -1,9 +1,9 @@
+#pragma once
 #include "babb/utils/memory.h"
 #include "bcplus/Location.h"
 
 namespace bcplus {
 namespace parser {
-namespace detail {
 
 /// A simple class to track an integral token
 class Number : public babb::utils::Referenced
@@ -50,4 +50,4 @@ public:
 };
 
 
-}}}
+}}

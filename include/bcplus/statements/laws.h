@@ -2,6 +2,7 @@
 
 #include "bcplus/elements/formulas.h"
 #include "bcplus/elements/terms.h"
+#include "bcplus/parser/Number.h"
 #include "bcplus/statements/Statement.h"
 
 #include "bcplus/statements/detail/BasicLawForm.h"
@@ -171,7 +172,7 @@ typedef detail::SimpleLawForm<
 typedef detail::TemporalLawForm<
 	Statement::Type::LAW_OBSERVED,
 	elements::AtomicFormula, // observed c=v
-	elements::Term	// at V
+	parser::Number	// at V
 	> ObservedLaw;
 
 

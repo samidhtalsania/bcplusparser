@@ -10,7 +10,7 @@
 			#include "bcplus/parser/BCParser.h"
 			#include "bcplus/parser/Token.h"
 			#include "bcplus/parser/detail/lemon_parser.h"
-			#include "bcplus/parser/detail/Number.h"
+			#include "bcplus/parser/Number.h"
 			#include "bcplus/parser/detail/NumberRange.h"
 			#include "bcplus/parser/detail/NumberRangeEval.h"
 			#include "bcplus/statements/Statement.h"
@@ -2797,14 +2797,15 @@ stmt_law(stmt) ::= law_observed(law).				{stmt = law;}
 	
 	#define LAW_SIMPLE_FORM(law, kw, head, where, p, feature, class)																				\
 		law = NULL;																																	\
-		ref_ptr<Element> head_ptr = head, where_ptr = where;																						\
-		ref_ptr<const Token> kw_ptr = kw, p_ptr = p;																								\
-																																					\
-		if (!parser->lang()->support(feature)) {																									\
-			parser->_feature_error(feature, (kw ? &kw_ptr->beginLoc() : &head_ptr->beginLoc()));													\
-			YYERROR;																																\
-		} else {																																	\
-			law = new class(head, where, (kw ? kw_ptr->beginLoc() : head_ptr->beginLoc()), p_ptr->endLoc());										\
+		ref_ptr<Element> head_ptr = head;																		\
+		ref_ptr<const Referenced> where_ptr = where;															\
+		ref_ptr<const Token> kw_ptr = kw, p_ptr = p;															\
+																												\
+		if (!parser->lang()->support(feature)) {																\
+			parser->_feature_error(feature, (kw ? &kw_ptr->beginLoc() : &head_ptr->beginLoc()));				\
+			YYERROR;																							\
+		} else {																								\
+			law = new class(head, where, (kw ? kw_ptr->beginLoc() : head_ptr->beginLoc()), p_ptr->endLoc());	\
 		}
 		
 
@@ -2890,20 +2891,9 @@ law_rigid(law) 			::= RIGID(kw) constant(head) clause_where(where) PERIOD(p).			
 																																														Language::Feature::LAW_RIGID, RigidLaw); }
 
 
-law_observed(law) 		::= OBSERVED(kw) atomic_head_formula(head) AT term_no_const(t) PERIOD(p).																						
+law_observed(law) 		::= OBSERVED(kw) atomic_head_formula(head) AT term_int_eval(t) PERIOD(p).																						
 		{ 
-			law = NULL;
-			ref_ptr<const Token> kw_ptr = kw, p_ptr = p;
-			ref_ptr<AtomicFormula> head_ptr = head;
-			ref_ptr<Term> t_ptr = t;
-
-			// make sure that the At clause is integral
-			if (t->domainType() != DomainType::INTEGRAL) {
-				parser->_parse_error("Expected an integral expression.", &t->beginLoc());
-				YYERROR;
-			} else {
-				LAW_SIMPLE_FORM(law, kw, head, t, p, Language::Feature::LAW_OBSERVED, ObservedLaw); 
-			}
+			LAW_SIMPLE_FORM(law, kw, head, t, p, Language::Feature::LAW_OBSERVED, ObservedLaw); 
 		}
 
 /********************************************************************************************************************************/

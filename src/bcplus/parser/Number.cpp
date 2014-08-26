@@ -1,9 +1,8 @@
 #include "babb/utils/memory.h"
-#include "bcplus/parser/detail/Number.h"
+#include "bcplus/parser/Number.h"
 
 namespace bcplus {
 namespace parser {
-namespace detail {
 
 Number::Number(int val, Location const& begin, Location const& end)
 	: _val(val), _begin(begin), _end(end) {
@@ -14,5 +13,5 @@ Number::~Number() {
 	/* Intentionally Left Blank */
 }
 
-}}}
+}}
 
