@@ -72,6 +72,7 @@ Token* Scanner::tokenize_2(ScannerRawSource* source) {
 				<NORMAL> "assuming"/NW					{ ret = T_ASSUMING;						goto re2c_finish;					}
 				<NORMAL> "attribute"/NW					{ ret = T_ATTRIBUTE;					goto re2c_finish;					}
 				<NORMAL> "all"/NW						{ ret = T_ALL;							goto re2c_finish;					}
+				<NORMAL> "at"/NW						{ ret = T_AT;							goto re2c_finish;					}
 				<NORMAL> "by"/NW						{ ret = T_BY;							goto re2c_finish;					}
 				<NORMAL> "caused"/NW					{ ret = T_CAUSED;						goto re2c_finish;					}
 				<NORMAL> "causes"/NW					{ ret = T_CAUSES;						goto re2c_finish;					}
