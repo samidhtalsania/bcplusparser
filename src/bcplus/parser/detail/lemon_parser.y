@@ -2693,6 +2693,8 @@ clause_where(new_f) ::= .									{ new_f = NULL; }
 %destructor law_rigid				{ DEALLOC($$);									}			
 %type       law_observed			{ Statement*									}			// observed c=v at v2
 %destructor law_observed			{ DEALLOC($$);									}			
+%type       law_temporal_constraint	{ Statement*									}			// constraint F at v2
+%destructor law_temporal_constraint	{ DEALLOC($$);									}			
 
 stmt_law(stmt) ::= law_basic(law).					{stmt = law;}
 stmt_law(stmt) ::= law_caused(law).					{stmt = law;}
@@ -2712,6 +2714,7 @@ stmt_law(stmt) ::= law_inertial(law).				{stmt = law;}
 stmt_law(stmt) ::= law_nonexecutable(law).			{stmt = law;}
 stmt_law(stmt) ::= law_rigid(law).					{stmt = law;}
 stmt_law(stmt) ::= law_observed(law).				{stmt = law;}
+stmt_law(stmt) ::= law_temporal_constraint(law).	{stmt = law;}
 
 
 %include {
@@ -2894,6 +2897,11 @@ law_rigid(law) 			::= RIGID(kw) constant(head) clause_where(where) PERIOD(p).			
 law_observed(law) 		::= OBSERVED(kw) atomic_head_formula(head) AT term_int_eval(t) PERIOD(p).																						
 		{ 
 			LAW_SIMPLE_FORM(law, kw, head, t, p, Language::Feature::LAW_OBSERVED, ObservedLaw); 
+		}
+
+law_temporal_constraint(law) ::= CONSTRAINT(kw) formula(body) AT term_int_eval(t) PERIOD(p).																						
+		{ 
+			LAW_SIMPLE_FORM(law, kw, body, t, p, Language::Feature::LAW_TEMPORAL_CONSTRAINT, TemporalConstraintLaw); 
 		}
 
 /********************************************************************************************************************************/

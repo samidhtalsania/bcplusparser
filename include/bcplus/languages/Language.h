@@ -107,6 +107,7 @@ public:
 			LAW_NONEXECUTABLE,			///< nonexecutable F if G		
 			LAW_RIGID,					///< rigid c			
 			LAW_OBSERVED,				///< observed c=v at v2.
+			LAW_TEMPORAL_CONSTRAINT,	///< constraint F at v2.
 
 			NOCONCURRENCY,				///< noconcurrency.
 			STRONG_NOCONCURRENCY,		///< strong noconcurrency.

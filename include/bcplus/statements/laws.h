@@ -175,6 +175,11 @@ typedef detail::TemporalLawForm<
 	parser::Number	// at V
 	> ObservedLaw;
 
+typedef detail::TemporalLawForm<
+	Statement::Type::LAW_TEMPORAL_CONSTRAINT,
+	elements::Formula, // constraint F
+	parser::Number	// at V
+	> TemporalConstraintLaw;
 
 
 }}

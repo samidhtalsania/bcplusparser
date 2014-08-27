@@ -15,6 +15,7 @@ char const* OBCPlus::name() const {
 bool OBCPlus::support(Feature::type feature) const {
 	switch (feature) {
 		case Feature::LAW_OBSERVED:               
+		case Feature::LAW_TEMPORAL_CONSTRAINT:               
 		case Feature::CONST_ABACTION:
 		case Feature::CONST_ACTION:
 		case Feature::CONST_ADDITIVEFLUENT:

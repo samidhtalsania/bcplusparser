@@ -103,6 +103,7 @@ bool MVPF::support(Feature::type feature) const {
 		case Feature::LAW_PCAUSED_S:              
 		case Feature::LAW_PCAUSED_D:              
 		case Feature::LAW_OBSERVED:               
+		case Feature::LAW_TEMPORAL_CONSTRAINT:               
 		case Feature::STRONG_NOCONCURRENCY:       
 		default:
 			return false;

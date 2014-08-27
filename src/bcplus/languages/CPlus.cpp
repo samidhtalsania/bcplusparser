@@ -104,6 +104,7 @@ bool CPlus::support(Feature::type feature) const {
 		case Feature::LAW_BASIC_D:                
 		case Feature::LAW_IMPL:                   
 		case Feature::LAW_OBSERVED:               
+		case Feature::LAW_TEMPORAL_CONSTRAINT:               
 		default:
 			return false;
 	}

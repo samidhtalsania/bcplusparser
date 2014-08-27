@@ -95,7 +95,8 @@ char const* Language::Feature::descr(type feature) {
 		case LAW_NONEXECUTABLE:          		return "\"nonexecutable\" constraint laws (nonexecutable F if G)";
 		case LAW_RIGID:                  		return "\"rigid\" constraint laws (rigid c)";
 
-		case LAW_OBSERVED:               		return "observational laws (observed c-v at t)";
+		case LAW_OBSERVED:               		return "observational laws (observed c=v at t)";
+		case LAW_TEMPORAL_CONSTRAINT:           return "temporal constraint laws (constraint F at t)";
 
 		case NOCONCURRENCY:              		return "no concurrency declarations";
 		case STRONG_NOCONCURRENCY:       		return "strong no concurrency declarations";
