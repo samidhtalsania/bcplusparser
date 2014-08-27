@@ -99,6 +99,7 @@ Token* Scanner::tokenize_2(ScannerRawSource* source) {
 				<NORMAL> "noconcurrency"/NW				{ ret = T_NOCONCURRENCY;				goto re2c_finish;					}
 				<NORMAL> "nonexecutable"/NW				{ ret = T_NONEXECUTABLE;				goto re2c_finish;					}
 				<NORMAL> "of"/NW						{ ret = T_OF;							goto re2c_finish;					}
+				<NORMAL> "observed"/NW					{ ret = T_OBSERVED;						goto re2c_finish;					}
 				<NORMAL> "possibly" WS+ "caused"/NW		{ ret = T_POSSIBLY_CAUSED;				goto re2c_finish;					}
 				<NORMAL> "rigid"/NW						{ ret = T_RIGID;						goto re2c_finish;					}
 				<NORMAL> "sdFluent"/NW					{ ret = T_SDFLUENT;						goto re2c_finish;					}
