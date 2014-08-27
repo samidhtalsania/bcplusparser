@@ -1717,7 +1717,7 @@ constant_bnd(bnd) ::= constant_dcl_lst(names) DBL_COLON constant_dcl_type(type).
 				s = parser->symtab()->star(s);
 
 
-			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN), decl.second);
+			ref_ptr<ConstantSymbol> c = new ConstantSymbol(type, decl.first->str(), s, decl.second);
 			bnd->push_back(c);
 			CONSTANT_DECL(c, decl.first->beginLoc());
 		}

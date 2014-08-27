@@ -5033,7 +5033,7 @@ static void yy_reduce(
 				s = parser->symtab()->star(s);
 
 
-			ref_ptr<ConstantSymbol> c = new ConstantSymbol(yymsp[0].minor.yy265, decl.first->str(), parser->symtab()->bsort(SymbolTable::BuiltinSort::BOOLEAN), decl.second);
+			ref_ptr<ConstantSymbol> c = new ConstantSymbol(yymsp[0].minor.yy265, decl.first->str(), s, decl.second);
 			yygotominor.yy409->push_back(c);
 			CONSTANT_DECL(c, decl.first->beginLoc());
 		}
