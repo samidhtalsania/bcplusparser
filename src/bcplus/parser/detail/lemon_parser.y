@@ -917,16 +917,19 @@ comparison(c) ::= constant(lhs) GTHAN_EQ term(rhs).									{ c = new Comparison
 		af = NULL;																						\
 		ref_ptr<Constant> c_ptr = constant;																\
 																										\
+																										\
+		ref_ptr<const ObjectSymbol> t =																	\
+			(value ? parser->symtab()->bobj(SymbolTable::BuiltinObject::TRUE) 							\
+				: parser->symtab()->bobj(SymbolTable::BuiltinObject::FALSE));							\
+																										\
+																										\
 		/* If this is a boolean constant we can interpret it as a shortcut for c=true */				\
-		if (constant->domainType() != DomainType::BOOLEAN) {											\
+		if (!constant->symbol()->sort()->contains(t)) {													\
 			parser->_parse_error("\"" + *constant->symbol()->name() 									\
 				+ "\" is not a boolean valued constant and therefore "									\
 				"cannot be used in a bare atomic formula.", &constant->beginLoc());						\
 			YYERROR;																					\
 		} else {																						\
-			ref_ptr<const ObjectSymbol> t =																\
-				(value ? parser->symtab()->bobj(SymbolTable::BuiltinObject::TRUE) 						\
-					: parser->symtab()->bobj(SymbolTable::BuiltinObject::FALSE));						\
 			af = new AtomicFormula(constant,															\
 					new Object(t, NULL, constant->beginLoc(), constant->endLoc()), 						\
 					constant->beginLoc(), constant->endLoc());											\
