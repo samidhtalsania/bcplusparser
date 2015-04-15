@@ -1,4 +1,5 @@
 
+#include <boost/version.hpp>
 #include <boost/foreach.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -536,7 +537,11 @@ bool SymbolTable::save(boost::filesystem::path const& path) const {
 
 
 		// write the file
+#if BOOST_VERSION >= 105600
+		pt::xml_parser::write_xml(out, xml, pt::xml_parser::xml_writer_settings<std::string>('\t', 1));
+#else
 		pt::xml_parser::write_xml(out, xml, pt::xml_parser::xml_writer_settings<char>('\t', 1));
+#endif
 
 	} catch (fs::filesystem_error& e) {
 		_config->ostream(Verb::ERROR) << "ERROR: An error occurred while writing the symbol table to \"" << path.native() << "\"." << std::endl;
