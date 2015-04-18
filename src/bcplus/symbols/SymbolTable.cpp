@@ -504,7 +504,7 @@ bool SymbolTable::save(boost::filesystem::path const& path) const {
 		char const* typestr = Symbol::Type::cstr((Symbol::Type::type)type);
 		for (const_iterator it = begin((Symbol::Type::type)type); it != end((Symbol::Type::type)type); it++) {
 			pt::ptree& node = symbols.add(typestr, "");
-			(*it)->save(node);
+			if (*it) (*it)->save(node);
 		}
 		type = type << 1;
 	}
