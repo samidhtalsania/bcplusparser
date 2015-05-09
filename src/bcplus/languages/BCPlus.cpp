@@ -94,12 +94,12 @@ bool BCPlus::support(Feature::type feature) const {
 		case Feature::CODE_LUA_CP:                
 		case Feature::CODE_LUA_GR: 
 		case Feature::STRONG_NOCONCURRENCY:       
+		case Feature::LAW_CAUSED_S:               
+		case Feature::LAW_CAUSED_D:               
 			return true;
 
 		case Feature::DECL_MAXAFVALUE:            
 		case Feature::MAXAFVALUE:
-		case Feature::LAW_CAUSED_S:               
-		case Feature::LAW_CAUSED_D:               
 		case Feature::LAW_PCAUSED_S:              
 		case Feature::LAW_PCAUSED_D:              
 		case Feature::LAW_IMPL:                   
