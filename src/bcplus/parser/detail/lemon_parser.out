@@ -89,7 +89,7 @@ State 1:
           atomic_formula ::= * constant
           atomic_formula ::= * TILDE constant
           atomic_formula ::= * constant EQ term
-          head_formula ::= * head_formula AMP head_formula
+          head_formula ::= * head_formula COMMA head_formula
           head_formula ::= * PAREN_L head_formula PAREN_R
           head_formula ::= * comparison
           head_formula ::= * atomic_head_formula
@@ -296,7 +296,7 @@ State 2:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -420,7 +420,7 @@ State 3:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -554,7 +554,7 @@ State 4:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -681,7 +681,7 @@ State 5:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -796,7 +796,7 @@ State 6:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -907,7 +907,7 @@ State 7:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -1022,7 +1022,7 @@ State 8:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -1148,7 +1148,7 @@ State 9:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -1274,7 +1274,7 @@ State 10:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -1400,7 +1400,7 @@ State 11:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -1527,7 +1527,7 @@ State 12:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -1653,7 +1653,7 @@ State 13:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -1779,7 +1779,7 @@ State 14:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -1906,7 +1906,7 @@ State 15:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -2032,7 +2032,7 @@ State 16:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -2158,7 +2158,7 @@ State 17:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -2284,7 +2284,7 @@ State 18:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -2411,7 +2411,7 @@ State 19:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -2538,7 +2538,7 @@ State 20:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -2664,7 +2664,7 @@ State 21:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -2790,7 +2790,7 @@ State 22:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -2916,7 +2916,7 @@ State 23:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -3042,7 +3042,7 @@ State 24:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= formula PIPE * formula
@@ -3168,7 +3168,7 @@ State 25:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= formula DBL_PLUS * formula
           formula ::= * formula PIPE formula
@@ -3294,8 +3294,8 @@ State 26:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
-          formula ::= formula AMP * formula
+          formula ::= * formula COMMA formula
+          formula ::= formula COMMA * formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -3421,7 +3421,7 @@ State 27:
           formula ::= * NOT formula
           formula ::= NOT * formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -3549,7 +3549,7 @@ State 28:
           formula ::= * NOT formula
           formula ::= * DASH formula
           formula ::= DASH * formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -3676,7 +3676,7 @@ State 29:
           formula ::= PAREN_L * formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -3801,7 +3801,7 @@ State 30:
           formula ::= * PAREN_L formula PAREN_R
           formula ::= * NOT formula
           formula ::= * DASH formula
-          formula ::= * formula AMP formula
+          formula ::= * formula COMMA formula
           formula ::= * formula DBL_PLUS formula
           formula ::= * formula PIPE formula
           formula ::= * formula EQUIV formula
@@ -3920,7 +3920,7 @@ State 31:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -4024,7 +4024,7 @@ State 32:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -4128,7 +4128,7 @@ State 33:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -4231,7 +4231,7 @@ State 34:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -4334,7 +4334,7 @@ State 35:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -4437,7 +4437,7 @@ State 36:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -4540,7 +4540,7 @@ State 37:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= formula_temporal PIPE * formula_temporal
@@ -4643,7 +4643,7 @@ State 38:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal DBL_PLUS * formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
@@ -4746,8 +4746,8 @@ State 39:
           formula_temporal ::= * PAREN_L formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
-          formula_temporal ::= formula_temporal AMP * formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
+          formula_temporal ::= formula_temporal COMMA * formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -4850,7 +4850,7 @@ State 40:
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= NOT * formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -4954,7 +4954,7 @@ State 41:
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
           formula_temporal ::= DASH * formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -5058,7 +5058,7 @@ State 42:
           formula_temporal ::= PAREN_L * formula_temporal PAREN_R
           formula_temporal ::= * NOT formula_temporal
           formula_temporal ::= * DASH formula_temporal
-          formula_temporal ::= * formula_temporal AMP formula_temporal
+          formula_temporal ::= * formula_temporal COMMA formula_temporal
           formula_temporal ::= * formula_temporal DBL_PLUS formula_temporal
           formula_temporal ::= * formula_temporal PIPE formula_temporal
           formula_temporal ::= * formula_temporal EQUIV formula_temporal
@@ -5186,7 +5186,7 @@ State 43:
           atomic_formula ::= * constant
           atomic_formula ::= * TILDE constant
           atomic_formula ::= * constant EQ term
-          head_formula ::= * head_formula AMP head_formula
+          head_formula ::= * head_formula COMMA head_formula
           head_formula ::= * PAREN_L head_formula PAREN_R
           head_formula ::= * comparison
           head_formula ::= * atomic_head_formula
@@ -5301,7 +5301,7 @@ State 44:
           atomic_formula ::= * constant
           atomic_formula ::= * TILDE constant
           atomic_formula ::= * constant EQ term
-          head_formula ::= * head_formula AMP head_formula
+          head_formula ::= * head_formula COMMA head_formula
           head_formula ::= * PAREN_L head_formula PAREN_R
           head_formula ::= * comparison
           head_formula ::= * atomic_head_formula
@@ -5416,7 +5416,7 @@ State 45:
           atomic_formula ::= * constant
           atomic_formula ::= * TILDE constant
           atomic_formula ::= * constant EQ term
-          head_formula ::= * head_formula AMP head_formula
+          head_formula ::= * head_formula COMMA head_formula
           head_formula ::= * PAREN_L head_formula PAREN_R
           head_formula ::= * comparison
           head_formula ::= * atomic_head_formula
@@ -5531,7 +5531,7 @@ State 46:
           atomic_formula ::= * constant
           atomic_formula ::= * TILDE constant
           atomic_formula ::= * constant EQ term
-          head_formula ::= * head_formula AMP head_formula
+          head_formula ::= * head_formula COMMA head_formula
           head_formula ::= * PAREN_L head_formula PAREN_R
           head_formula ::= * comparison
           head_formula ::= * atomic_head_formula
@@ -5646,8 +5646,8 @@ State 47:
           atomic_formula ::= * constant
           atomic_formula ::= * TILDE constant
           atomic_formula ::= * constant EQ term
-          head_formula ::= * head_formula AMP head_formula
-          head_formula ::= head_formula AMP * head_formula
+          head_formula ::= * head_formula COMMA head_formula
+          head_formula ::= head_formula COMMA * head_formula
           head_formula ::= * PAREN_L head_formula PAREN_R
           head_formula ::= * comparison
           head_formula ::= * atomic_head_formula
@@ -5762,7 +5762,7 @@ State 48:
           atomic_formula ::= * constant
           atomic_formula ::= * TILDE constant
           atomic_formula ::= * constant EQ term
-          head_formula ::= * head_formula AMP head_formula
+          head_formula ::= * head_formula COMMA head_formula
           head_formula ::= * PAREN_L head_formula PAREN_R
           head_formula ::= PAREN_L * head_formula PAREN_R
           head_formula ::= * comparison
@@ -5848,7 +5848,7 @@ State 49:
           formula_no_const ::= * PAREN_L formula_no_const PAREN_R
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= * formula_no_const EQUIV formula_no_const
@@ -5929,7 +5929,7 @@ State 50:
           formula_no_const ::= * PAREN_L formula_no_const PAREN_R
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= * formula_no_const EQUIV formula_no_const
@@ -6010,7 +6010,7 @@ State 51:
           formula_no_const ::= * PAREN_L formula_no_const PAREN_R
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= * formula_no_const EQUIV formula_no_const
@@ -6091,7 +6091,7 @@ State 52:
           formula_no_const ::= * PAREN_L formula_no_const PAREN_R
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= formula_no_const PIPE * formula_no_const
@@ -6172,7 +6172,7 @@ State 53:
           formula_no_const ::= * PAREN_L formula_no_const PAREN_R
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const DBL_PLUS * formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
@@ -6253,8 +6253,8 @@ State 54:
           formula_no_const ::= * PAREN_L formula_no_const PAREN_R
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
-          formula_no_const ::= formula_no_const AMP * formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
+          formula_no_const ::= formula_no_const COMMA * formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= * formula_no_const EQUIV formula_no_const
@@ -6335,7 +6335,7 @@ State 55:
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= NOT * formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= * formula_no_const EQUIV formula_no_const
@@ -6417,7 +6417,7 @@ State 56:
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
           formula_no_const ::= DASH * formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= * formula_no_const EQUIV formula_no_const
@@ -6499,7 +6499,7 @@ State 57:
           formula_no_const ::= PAREN_L * formula_no_const PAREN_R
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= * formula_no_const EQUIV formula_no_const
@@ -6579,7 +6579,7 @@ State 58:
           formula_no_const ::= * PAREN_L formula_no_const PAREN_R
           formula_no_const ::= * NOT formula_no_const
           formula_no_const ::= * DASH formula_no_const
-          formula_no_const ::= * formula_no_const AMP formula_no_const
+          formula_no_const ::= * formula_no_const COMMA formula_no_const
           formula_no_const ::= * formula_no_const DBL_PLUS formula_no_const
           formula_no_const ::= * formula_no_const PIPE formula_no_const
           formula_no_const ::= * formula_no_const EQUIV formula_no_const
@@ -14867,7 +14867,7 @@ State 220:
                  term_integral shift  364
 
 State 221:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -14885,12 +14885,12 @@ State 221:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                   clause_after shift  281
                      {default} reduce 405
 
 State 222:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -14906,12 +14906,12 @@ State 222:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                      clause_if shift  257
                      {default} reduce 403
 
 State 223:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -14927,12 +14927,12 @@ State 223:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                   clause_after shift  277
                      {default} reduce 405
 
 State 224:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -14948,12 +14948,12 @@ State 224:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                   clause_after shift  279
                      {default} reduce 405
 
 State 225:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -14969,12 +14969,12 @@ State 225:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                   clause_after shift  283
                      {default} reduce 405
 
 State 226:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -14990,12 +14990,12 @@ State 226:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                   clause_where shift  498
                      {default} reduce 411
 
 State 227:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -15011,7 +15011,7 @@ State 227:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                   clause_where shift  534
                      {default} reduce 411
 
@@ -15357,7 +15357,7 @@ State 247:
                       quant_op shift  309
 
 State 248:
-          head_formula ::= head_formula * AMP head_formula
+          head_formula ::= head_formula * COMMA head_formula
           clause_if ::= * IF formula
     (403) clause_if ::= *
           law_basic ::= head_formula * clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
@@ -15365,29 +15365,29 @@ State 248:
 
                             IF shift  30
                    ARROW_LDASH shift  15
-                           AMP shift  47
+                         COMMA shift  47
                      clause_if shift  307
                      {default} reduce 403
 
 State 249:
-          head_formula ::= head_formula * AMP head_formula
+          head_formula ::= head_formula * COMMA head_formula
           clause_if ::= * IF formula
     (403) clause_if ::= *
           law_pcaused ::= POSSIBLY_CAUSED head_formula * clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
 
                             IF shift  30
-                           AMP shift  47
+                         COMMA shift  47
                      clause_if shift  287
                      {default} reduce 403
 
 State 250:
-          head_formula ::= head_formula * AMP head_formula
+          head_formula ::= head_formula * COMMA head_formula
           clause_if ::= * IF formula
     (403) clause_if ::= *
           law_caused ::= CAUSED head_formula * clause_if clause_ifcons clause_after clause_unless clause_where PERIOD
 
                             IF shift  30
-                           AMP shift  47
+                         COMMA shift  47
                      clause_if shift  291
                      {default} reduce 403
 
@@ -15401,24 +15401,24 @@ State 251:
                      macro_arg shift  725
 
 State 252:
-          head_formula ::= head_formula * AMP head_formula
+          head_formula ::= head_formula * COMMA head_formula
           clause_if ::= * IF formula
     (403) clause_if ::= *
           law_mcause ::= atomic_formula MAY_CAUSE head_formula * clause_if clause_unless clause_where PERIOD
 
                             IF shift  30
-                           AMP shift  47
+                         COMMA shift  47
                      clause_if shift  295
                      {default} reduce 403
 
 State 253:
-          head_formula ::= head_formula * AMP head_formula
+          head_formula ::= head_formula * COMMA head_formula
           clause_if ::= * IF formula
     (403) clause_if ::= *
           law_causes ::= atomic_formula CAUSES head_formula * clause_if clause_unless clause_where PERIOD
 
                             IF shift  30
-                           AMP shift  47
+                         COMMA shift  47
                      clause_if shift  303
                      {default} reduce 403
 
@@ -16359,12 +16359,12 @@ State 326:
                        PAREN_R reduce 297
                         PERIOD reduce 297
                    ARROW_LDASH reduce 297
-                           AMP reduce 297
+                         COMMA reduce 297
                      {default} reduce 68
 
 State 327:
           formula_temporal ::= PAREN_L formula_temporal * PAREN_R
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -16377,10 +16377,10 @@ State 327:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
 
 State 328:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -16395,10 +16395,10 @@ State 328:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
 
 State 329:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -16413,10 +16413,10 @@ State 329:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
 
 State 330:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -16431,10 +16431,10 @@ State 330:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
 
 State 331:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -16449,10 +16449,10 @@ State 331:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
 
 State 332:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -16466,7 +16466,7 @@ State 332:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
 
 State 333:
           term_temporal ::= PAREN_L term_temporal * PAREN_R
@@ -16487,7 +16487,7 @@ State 333:
 
 State 334:
           formula_no_const ::= PAREN_L formula_no_const * PAREN_R
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
           formula_no_const ::= formula_no_const * EQUIV formula_no_const
@@ -16500,11 +16500,11 @@ State 334:
                    ARROW_RDASH shift  49
                       DBL_PLUS shift  53
                           PIPE shift  52
-                           AMP shift  54
+                         COMMA shift  54
 
 State 335:
           formula ::= PAREN_L formula * PAREN_R
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -16517,10 +16517,10 @@ State 335:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
 
 State 336:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -16535,10 +16535,10 @@ State 336:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
 
 State 337:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -16553,10 +16553,10 @@ State 337:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
 
 State 338:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -16571,10 +16571,10 @@ State 338:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
 
 State 339:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -16589,10 +16589,10 @@ State 339:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
 
 State 340:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -16606,7 +16606,7 @@ State 340:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
 
 State 341:
           term_int_eval ::= term_int_eval * DASH term_int_eval
@@ -16639,7 +16639,7 @@ State 342:
                            MOD shift  236
 
 State 343:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -16652,11 +16652,11 @@ State 343:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
                      {default} reduce 395
 
 State 344:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -16669,7 +16669,7 @@ State 344:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
                      {default} reduce 392
 
 State 345:
@@ -16875,7 +16875,7 @@ State 356:
                      {default} reduce 273
 
 State 357:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -16888,7 +16888,7 @@ State 357:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 266
 
 State 358:
@@ -16997,7 +16997,7 @@ State 364:
                            MOD shift  213
 
 State 365:
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
           formula_no_const ::= formula_no_const * EQUIV formula_no_const
@@ -17010,11 +17010,11 @@ State 365:
                    ARROW_RDASH shift  49
                       DBL_PLUS shift  53
                           PIPE shift  52
-                           AMP shift  54
+                         COMMA shift  54
                      {default} reduce 410
 
 State 366:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -17027,11 +17027,11 @@ State 366:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 404
 
 State 367:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -17044,11 +17044,11 @@ State 367:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 406
 
 State 368:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -17061,7 +17061,7 @@ State 368:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 402
 
 State 369:
@@ -17125,7 +17125,7 @@ State 372:
                      {default} reduce 131
 
 State 373:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -17137,7 +17137,7 @@ State 373:
                    ARROW_RDASH shift  34
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
                      {default} reduce 263
 
 State 374:
@@ -17171,7 +17171,7 @@ State 375:
                      {default} reduce 130
 
 State 376:
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
           formula_no_const ::= formula_no_const * EQUIV formula_no_const
@@ -17183,7 +17183,7 @@ State 376:
                    ARROW_RDASH shift  49
                       DBL_PLUS shift  53
                           PIPE shift  52
-                           AMP shift  54
+                         COMMA shift  54
                      {default} reduce 191
 
 State 377:
@@ -17367,7 +17367,7 @@ State 388:
                      {default} reduce 218
 
 State 389:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -17379,7 +17379,7 @@ State 389:
                    ARROW_RDASH shift  21
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 148
 
 State 390:
@@ -17872,7 +17872,7 @@ State 422:
                      {default} reduce 296
 
 State 423:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -17882,11 +17882,11 @@ State 423:
 
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
                      {default} reduce 265
 
 State 424:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -17896,7 +17896,7 @@ State 424:
 
                       DBL_PLUS shift  38
                           PIPE shift  37
-                           AMP shift  39
+                         COMMA shift  39
                      {default} reduce 264
 
 State 425:
@@ -18035,7 +18035,7 @@ State 435:
                      {default} reduce 126
 
 State 436:
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
           formula_no_const ::= formula_no_const * EQUIV formula_no_const
@@ -18045,11 +18045,11 @@ State 436:
 
                       DBL_PLUS shift  53
                           PIPE shift  52
-                           AMP shift  54
+                         COMMA shift  54
                      {default} reduce 193
 
 State 437:
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
           formula_no_const ::= formula_no_const * EQUIV formula_no_const
@@ -18059,7 +18059,7 @@ State 437:
 
                       DBL_PLUS shift  53
                           PIPE shift  52
-                           AMP shift  54
+                         COMMA shift  54
                      {default} reduce 192
 
 State 438:
@@ -18089,7 +18089,7 @@ State 439:
                      {default} reduce 94
 
 State 440:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -18099,11 +18099,11 @@ State 440:
 
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 150
 
 State 441:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -18113,7 +18113,7 @@ State 441:
 
                       DBL_PLUS shift  25
                           PIPE shift  24
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 149
 
 State 442:
@@ -18474,11 +18474,11 @@ State 480:
                      {default} reduce 21
 
 State 481:
-          head_formula ::= head_formula * AMP head_formula
+          head_formula ::= head_formula * COMMA head_formula
           head_formula ::= PAREN_L head_formula * PAREN_R
 
                        PAREN_R shift  777
-                           AMP shift  47
+                         COMMA shift  47
 
 State 482:
           card_var_lst ::= card_var_lst_inner * PIPE
@@ -18612,7 +18612,7 @@ State 504:
                      {default} reduce 245
 
 State 505:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
     (262) formula_temporal ::= formula_temporal PIPE formula_temporal *
@@ -18620,11 +18620,11 @@ State 505:
           formula_temporal ::= formula_temporal * IMPL formula_temporal
           formula_temporal ::= formula_temporal * ARROW_RDASH formula_temporal
 
-                           AMP shift  39
+                         COMMA shift  39
                      {default} reduce 262
 
 State 506:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
     (261) formula_temporal ::= formula_temporal DBL_PLUS formula_temporal *
           formula_temporal ::= formula_temporal * PIPE formula_temporal
@@ -18632,7 +18632,7 @@ State 506:
           formula_temporal ::= formula_temporal * IMPL formula_temporal
           formula_temporal ::= formula_temporal * ARROW_RDASH formula_temporal
 
-                           AMP shift  39
+                         COMMA shift  39
                      {default} reduce 261
 
 State 507:
@@ -18814,7 +18814,7 @@ State 535:
                         PERIOD shift  734
 
 State 536:
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
     (190) formula_no_const ::= formula_no_const PIPE formula_no_const *
@@ -18822,11 +18822,11 @@ State 536:
           formula_no_const ::= formula_no_const * IMPL formula_no_const
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
 
-                           AMP shift  54
+                         COMMA shift  54
                      {default} reduce 190
 
 State 537:
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
     (189) formula_no_const ::= formula_no_const DBL_PLUS formula_no_const *
           formula_no_const ::= formula_no_const * PIPE formula_no_const
@@ -18834,7 +18834,7 @@ State 537:
           formula_no_const ::= formula_no_const * IMPL formula_no_const
           formula_no_const ::= formula_no_const * ARROW_RDASH formula_no_const
 
-                           AMP shift  54
+                         COMMA shift  54
                      {default} reduce 189
 
 State 538:
@@ -18859,7 +18859,7 @@ State 540:
                      {default} reduce 25
 
 State 541:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
     (147) formula ::= formula PIPE formula *
@@ -18867,11 +18867,11 @@ State 541:
           formula ::= formula * IMPL formula
           formula ::= formula * ARROW_RDASH formula
 
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 147
 
 State 542:
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
     (146) formula ::= formula DBL_PLUS formula *
           formula ::= formula * PIPE formula
@@ -18879,7 +18879,7 @@ State 542:
           formula ::= formula * IMPL formula
           formula ::= formula * ARROW_RDASH formula
 
-                           AMP shift  26
+                         COMMA shift  26
                      {default} reduce 146
 
 State 543:
@@ -19211,7 +19211,7 @@ State 604:
 
 State 605:
     (259) formula_temporal ::= DASH formula_temporal *
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -19256,8 +19256,8 @@ State 612:
                      {default} reduce 267
 
 State 613:
-          formula_temporal ::= formula_temporal * AMP formula_temporal
-    (260) formula_temporal ::= formula_temporal AMP formula_temporal *
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
+    (260) formula_temporal ::= formula_temporal COMMA formula_temporal *
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -19268,7 +19268,7 @@ State 613:
 
 State 614:
     (258) formula_temporal ::= NOT formula_temporal *
-          formula_temporal ::= formula_temporal * AMP formula_temporal
+          formula_temporal ::= formula_temporal * COMMA formula_temporal
           formula_temporal ::= formula_temporal * DBL_PLUS formula_temporal
           formula_temporal ::= formula_temporal * PIPE formula_temporal
           formula_temporal ::= formula_temporal * EQUIV formula_temporal
@@ -20006,7 +20006,7 @@ State 735:
 
 State 736:
     (187) formula_no_const ::= DASH formula_no_const *
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
           formula_no_const ::= formula_no_const * EQUIV formula_no_const
@@ -20031,8 +20031,8 @@ State 739:
                      {default} reduce 194
 
 State 740:
-          formula_no_const ::= formula_no_const * AMP formula_no_const
-    (188) formula_no_const ::= formula_no_const AMP formula_no_const *
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
+    (188) formula_no_const ::= formula_no_const COMMA formula_no_const *
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
           formula_no_const ::= formula_no_const * EQUIV formula_no_const
@@ -20043,7 +20043,7 @@ State 740:
 
 State 741:
     (186) formula_no_const ::= NOT formula_no_const *
-          formula_no_const ::= formula_no_const * AMP formula_no_const
+          formula_no_const ::= formula_no_const * COMMA formula_no_const
           formula_no_const ::= formula_no_const * DBL_PLUS formula_no_const
           formula_no_const ::= formula_no_const * PIPE formula_no_const
           formula_no_const ::= formula_no_const * EQUIV formula_no_const
@@ -20181,7 +20181,7 @@ State 760:
 
 State 761:
     (144) formula ::= DASH formula *
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -20246,8 +20246,8 @@ State 772:
                      {default} reduce 151
 
 State 773:
-          formula ::= formula * AMP formula
-    (145) formula ::= formula AMP formula *
+          formula ::= formula * COMMA formula
+    (145) formula ::= formula COMMA formula *
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -20258,7 +20258,7 @@ State 773:
 
 State 774:
     (143) formula ::= NOT formula *
-          formula ::= formula * AMP formula
+          formula ::= formula * COMMA formula
           formula ::= formula * DBL_PLUS formula
           formula ::= formula * PIPE formula
           formula ::= formula * EQUIV formula
@@ -20329,8 +20329,8 @@ State 783:
                      {default} reduce 291
 
 State 784:
-          head_formula ::= head_formula * AMP head_formula
-    (289) head_formula ::= head_formula AMP head_formula *
+          head_formula ::= head_formula * COMMA head_formula
+    (289) head_formula ::= head_formula COMMA head_formula *
 
                      {default} reduce 289
 

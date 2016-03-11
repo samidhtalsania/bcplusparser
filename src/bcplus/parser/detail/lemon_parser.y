@@ -869,7 +869,8 @@ formula(new_f) ::= formula_base(f).													{ new_f = f;				}
 formula(new_f) ::= PAREN_L formula(f) PAREN_R.										{ new_f = f; new_f->parens(true); 	}
 formula(new_f) ::= NOT(op) formula(f).												{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_KEYWORD); }
 formula(new_f) ::= DASH(op) formula(f).												{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_DASH); }
-formula(new_f) ::= formula(lhs) AMP formula(rhs).									{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//formula(new_f) ::= formula(lhs) AMP formula(rhs).									{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+formula(new_f) ::= formula(lhs) COMMA formula(rhs).									{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
 formula(new_f) ::= formula(lhs) DBL_PLUS(op) formula(rhs).							{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
 formula(new_f) ::= formula(lhs) PIPE(op) formula(rhs).								{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
 formula(new_f) ::= formula(lhs) EQUIV(op) formula(rhs).								{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::EQUIV); }
@@ -966,7 +967,8 @@ formula_no_const(new_f) ::= formula_no_const_base(f).											{ new_f = f;				
 formula_no_const(new_f) ::= PAREN_L formula_no_const(f) PAREN_R.								{ new_f = f; new_f->parens(true); 	}
 formula_no_const(new_f) ::= NOT(op) formula_no_const(f).										{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_KEYWORD); }
 formula_no_const(new_f) ::= DASH(op) formula_no_const(f).										{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_DASH); }
-formula_no_const(new_f) ::= formula_no_const(lhs) AMP formula_no_const(rhs).					{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//formula_no_const(new_f) ::= formula_no_const(lhs) AMP formula_no_const(rhs).					{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+formula_no_const(new_f) ::= formula_no_const(lhs) COMMA formula_no_const(rhs).					{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
 formula_no_const(new_f) ::= formula_no_const(lhs) DBL_PLUS(op) formula_no_const(rhs).			{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
 formula_no_const(new_f) ::= formula_no_const(lhs) PIPE(op) formula_no_const(rhs).				{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
 formula_no_const(new_f) ::= formula_no_const(lhs) EQUIV(op) formula_no_const(rhs).				{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::EQUIV); }
@@ -1241,7 +1243,8 @@ formula_temporal(new_f) ::= formula_temporal_base(f).													{ new_f = f;		
 formula_temporal(new_f) ::= PAREN_L formula_temporal(f) PAREN_R.										{ new_f = f; new_f->parens(true); 	}
 formula_temporal(new_f) ::= NOT(op) formula_temporal(f).												{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_KEYWORD); }
 formula_temporal(new_f) ::= DASH(op) formula_temporal(f).												{ NESTED_UOP(new_f, op, f, UnaryFormula::Operator::NOT, Language::Feature::FORMULA_NOT_DASH); }
-formula_temporal(new_f) ::= formula_temporal(lhs) AMP formula_temporal(rhs).							{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+//formula_temporal(new_f) ::= formula_temporal(lhs) AMP formula_temporal(rhs).							{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
+formula_temporal(new_f) ::= formula_temporal(lhs) COMMA formula_temporal(rhs).							{ new_f = new BinaryFormula(BinaryFormula::Operator::AND, lhs, rhs, lhs->beginLoc(), rhs->endLoc()); }
 formula_temporal(new_f) ::= formula_temporal(lhs) DBL_PLUS(op) formula_temporal(rhs).					{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
 formula_temporal(new_f) ::= formula_temporal(lhs) PIPE(op) formula_temporal(rhs).						{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::OR); }
 formula_temporal(new_f) ::= formula_temporal(lhs) EQUIV(op) formula_temporal(rhs).						{ NESTED_BOP(new_f, lhs, op, rhs, BinaryFormula::Operator::EQUIV); }
@@ -1349,7 +1352,11 @@ formula_temporal_card(card) ::= term_temporal_strong(min) 	CBRACKET_L(bl) formul
 %type		formula_smpl_card				{ CardinalityFormula*						}			// cardinality formula in the head of a law
 %destructor formula_smpl_card				{ DEALLOC($$);								}
 
-head_formula(f) ::= head_formula(l) AMP head_formula(r).
+//head_formula(f) ::= head_formula(l) AMP head_formula(r).
+//	{
+//		f = new BinaryFormula(BinaryFormula::Operator::AND, l, r, l->beginLoc(), r->endLoc());
+//	}
+head_formula(f) ::= head_formula(l) COMMA head_formula(r).
 	{
 		f = new BinaryFormula(BinaryFormula::Operator::AND, l, r, l->beginLoc(), r->endLoc());
 	}
