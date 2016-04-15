@@ -43,6 +43,8 @@ private:
 		yycASP_CP,						///< CCalc style ASP block
 		yycLUA_GR,						///< Gringo style LUA block
 		yycLUA_CP,						///< CCalc style LUA block
+		yycPYTHON_GR,					///< Gringo style python block
+		yycPYTHON_CP,					///< CCalc style python block
 		yycF2LP_GR,						///< Gringo style F2LP block
 		yycF2LP_CP,						///< CCalc style F2LP block
 		yycPRE_ARG,						///< Intermediate state after we parsed an identifier and are about to parse "("

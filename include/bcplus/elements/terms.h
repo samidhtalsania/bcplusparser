@@ -154,6 +154,15 @@ typedef detail::AnonymousElement<
 	detail::TermType::LUA,
 	Term> LuaTerm;
 
+
+/*
+* @brief A Python Call.
+*/
+typedef detail::AnonymousElement<
+	Term,
+	detail::TermType::PYTHON,
+	Term> PyTerm;
+
 /**
  * @brief An anonymous variable.
  */

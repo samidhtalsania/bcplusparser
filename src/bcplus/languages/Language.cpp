@@ -107,6 +107,8 @@ char const* Language::Feature::descr(type feature) {
 		case CODE_F2LP_GR:               		return "F2LP code blocks (#begin_f2lp ... #end_f2lp.)";
 		case CODE_LUA_CP:                		return "LUA code blocks (:- begin lua. ... :- end lua.)";
 		case CODE_LUA_GR:                		return "LUA code blocks (#begin_lua ... #end_lua.)";
+		case CODE_PYTHON_CP:                	return "PYTHON code blocks (:- begin_python. ... :- end_python.)";
+		case CODE_PYTHON_GR:                	return "PYTHON code blocks (#begin_python ... #end_PYTHON.)";
 		default:						 		return "<UNKNOWN_FEATURE>";
 	}
 

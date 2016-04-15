@@ -17,6 +17,9 @@ typedef detail::SimpleStatement<Statement::Type::ASP, babb::utils::ref_ptr<const
 /// A statement containing LUA code
 typedef detail::SimpleStatement<Statement::Type::LUA, babb::utils::ref_ptr<const parser::Token>, parser::Token const* > LUABlock;
 
+/// A statement containing PYTHON code
+typedef detail::SimpleStatement<Statement::Type::PYTHON, babb::utils::ref_ptr<const parser::Token>, parser::Token const* > PYTHONBlock;
+
 /// A statement containing aggregate comments
 typedef detail::ListStatement<Statement::Type::COMMENTS, const parser::Token> CommentBlock;
 

@@ -155,22 +155,42 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												  BLK_INIT;
 												  goto yyc_ASP_GR;
 												}
-		<NORMAL>":-" WS* "begin_lua" WS* [.]
+		<NORMAL>":-" WS* "begin_lua" WS* [.] 
 												{
 												  _cond = yycLUA_CP;
 												  BLK_INIT;
 												  goto yyc_LUA_CP;
 												}
-		<NORMAL>":-" WS* "begin" WS+ "lua" WS* [.]
+		<NORMAL>":-" WS* "begin" WS+ "lua" WS* [.] 
 												{
 												  _cond = yycLUA_CP;
 												  BLK_INIT;
 												  goto yyc_LUA_CP;
 												}
-		<NORMAL> "#begin_lua" WS* [.]?			{
+		<NORMAL> "#begin_lua" WS* [.]? 
+												{
 												  _cond = yycLUA_GR;
 												  BLK_INIT;
 												  goto yyc_LUA_GR;
+												}
+
+		<NORMAL>":-" WS* "begin_python" WS* [.] 
+												{
+												  _cond = yycPYTHON_CP;
+												  BLK_INIT;
+												  goto yyc_PYTHON_CP;
+												}
+		<NORMAL>":-" WS* "begin" WS+ "python" WS* [.] 
+												{
+												  _cond = yycPYTHON_CP;
+												  BLK_INIT;
+												  goto yyc_PYTHON_CP;
+												}
+		<NORMAL> "#begin_python" WS* [.]? 
+												{
+												  _cond = yycPYTHON_GR;
+												  BLK_INIT;
+												  goto yyc_PYTHON_GR;
 												}
 		<NORMAL>":-" WS* "begin_f2lp" WS* [.]
 												{
@@ -360,7 +380,56 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												  source->cursor()--;
 												  goto re2c_finish;					
 												}
+
 		<LUA_GR> .								{												goto yyc_LUA_GR;					}
+
+
+		<PYTHON_GR> NL							{ 
+												  BLK_LINE;
+												  ln_cmt = false;
+												  goto yyc_PYTHON_GR;				
+												}
+		<PYTHON_GR> [']							{
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
+												  goto yyc_PYTHON_GR;
+												}
+		<PYTHON_GR> ["]							{
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;
+												  goto yyc_PYTHON_GR;
+												}
+		<PYTHON_GR> "--"							{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) {
+													  ln_cmt = true;
+												  }
+												  goto yyc_PYTHON_GR;
+												}
+		<PYTHON_GR> "--{"							{
+												  if (!ln_cmt && !sgl_quote && !dbl_quote) {
+													  blk_cmt = true;
+												  }
+												  goto yyc_PYTHON_GR;
+												}
+		<PYTHON_GR> "}"							{
+												  blk_cmt = false;
+												  goto yyc_PYTHON_GR;
+												}
+		<PYTHON_GR> "#end_python" WS* [.]				{ 
+												  if (!blk_cmt && !ln_cmt && !sgl_quote && !dbl_quote) {
+													  _cond = yycNORMAL; 
+													  ret = T_PYTHON_GR; 
+													  goto re2c_finish;					
+												  } else goto yyc_PYTHON_GR;
+												}
+		<PYTHON_GR> EOF							{ 
+												  BLK_FINISH(1);
+												  ret = T_ERR_UNTERMINATED_PYTHON;			
+												  _cond = yycNORMAL;
+												  source->cursor()--;
+												  goto re2c_finish;					
+												}
+
+		<PYTHON_GR> .								{												goto yyc_PYTHON_GR;					}
+
 
 		<LUA_CP> NL								{ 
 												  BLK_LINE;
@@ -414,7 +483,72 @@ Token* Scanner::tokenize_3(ScannerRawSource* source) {
 												  source->cursor()--;
 												  goto re2c_finish;					
 												}
+
 		<LUA_CP> .								{												goto yyc_LUA_CP;					}
+
+
+		<PYTHON_CP> NL							{ 
+												  BLK_LINE;
+												  ln_cmt = false;
+												  goto yyc_PYTHON_CP;					
+												}
+		<PYTHON_CP> [']							{
+												  if (!dbl_quote && !ln_cmt && !blk_cmt) sgl_quote = !sgl_quote;
+												  goto yyc_PYTHON_CP;
+												}
+		<PYTHON_CP> ["]							{
+												  if (!sgl_quote && !ln_cmt && !blk_cmt) dbl_quote = !dbl_quote;
+												  goto yyc_PYTHON_CP;
+												}
+		<PYTHON_CP> "--"							{
+												  if (!blk_cmt && !sgl_quote && !dbl_quote) {
+													  ln_cmt = true;
+												  }
+												  goto yyc_PYTHON_CP;
+												}
+		<PYTHON_CP> "--{"							{
+												  if (!ln_cmt && !sgl_quote && !dbl_quote) {
+													  blk_cmt = true;
+												  }
+												  goto yyc_PYTHON_CP;
+												}
+		<PYTHON_CP> "}"							{
+												  blk_cmt = false;
+												  goto yyc_PYTHON_CP;
+												}
+		<PYTHON_CP> ":-" WS* "end_python" WS* [.]
+												{ 
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) {
+												    _cond = yycNORMAL; 
+												    ret = T_PYTHON_CP; 
+												    goto re2c_finish;					
+												  } else goto yyc_PYTHON_CP;
+												}
+		<PYTHON_CP> ":-" WS* "end" WS+ "python" WS* [.]
+												{ 
+												  if (!ln_cmt && !blk_cmt && !sgl_quote && !dbl_quote) {
+													  _cond = yycNORMAL; 
+													  ret = T_PYTHON_CP; 
+													  goto re2c_finish;					
+												  } else goto yyc_PYTHON_CP;
+												}
+		<PYTHON_CP> EOF							{ 
+												  BLK_FINISH(1);
+												  ret = T_ERR_UNTERMINATED_PYTHON;			
+												  _cond = yycNORMAL;
+												  source->cursor()--;
+												  goto re2c_finish;					
+												}
+		<PYTHON_CP> EOF							{ 
+												  BLK_FINISH(1);
+												  ret = T_ERR_UNTERMINATED_PYTHON;			
+												  _cond = yycNORMAL;
+												  source->cursor()--;
+												  goto re2c_finish;					
+												}
+
+		<PYTHON_CP> .								{												goto yyc_PYTHON_CP;					}
+
 
 
 		<F2LP_GR> NL							{ 

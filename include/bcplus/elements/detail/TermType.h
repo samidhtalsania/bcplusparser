@@ -14,6 +14,7 @@ struct TermType {
 		VARIABLE,
 		CONSTANT,
 		LUA,
+		PYTHON,
 		ANON_VAR,
 		NULLARY,
 		BINDING

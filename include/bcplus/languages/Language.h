@@ -117,7 +117,10 @@ public:
 			CODE_F2LP_CP,				///< CCalc style F2LP code block
 			CODE_F2LP_GR,				///< Gringo style F2LP code block
 			CODE_LUA_CP,				///< CCalc style LUA code block
-			CODE_LUA_GR					///< Gringo style LUA code block
+			CODE_LUA_GR,					///< Gringo style LUA code block
+
+			CODE_PYTHON_CP,				///< CCalc style LUA code block
+			CODE_PYTHON_GR				///< Gringo style LUA code block
 		};
 
 

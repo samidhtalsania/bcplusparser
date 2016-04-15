@@ -84,7 +84,9 @@ bool CPlus::support(Feature::type feature) const {
 		case Feature::CODE_F2LP_CP:               
 		case Feature::CODE_F2LP_GR:               
 		case Feature::CODE_LUA_CP:                
-		case Feature::CODE_LUA_GR: 
+		case Feature::CODE_LUA_GR:
+		case Feature::CODE_PYTHON_CP:                
+		case Feature::CODE_PYTHON_GR: 
 		case Feature::LAW_CAUSED_S:               
 		case Feature::LAW_CAUSED_D:               
 		case Feature::LAW_PCAUSED_S:              

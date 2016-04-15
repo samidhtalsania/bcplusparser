@@ -119,6 +119,10 @@ BCParser::ParseType BCParser::parse() {
 		case T_ERR_UNTERMINATED_LUA:
 			_parse_error("Unexpected end of input. Unterminated LUA code block.", &token->beginLoc());
 			break;
+
+		case T_ERR_UNTERMINATED_PYTHON:
+			_parse_error("Unexpected end of input. Unterminated Python code block.", &token->beginLoc());
+			break;
 		
 		case T_ERR_UNTERMINATED_F2LP:
 			_parse_error("Unexpected end of input. Unterminated F2LP code block.", &token->beginLoc());

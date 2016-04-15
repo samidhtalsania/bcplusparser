@@ -74,6 +74,8 @@
 %nonassoc ASP_CP.          // Raw ASP code from input using C+ style ':- begin asp.' and ':- end asp.'.
 %nonassoc LUA_GR.          // Raw LUA code from input using gringo style '#begin_lua' and '#end_lua.'.
 %nonassoc LUA_CP.          // Raw LUA code from input using C+ style ':- begin lua.' and ':- end lua.'
+%nonassoc PYTHON_GR.       // Raw LUA code from input using gringo style '#begin_python' and '#end_python.'.
+%nonassoc PYTHON_CP.       // Raw LUA code from input using C+ style ':- begin python.' and ':- end python.'
 %nonassoc F2LP_GR.         // Raw F2LP code from input using gringo style '#begin_f2lp' and '#end_f2lp.'.
 %nonassoc F2LP_CP.         // Raw F2LP code from input using C+ style ':- begin f2lp.' and ':- end f2lp.'.
 %nonassoc COMMENT.         // Raw text from input that was commented out.
@@ -182,7 +184,7 @@
 // errors
 %nonassoc EOF.
 %nonassoc ERR_IO ERR_UNKNOWN_SYMBOL.
-%nonassoc ERR_UNTERMINATED_STRING ERR_UNTERMINATED_ASP ERR_UNTERMINATED_LUA. 
+%nonassoc ERR_UNTERMINATED_STRING ERR_UNTERMINATED_ASP ERR_UNTERMINATED_LUA ERR_UNTERMINATED_PYTHON. 
 %nonassoc ERR_UNTERMINATED_F2LP ERR_UNTERMINATED_BLK_COMMENT ERR_SYNTAX ERR_PAREN_MISMATCH.
 
 // place holders and pseudo-tokens
@@ -325,6 +327,7 @@ base_elem(elem) ::= base_elem_no_const(c).	{ elem = c; }
 base_elem_no_const(elem) ::= object(o).		{ elem = o;	}
 base_elem_no_const(elem) ::= variable(v).	{ elem = v; }
 base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
+// base_elem_no_const(elem) ::= python(p).		{ elem = p; }
 //base_elem_no_const(elem) ::= undeclared.	{ /* This should never be called*/ elem = NULL; }
 %include {
 	#define BASE_ELEM_DEF(elem, id, lparen, args, rparen, symtype, class, symclass)											\
@@ -372,6 +375,7 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 						case Term::Type::ANON_VAR:																			\
 						case Term::Type::NULLARY:																			\
 						case Term::Type::LUA:																				\
+						case Term::Type::PYTHON:																			\
 						case Term::Type::OBJECT:																			\
 						case Term::Type::BINARY:																			\
 						case Term::Type::UNARY:																				\
@@ -432,6 +436,13 @@ base_elem_no_const(elem) ::= lua(l).		{ elem = l; }
 		ref_ptr<const Token> rparen_ptr = rparen;																			\
 		elem = new LuaTerm(id_ptr->str(), args, id_ptr->beginLoc(), (args ? rparen_ptr->endLoc() : id_ptr->endLoc()));
 
+	#define BASE_PYTHON_ELEM(elem, id, lparen, args, rparen)																	\
+		ref_ptr<const Token> id_ptr = id;																					\
+		ref_ptr<const Token> lparen_ptr = lparen;																			\
+		ref_ptr<TermList> args_ptr = args;																					\
+		ref_ptr<const Token> rparen_ptr = rparen;																			\
+		elem = new PyTerm(id_ptr->str(), args, id_ptr->beginLoc(), (args ? rparen_ptr->endLoc() : id_ptr->endLoc()));
+
 	#define UNDECLARED(elem, id, args)																						\
 		elem = NULL;																										\
 		ref_ptr<const Token> id_ptr = id;																					\
@@ -469,6 +480,8 @@ variable(o) ::= VARIABLE_ID(id).
 lua(l) ::= AT_IDENTIFIER(id) PAREN_L(pl) term_lst(args) PAREN_R(pr).			{ BASE_LUA_ELEM(l, id, pl, args, pr); }
 lua(l) ::= AT_IDENTIFIER(id).													{ BASE_LUA_ELEM(l, id, NULL, NULL, NULL); }
 lua(l) ::= AT_IDENTIFIER(id) PAREN_L(pl) PAREN_R(pr).							{ BASE_LUA_ELEM(l, id, pl, NULL, pr); }
+
+
 undeclared(u) ::= IDENTIFIER(id) PAREN_L term_lst(args) PAREN_R.				{ UNDECLARED(u, id, args); }
 undeclared(u) ::= IDENTIFIER(id).												{ UNDECLARED(u, id, NULL); }
 
@@ -2939,3 +2952,5 @@ stmt_code_blk(stmt) ::= F2LP_GR(code).				{ CODE_BLK(stmt, code, Language::Featu
 stmt_code_blk(stmt) ::= F2LP_CP(code).				{ CODE_BLK(stmt, code, Language::Feature::CODE_F2LP_CP, F2LPBlock); }
 stmt_code_blk(stmt) ::= LUA_GR(code).				{ CODE_BLK(stmt, code, Language::Feature::CODE_LUA_GR, LUABlock);   }
 stmt_code_blk(stmt) ::= LUA_CP(code).				{ CODE_BLK(stmt, code, Language::Feature::CODE_LUA_CP, LUABlock);   }
+stmt_code_blk(stmt) ::= PYTHON_GR(code).			{ CODE_BLK(stmt, code, Language::Feature::CODE_PYTHON_GR, PYTHONBlock);   }
+stmt_code_blk(stmt) ::= PYTHON_CP(code).			{ CODE_BLK(stmt, code, Language::Feature::CODE_PYTHON_CP, PYTHONBlock);   }

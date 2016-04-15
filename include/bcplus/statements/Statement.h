@@ -30,6 +30,7 @@ public:
 			COMMENTS,					///< comment block
 			F2LP,						///< F2LP code block
 			LUA,						///< LUA code block
+			PYTHON,						///< PYTHON code block
 			ASP,						///< ASP code block
 			SHOW,						///< Show statement
 			SHOW_ALL,					///< Show all statement

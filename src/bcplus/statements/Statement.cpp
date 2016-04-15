@@ -18,6 +18,7 @@ char const* Statement::Type::typeString(type v) {
 
 	case F2LP:						return "F2LP block";
 	case LUA:						return "LUA block";
+	case PYTHON:					return "PYTHON block";
 	case ASP:						return "ASP block";
 	case SHOW:						return "show";
 	case SHOW_ALL:					return "show (all)";
