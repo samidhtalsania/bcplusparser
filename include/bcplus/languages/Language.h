@@ -119,8 +119,8 @@ public:
 			CODE_LUA_CP,				///< CCalc style LUA code block
 			CODE_LUA_GR,					///< Gringo style LUA code block
 
-			CODE_PYTHON_CP,				///< CCalc style LUA code block
-			CODE_PYTHON_GR				///< Gringo style LUA code block
+			CODE_PYTHON_CP,				///< CCalc style PYTHON code block
+			CODE_PYTHON_GR				///< Gringo style PYTHON code block
 		};
 
 

@@ -74,6 +74,8 @@ bool BC::support(Feature::type feature) const {
 		case Feature::CODE_F2LP_GR:               
 		case Feature::CODE_LUA_CP:                
 		case Feature::CODE_LUA_GR: 
+		case Feature::CODE_PYTHON_CP:                
+		case Feature::CODE_PYTHON_GR:
 			return true;
 
 		case Feature::CLAUSE_UNLESS:              
